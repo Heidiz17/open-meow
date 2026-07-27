@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🐾 Open 貓貓 - 終極自訂壟斷版</title>
+  <title>🐾 Open 貓貓 - 終極真貓聲合唱版</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: #f7f9fc; color: #333; margin: 0; padding: 15px; padding-bottom: 50px; }
+    body { background-color: #f7f9fc; color: #333; margin: 0; padding: 15px; padding-bottom: 70px; }
     h1 { text-align: center; color: #ff6b6b; font-size: 28px; margin-bottom: 5px; }
     p.subtitle { text-align: center; color: #666; font-size: 16px; margin-top: 0; }
     
     .section-title { font-size: 22px; color: #2d3436; border-left: 5px solid #ff6b6b; padding-left: 10px; margin: 25px 0 15px; }
     
-    /* 1. 音樂播放器區 (置頂) */
+    /* 1. 專屬背景音樂 (置頂) */
     .music-box { background: #74b9ff; color: white; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(116,185,255,0.3); }
     .music-box input { display: none; }
     .custom-upload-btn { background: #0984e3; color: white; padding: 10px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-block; margin-top: 8px; }
@@ -23,10 +23,18 @@
     .sound-btn { 
       background: white; border: 2px solid #ffeaa7; border-radius: 15px; padding: 12px 8px; 
       text-align: center; cursor: pointer; font-size: 15px; font-weight: bold; color: #d63031;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.2s;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.1s;
     }
-    .sound-btn:active { transform: scale(0.95); background: #ffeaa7; }
+    .sound-btn:active { transform: scale(0.92); background: #ffeaa7; }
     .sound-btn span { display: block; font-size: 24px; margin-bottom: 5px; }
+
+    /* 底部翻譯浮條 */
+    .toast-box { 
+      position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+      background: rgba(45, 52, 54, 0.9); color: white; padding: 12px 24px; border-radius: 25px;
+      font-size: 17px; font-weight: bold; display: none; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      text-align: center; max-width: 90%;
+    }
 
     /* 3. 上傳與相簿區 */
     .upload-box { background: #eccc68; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 15px; }
@@ -51,9 +59,9 @@
 <body>
 
   <h1>🐾 Open 貓貓助手</h1>
-  <p class="subtitle">免費 30 種貓語 + 離線 MP3 + 專屬大相簿</p>
+  <p class="subtitle">綁定真貓聲 + 自訂離線 MP3 + 專屬大相簿</p>
 
-  <!-- 1. 🎵 專屬背景音樂 (置頂位置) -->
+  <!-- 1. 🎵 專屬背景音樂 (置頂，自訂永久 Save) -->
   <div class="music-box">
     <strong>🎵 專屬背景音樂 / 自訂 MP3：</strong><br>
     <label class="custom-upload-btn" for="musicInput">➕ 揼入自己鍾意嘅 MP3</label>
@@ -62,11 +70,11 @@
     <audio id="bgPlayer" controls style="display: none;"></audio>
   </div>
 
-  <!-- 2. 🔊 聲音解密區 -->
-  <div class="section-title">🔊 30 種貓語解密（點擊發聲與翻譯）</div>
+  <!-- 2. 🔊 綁定真貓叫聲區 -->
+  <div class="section-title">🔊 30 種真貓語解密（按鈕即播真貓聲！）</div>
   <div class="sound-grid" id="soundGrid"></div>
 
-  <!-- 3. 🖼️ 專屬相簿區 -->
+  <!-- 3. 🖼️ 專屬相簿區 (自訂永久 Save) -->
   <div class="section-title">🖼️ 主人與喵星人專屬相簿（永久 Save 喺手機）</div>
   
   <div class="upload-box">
@@ -75,6 +83,9 @@
   </div>
 
   <div class="photo-grid" id="photoGrid"></div>
+
+  <!-- 底部翻譯浮條 -->
+  <div class="toast-box" id="toast"></div>
 
   <!-- 燈箱 -->
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -97,37 +108,38 @@
       loadSavedMusic();
     };
 
+    // 🐾 30 個綁定 App 內建真貓叫聲 (對應 GitHub 上傳嘅 cat1.mp3, cat2.mp3...)
     const catSounds = [
-      { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", pitch: 600 },
-      { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", pitch: 850 },
-      { name: "急促討食", emoji: "⚡", desc: "動作太慢，扣 50 分！", pitch: 950 },
-      { name: "裝可憐喵", emoji: "🥺", desc: "畀粒零食我食啦～", pitch: 500 },
-      { name: "開心呼嚕", emoji: "🥰", desc: "摸得好舒服，想瞓覺。", pitch: 200 },
-      { name: "興奮鳥鳴", emoji: "🐥", desc: "見到窗外有飛鳥！", pitch: 1100 },
-      { name: "告白短喵", emoji: "❤️", desc: "最信任你啦奴才。", pitch: 650 },
-      { name: "放鬆踏踏", emoji: "🐾", desc: "按摩中，請勿打擾。", pitch: 300 },
-      { name: "迎人高音", emoji: "🎉", desc: "好開心見到你返屋企！", pitch: 900 },
-      { name: "滾火低吼", emoji: "😡", desc: "唔好逼我，想咬人！", pitch: 150 },
-      { name: "警告哈氣", emoji: "🐍", desc: "別過嚟！再過嚟我動手！", pitch: 180 },
-      { name: "踩尾尖叫", emoji: "🙀", desc: "踩到我尾巴啦！痛呀！", pitch: 1300 },
-      { name: "摸夠收手", emoji: "✋", desc: "摸夠三下，可以退下了。", pitch: 400 },
-      { name: "不耐煩", emoji: "😮‍💨", desc: "好煩呀，我想靜下。", pitch: 350 },
-      { name: "睇窗咔咔", emoji: "🐛", desc: "好想抓抓不到，好心急！", pitch: 750 },
-      { name: "寂寞尋人", emoji: "🔍", desc: "去咗邊呀？屋企好寂寞。", pitch: 550 },
-      { name: "好奇問號", emoji: "❓", desc: "你在做咩呀？畀我睇 Factory。", pitch: 700 },
-      { name: "高級撒嬌", emoji: "😶", desc: "（無聲張嘴）最愛你了。", pitch: 450 },
-      { name: "伸懶腰", emoji: "🧘", desc: "舒服～睡個大覺。", pitch: 280 },
-      { name: "討摸摸", emoji: "🤗", desc: "過嚟摸我頭頭。", pitch: 620 },
-      { name: "打噴嚏", emoji: "🤧", desc: "哈啾！邊個喺度諗我？", pitch: 800 },
-      { name: "嘔毛前奏", emoji: "🤢", desc: "準備定紙巾，我要吐毛球啦。", pitch: 220 },
-      { name: "宵夜召喚", emoji: "🌙", desc: "半夜三更，快啲起身餵我！", pitch: 920 },
-      { name: "霸道佔領", emoji: "💻", desc: "呢個鍵盤現在係我嘅榻榻米。", pitch: 500 },
-      { name: "看穿人類", emoji: "😏", desc: "愚蠢嘅人類，又喺度做咩？", pitch: 380 },
-      { name: "肚餓暴走", emoji: "🏃", desc: "再唔給嘢食，我就開跑跑步！", pitch: 1000 },
-      { name: "巡視領地", emoji: "👑", desc: "呢個屋企所有嘢都係朕嘅。", pitch: 480 },
-      { name: "洗臉中", emoji: "🧼", desc: "保持洗臉，做隻精緻嘅貓。", pitch: 520 },
-      { name: "曬太陽", emoji: "☀️", desc: "日光浴中，舒服到要融化。", pitch: 330 },
-      { name: "夢話咕嚕", emoji: "💤", desc: "做緊夢，夢見成河嘅罐罐...", pitch: 250 }
+      { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" },
+      { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },
+      { name: "急促討食", emoji: "⚡", desc: "動作太慢，扣 50 分！", file: "cat3.mp3" },
+      { name: "裝可憐喵", emoji: "🥺", desc: "畀粒零食我食啦～", file: "cat4.mp3" },
+      { name: "開心呼嚕", emoji: "🥰", desc: "摸得好舒服，想瞓覺。", file: "cat5.mp3" },
+      { name: "興奮鳥鳴", emoji: "🐥", desc: "見到窗外有飛鳥！", file: "cat6.mp3" },
+      { name: "告白短喵", emoji: "❤️", desc: "最信任你啦奴才。", file: "cat7.mp3" },
+      { name: "放鬆踏踏", emoji: "🐾", desc: "按摩中，請勿打擾。", file: "cat8.mp3" },
+      { name: "迎人高音", emoji: "🎉", desc: "好開心見到你返屋企！", file: "cat9.mp3" },
+      { name: "滾火低吼", emoji: "😡", desc: "唔好逼我，想咬人！", file: "cat10.mp3" },
+      { name: "警告哈氣", emoji: "🐍", desc: "別過嚟！再過嚟我動手！", file: "cat11.mp3" },
+      { name: "踩尾尖叫", emoji: "🙀", desc: "踩到我尾巴啦！痛呀！", file: "cat12.mp3" },
+      { name: "摸夠收手", emoji: "✋", desc: "摸夠三下，可以退下了。", file: "cat13.mp3" },
+      { name: "不耐煩", emoji: "😮‍💨", desc: "好煩呀，我想靜下。", file: "cat14.mp3" },
+      { name: "睇窗咔咔", emoji: "🐛", desc: "好想抓抓不到，好心急！", file: "cat15.mp3" },
+      { name: "寂寞尋人", emoji: "🔍", desc: "去咗邊呀？屋企好寂寞。", file: "cat16.mp3" },
+      { name: "好奇問號", emoji: "❓", desc: "你在做咩呀？畀我睇 Factory。", file: "cat17.mp3" },
+      { name: "高級撒嬌", emoji: "😶", desc: "（無聲張嘴）最愛你了。", file: "cat18.mp3" },
+      { name: "伸懶腰", emoji: "🧘", desc: "舒服～睡個大覺。", file: "cat19.mp3" },
+      { name: "討摸摸", emoji: "🤗", desc: "過嚟摸我頭頭。", file: "cat20.mp3" },
+      { name: "打噴嚏", emoji: "🤧", desc: "哈啾！邊個喺度諗我？", file: "cat21.mp3" },
+      { name: "嘔毛前奏", emoji: "🤢", desc: "準備定紙巾，我要吐毛球啦。", file: "cat22.mp3" },
+      { name: "宵夜召喚", emoji: "🌙", desc: "半夜三更，快啲起身餵我！", file: "cat23.mp3" },
+      { name: "霸道佔領", emoji: "💻", desc: "呢個鍵盤現在係我嘅榻榻米。", file: "cat24.mp3" },
+      { name: "看穿人類", emoji: "😏", desc: "愚蠢嘅人類，又喺度做咩？", file: "cat25.mp3" },
+      { name: "肚餓暴走", emoji: "🏃", desc: "再唔給嘢食，我就開跑跑步！", file: "cat26.mp3" },
+      { name: "巡視領地", emoji: "👑", desc: "呢個屋企所有嘢都係朕嘅。", file: "cat27.mp3" },
+      { name: "洗臉中", emoji: "🧼", desc: "保持洗臉，做隻精緻嘅貓。", file: "cat28.mp3" },
+      { name: "曬太陽", emoji: "☀️", desc: "日光浴中，舒服到要融化。", file: "cat29.mp3" },
+      { name: "夢話咕嚕", emoji: "💤", desc: "做緊夢，夢見成河嘅罐罐...", file: "cat30.mp3" }
     ];
 
     const soundGrid = document.getElementById('soundGrid');
@@ -135,53 +147,27 @@
       const btn = document.createElement('div');
       btn.className = 'sound-btn';
       btn.innerHTML = `<span>${item.emoji}</span>${item.name}`;
-      btn.onclick = () => playCatSoundAndTranslate(item);
+      btn.onclick = () => playRealCatSound(item);
       soundGrid.appendChild(btn);
     });
 
-    // 🐾 按鈕發聲 + 音樂防撞（Ducking）邏輯
-    function playCatSoundAndTranslate(item) {
-      const player = document.getElementById('bgPlayer');
-      
-      // 1. 如果有 MP3 喺度播放緊，先自動將背景音樂音量拉細至 15%（避免撞聲）
-      let originalVolume = player.volume;
-      if (!player.paused) {
-        player.volume = 0.15;
-      }
-
-      // 2. 用 Web Audio API 即時合成貓叫聲（模擬喵叫頻率）
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        
-        // 模擬喵叫滑音 (Pitch Sweep)
-        osc.frequency.setValueAtTime(item.pitch, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(item.pitch * 0.6, audioCtx.currentTime + 0.35);
-        
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-        
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.35);
-      } catch (e) {
-        console.log("Audio play error", e);
-      }
-
-      // 3. 彈出貓語翻譯
-      setTimeout(() => {
-        alert(`🐾 貓語翻譯：\n「${item.desc}」`);
-        // 4. 翻譯完畢後，恢復背景音樂音量
-        if (!player.paused) {
-          player.volume = originalVolume;
-        }
-      }, 100);
+    // 🐾 播放內建真貓叫聲 MP3（100% 獨立音訊通道，與背景音樂完全 Overlap 合唱！）
+    function playRealCatSound(item) {
+      const audio = new Audio(item.file);
+      audio.play().catch(e => console.log("Audio play blocked", e));
+      showToast(`🐾 貓語：${item.desc}`);
     }
 
-    // --- 相片上傳與永久 Save ---
+    let toastTimer;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    // --- 相片上傳與永久 Save (用戶自訂) ---
     function uploadPhoto(event) {
       const file = event.target.files[0];
       if (file) {
@@ -225,7 +211,7 @@
       }
     }
 
-    // --- MP3 音樂上傳與永久 Save ---
+    // --- MP3 音樂上傳與永久 Save (用戶自訂) ---
     function uploadMusic(event) {
       const file = event.target.files[0];
       if (file) {

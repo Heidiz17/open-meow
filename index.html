@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐾 Open 貓貓 - 30種貓語解密與專屬相簿</title>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: #f7f9fc; color: #333; margin: 0; padding: 15px; }
+    h1 { text-align: center; color: #ff6b6b; font-size: 28px; margin-bottom: 5px; }
+    p.subtitle { text-align: center; color: #666; font-size: 16px; margin-top: 0; }
+    
+    .section-title { font-size: 22px; color: #2d3436; border-left: 5px solid #ff6b6b; padding-left: 10px; margin: 25px 0 15px; }
+    
+    /* 貓叫聲大按鈕網格 */
+    .sound-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+    .sound-btn { 
+      background: white; border: 2px solid #ffeaa7; border-radius: 15px; padding: 12px 8px; 
+      text-align: center; cursor: pointer; font-size: 15px; font-weight: bold; color: #d63031;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.2s;
+    }
+    .sound-btn:active { transform: scale(0.95); background: #ffeaa7; }
+    .sound-btn span { display: block; font-size: 24px; margin-bottom: 5px; }
+
+    /* 上傳與相簿區 */
+    .upload-box { background: #eccc68; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 15px; }
+    .upload-box input { font-size: 16px; margin-top: 10px; }
+    
+    .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+    .photo-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; padding-bottom: 10px; }
+    .photo-card img { width: 100%; height: 160px; object-fit: cover; cursor: pointer; }
+    .photo-card p { margin: 8px 0 0; font-weight: bold; font-size: 16px; color: #2d3436; }
+
+    /* 全螢幕放大燈箱 */
+    .lightbox { 
+      display: none; position: fixed; top:0; left:0; width:100%; height:100%; 
+      background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; flex-direction: column;
+    }
+    .lightbox img { max-width: 90%; max-height: 80%; border-radius: 10px; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+    .lightbox p { color: white; font-size: 22px; margin-top: 15px; font-weight: bold; }
+    .close-btn { position: absolute; top: 20px; right: 25px; color: white; font-size: 35px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h1>🐾 Open 貓貓助手</h1>
+  <p class="subtitle">免費 30 種貓語解密 + 主人專屬大畫面相簿</p>
+
+  <!-- 聲音解密區 -->
+  <div class="section-title">🔊 30 種貓語解密（點擊翻譯）</div>
+  <div class="sound-grid" id="soundGrid"></div>
+
+  <!-- 專屬相簿區 -->
+  <div class="section-title">🖼️ 主人與喵星人專屬相簿</div>
+  
+  <div class="upload-box">
+    <strong>📸 加新相片：</strong><br>
+    <input type="file" id="photoInput" accept="image/*" onchange="addPhoto(event)">
+  </div>
+
+  <div class="photo-grid" id="photoGrid">
+    <div class="photo-card">
+      <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500" onclick="openLightbox(this.src, '喵主子要食罐罐')">
+      <p>喵主子要食罐罐</p>
+    </div>
+    <div class="photo-card">
+      <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=500" onclick="openLightbox(this.src, '同主人合照')">
+      <p>同主人合照</p>
+    </div>
+  </div>
+
+  <!-- 燈箱 -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="close-btn">&times;</span>
+    <img id="lightboxImg" src="">
+    <p id="lightboxCaption"></p>
+  </div>
+
+  <script>
+    // 30 種貓叫聲與情緒霸氣清單
+    const catSounds = [
+      { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！" },
+      { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！" },
+      { name: "急促討食", emoji: "⚡", desc: "動作太慢，扣 50 分！" },
+      { name: "裝可憐喵", emoji: "🥺", desc: "畀粒零食我食啦～" },
+      { name: "開心呼嚕", emoji: "🥰", desc: "摸得好舒服，想瞓覺。" },
+      { name: "興奮鳥鳴", emoji: "🐥", desc: "見到窗外有飛鳥！" },
+      { name: "告白短喵", emoji: "❤️", desc: "最信任你啦奴才。" },
+      { name: "放鬆踏踏", emoji: "🐾", desc: "按摩中，請勿打擾。" },
+      { name: "迎人高音", emoji: "🎉", desc: "好開心見到你返屋企！" },
+      { name: "滾火低吼", emoji: "😡", desc: "唔好逼我，想咬人！" },
+      { name: "警告哈氣", emoji: "🐍", desc: "別過嚟！再過嚟我動手！" },
+      { name: "踩尾尖叫", emoji: "🙀", desc: "踩到我尾巴啦！痛呀！" },
+      { name: "摸夠收手", emoji: "✋", desc: "摸夠三下，可以退下了。" },
+      { name: "不耐煩", emoji: "😮‍💨", desc: "好煩呀，我想靜下。" },
+      { name: "睇窗咔咔", emoji: "🐛", desc: "好想抓抓不到，好心急！" },
+      { name: "寂寞尋人", emoji: "🔍", desc: "去咗邊呀？屋企好寂寞。" },
+      { name: "好奇問號", emoji: "❓", desc: "你在做咩呀？畀我睇吓。" },
+      { name: "高級撒嬌", emoji: "😶", desc: "（無聲張嘴）最愛你了。" },
+      { name: "伸懶腰", emoji: "🧘", desc: "舒服～睡個大覺。" },
+      { name: "討摸摸", emoji: "🤗", desc: "過嚟摸我頭頭。" },
+      { name: "打噴嚏", emoji: "🤧", desc: "哈啾！邊個喺度諗我？" },
+      { name: "嘔毛前奏", emoji: "🤢", desc: "準備定紙巾，我要吐毛球啦。" },
+      { name: "宵夜召喚", emoji: "🌙", desc: "半夜三更，快啲起身餵我！" },
+      { name: "霸道佔領", emoji: "💻", desc: "呢個鍵盤現在係我嘅榻榻米。" },
+      { name: "看穿人類", emoji: "😏", desc: "愚蠢嘅人類，又喺度做咩？" },
+      { name: "肚餓暴走", emoji: "🏃", desc: "再唔給嘢食，我就開跑跑步！" },
+      { name: "巡視領地", emoji: "👑", desc: "呢個屋企所有嘢都係朕嘅。" },
+      { name: "洗臉中", emoji: "🧼", desc: "保持洗臉，做隻精緻嘅貓。" },
+      { name: "曬太陽", emoji: "☀️", desc: "日光浴中，舒服到要融化。" },
+      { name: "夢話咕嚕", emoji: "💤", desc: "做緊夢，夢見成河嘅罐罐..." }
+    ];
+
+    const soundGrid = document.getElementById('soundGrid');
+    catSounds.forEach((item) => {
+      const btn = document.createElement('div');
+      btn.className = 'sound-btn';
+      btn.innerHTML = `<span>${item.emoji}</span>${item.name}`;
+      btn.onclick = () => alert(`🐾 貓語翻譯：\n「${item.desc}」`);
+      soundGrid.appendChild(btn);
+    });
+
+    function addPhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const caption = prompt("請輸入呢張相嘅名字：", "喵喵靚相") || "專屬相片";
+          const photoGrid = document.getElementById('photoGrid');
+          const card = document.createElement('div');
+          card.className = 'photo-card';
+          card.innerHTML = `<img src="${e.target.result}" onclick="openLightbox(this.src, '${caption}')"><p>${caption}</p>`;
+          photoGrid.appendChild(card);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function openLightbox(src, caption) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightboxCaption').innerText = caption;
+      document.getElementById('lightbox').style.display = 'flex';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

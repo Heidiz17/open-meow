@@ -2,50 +2,37 @@
 <html lang="zh-HK">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🐾 Open 貓貓</title>
-
-  <!-- 🎨 手機桌面 Icon 仔設定 (請確保 GitHub 裡面有一張叫 icon.png 嘅相) -->
-  <link rel="apple-touch-icon" href="icon.png">
-  <link rel="icon" type="image/png" href="icon.png">
-
-  <!-- PWA 全螢幕全涵蓋設定 (隱藏網址列/選單) -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#f7f9fc">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐾 Open 貓貓 - 終極真貓聲合唱版</title>
   <style>
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-    html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color: #f7f9fc; color: #333; overflow-x: hidden; }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: #f7f9fc; color: #333; margin: 0; padding: 15px; padding-bottom: 70px; }
+    h1 { text-align: center; color: #ff6b6b; font-size: 28px; margin-bottom: 5px; }
+    p.subtitle { text-align: center; color: #666; font-size: 16px; margin-top: 0; }
     
-    .app-container { padding: 15px; padding-bottom: 80px; }
-    h1 { text-align: center; color: #ff6b6b; font-size: 28px; margin: 10px 0 5px; }
-    p.subtitle { text-align: center; color: #666; font-size: 15px; margin-top: 0; }
-    
-    .section-title { font-size: 20px; color: #2d3436; border-left: 5px solid #ff6b6b; padding-left: 10px; margin: 25px 0 15px; }
+    .section-title { font-size: 22px; color: #2d3436; border-left: 5px solid #ff6b6b; padding-left: 10px; margin: 25px 0 15px; }
     
     /* 1. 專屬背景音樂 (置頂) */
-    .music-box { background: #74b9ff; color: white; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(116,185,255,0.3); }
+    .music-box { background: #74b9ff; color: white; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(116,185,255,0.3); }
     .music-box input { display: none; }
     .custom-upload-btn { background: #0984e3; color: white; padding: 10px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-block; margin-top: 8px; }
     audio { width: 100%; margin-top: 10px; border-radius: 10px; }
 
     /* 2. 貓叫聲大按鈕網格 */
-    .sound-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+    .sound-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
     .sound-btn { 
-      background: white; border: 2px solid #ffeaa7; border-radius: 15px; padding: 12px 5px; 
-      text-align: center; cursor: pointer; font-size: 14px; font-weight: bold; color: #d63031;
+      background: white; border: 2px solid #ffeaa7; border-radius: 15px; padding: 12px 8px; 
+      text-align: center; cursor: pointer; font-size: 15px; font-weight: bold; color: #d63031;
       box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.1s;
     }
     .sound-btn:active { transform: scale(0.92); background: #ffeaa7; }
-    .sound-btn span { display: block; font-size: 22px; margin-bottom: 3px; }
+    .sound-btn span { display: block; font-size: 24px; margin-bottom: 5px; }
 
     /* 底部翻譯浮條 */
     .toast-box { 
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      background: rgba(45, 52, 54, 0.95); color: white; padding: 12px 24px; border-radius: 25px;
-      font-size: 16px; font-weight: bold; display: none; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+      background: rgba(45, 52, 54, 0.9); color: white; padding: 12px 24px; border-radius: 25px;
+      font-size: 17px; font-weight: bold; display: none; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       text-align: center; max-width: 90%;
     }
 
@@ -53,54 +40,54 @@
     .upload-box { background: #eccc68; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 15px; }
     .upload-box input { display: none; }
     
-    .photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
     .photo-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; padding-bottom: 10px; position: relative; }
-    .photo-card img { width: 100%; height: 160px; object-fit: cover; cursor: pointer; display: block; }
-    .photo-card p { margin: 8px 0 0; font-weight: bold; font-size: 15px; color: #2d3436; }
-    .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(214, 48, 49, 0.85); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; font-weight: bold; cursor: pointer; }
+    .photo-card img { width: 100%; height: 160px; object-fit: cover; cursor: pointer; }
+    .photo-card p { margin: 8px 0 0; font-weight: bold; font-size: 16px; color: #2d3436; }
+    .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(214, 48, 49, 0.8); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; font-weight: bold; cursor: pointer; }
 
     /* 全螢幕放大燈箱 */
     .lightbox { 
       display: none; position: fixed; top:0; left:0; width:100%; height:100%; 
-      background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; flex-direction: column;
+      background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; flex-direction: column;
     }
-    .lightbox img { max-width: 95%; max-height: 80%; border-radius: 8px; }
-    .lightbox p { color: white; font-size: 20px; margin-top: 15px; font-weight: bold; }
-    .close-btn { position: absolute; top: 25px; right: 25px; color: white; font-size: 35px; cursor: pointer; font-weight: bold; }
+    .lightbox img { max-width: 90%; max-height: 80%; border-radius: 10px; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+    .lightbox p { color: white; font-size: 22px; margin-top: 15px; font-weight: bold; }
+    .close-btn { position: absolute; top: 20px; right: 25px; color: white; font-size: 35px; cursor: pointer; font-weight: bold; }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <h1>🐾 Open 貓貓助手</h1>
-    <p class="subtitle">免費 30 種貓語 + 離線 MP3 + 專屬大相簿</p>
+  <h1>🐾 Open 貓貓助手</h1>
+  <p class="subtitle">免費 30 種貓語 + 離線 MP3 + 專屬大相簿</p>
 
-    <!-- 1. 🎵 專屬背景音樂 -->
-    <div class="music-box">
-      <strong>🎵 專屬背景音樂 / 自訂 MP3：</strong><br>
-      <label class="custom-upload-btn" for="musicInput">➕ 揼入自己鍾意嘅 MP3</label>
-      <input type="file" id="musicInput" onchange="uploadMusic(event)">
-      <div id="musicName" style="margin-top: 8px; font-weight: bold;">（未選擇音樂）</div>
-      <audio id="bgPlayer" controls style="display: none;"></audio>
-    </div>
-
-    <!-- 2. 🔊 綁定真貓叫聲區 -->
-    <div class="section-title">🔊 30 種真貓語解密</div>
-    <div class="sound-grid" id="soundGrid"></div>
-
-    <!-- 3. 🖼️ 專屬相簿區 -->
-    <div class="section-title">🖼️ 專屬相簿（永久 Save）</div>
-    
-    <div class="upload-box">
-      <label class="custom-upload-btn" style="background: #d63031;" for="photoInput">📸 加新相片（自動 Save）</label>
-      <input type="file" id="photoInput" accept="image/*" onchange="uploadPhoto(event)">
-    </div>
-
-    <div class="photo-grid" id="photoGrid"></div>
+  <!-- 1. 🎵 專屬背景音樂 (置頂，自訂永久 Save) -->
+  <div class="music-box">
+    <strong>🎵 專屬背景音樂 / 自訂 MP3：</strong><br>
+    <label class="custom-upload-btn" for="musicInput">➕ 揼入自己鍾意嘅 MP3</label>
+    <input type="file" id="musicInput" onchange="uploadMusic(event)">
+    <div id="musicName" style="margin-top: 8px; font-weight: bold;">（未選擇音樂）</div>
+    <audio id="bgPlayer" controls style="display: none;"></audio>
   </div>
 
+  <!-- 2. 🔊 綁定真貓叫聲區 -->
+  <div class="section-title">🔊 30 種真貓語解密（按鈕即播真貓聲！）</div>
+  <div class="sound-grid" id="soundGrid"></div>
+
+  <!-- 3. 🖼️ 專屬相簿區 (自訂永久 Save) -->
+  <div class="section-title">🖼️ 主人與喵星人專屬相簿（永久 Save 喺手機）</div>
+  
+  <div class="upload-box">
+    <label class="custom-upload-btn" style="background: #d63031;" for="photoInput">📸 加新相片（自動 Save）</label>
+    <input type="file" id="photoInput" accept="image/*" onchange="uploadPhoto(event)">
+  </div>
+
+  <div class="photo-grid" id="photoGrid"></div>
+
+  <!-- 底部翻譯浮條 -->
   <div class="toast-box" id="toast"></div>
 
+  <!-- 燈箱 -->
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
     <span class="close-btn">&times;</span>
     <img id="lightboxImg" src="">
@@ -121,6 +108,7 @@
       loadSavedMusic();
     };
 
+    // 🐾 30 個綁定 App 內建真貓叫聲 (對應 GitHub 上傳嘅 cat1.mp3, cat2.mp3...)
     const catSounds = [
       { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" },
       { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },
@@ -138,7 +126,7 @@
       { name: "不耐煩", emoji: "😮‍💨", desc: "好煩呀，我想靜下。", file: "cat14.mp3" },
       { name: "睇窗咔咔", emoji: "🐛", desc: "好想抓抓不到，好心急！", file: "cat15.mp3" },
       { name: "寂寞尋人", emoji: "🔍", desc: "去咗邊呀？屋企好寂寞。", file: "cat16.mp3" },
-      { name: "好奇問號", emoji: "❓", desc: "你在做咩呀？畀我睇下。", file: "cat17.mp3" },
+      { name: "好奇問號", emoji: "❓", desc: "你在做咩呀？畀我睇 Factory。", file: "cat17.mp3" },
       { name: "高級撒嬌", emoji: "😶", desc: "（無聲張嘴）最愛你了。", file: "cat18.mp3" },
       { name: "伸懶腰", emoji: "🧘", desc: "舒服～睡個大覺。", file: "cat19.mp3" },
       { name: "討摸摸", emoji: "🤗", desc: "過嚟摸我頭頭。", file: "cat20.mp3" },
@@ -163,6 +151,7 @@
       soundGrid.appendChild(btn);
     });
 
+    // 🐾 播放內建真貓叫聲 MP3（100% 獨立音訊通道，與背景音樂完全 Overlap 合唱！）
     function playRealCatSound(item) {
       const audio = new Audio(item.file);
       audio.play().catch(e => console.log("Audio play blocked", e));
@@ -178,6 +167,7 @@
       toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
 
+    // --- 相片上傳與永久 Save (用戶自訂) ---
     function uploadPhoto(event) {
       const file = event.target.files[0];
       if (file) {
@@ -221,6 +211,7 @@
       }
     }
 
+    // --- MP3 音樂上傳與永久 Save (用戶自訂) ---
     function uploadMusic(event) {
       const file = event.target.files[0];
       if (file) {

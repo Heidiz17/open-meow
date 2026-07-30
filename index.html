@@ -81,11 +81,18 @@
     /* 🖼️ Slideshow 幻燈片全螢幕樣式 */
     .lightbox { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.94); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; padding: 15px; }
     #lightboxContent { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; margin: auto; transition: opacity 0.3s ease-in-out; }
-    #lightboxContent img, #lightboxContent video { max-width: 90vw; max-height: 80vh; width: auto; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.5); }
-    .lightbox-controls { display: flex; gap: 15px; align-items: center; margin-top: 10px; z-index: 3100; }
-    .slide-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; width: 40px; height: 40px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    #lightboxContent img, #lightboxContent video { max-width: 90vw; max-height: 75vh; width: auto; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.5); }
+    
+    .lightbox-controls { display: flex; gap: 10px; align-items: center; margin-top: 8px; z-index: 3100; flex-wrap: wrap; justify-content: center; }
+    .slide-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; width: 38px; height: 38px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
     .slide-btn:active { background: #00b894; }
-    .lightbox p { color: white; font-size: 15px; font-style: italic; margin: 0; font-weight: bold; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+    
+    /* 秒數選擇掣樣式 */
+    .speed-btn-group { display: flex; gap: 4px; background: rgba(255,255,255,0.15); padding: 3px 6px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); }
+    .speed-btn { background: transparent; color: #dfe6e9; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; }
+    .speed-btn.active { background: #00b894; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+
+    .lightbox p { color: white; font-size: 14px; font-style: italic; margin: 4px 0 0; font-weight: bold; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
     .close-btn { position: absolute; top: 15px; right: 20px; color: white; font-size: 38px; cursor: pointer; font-weight: bold; z-index: 3100; }
   </style>
 </head>
@@ -99,7 +106,7 @@
     </div>
   </div>
 
-  <!-- 🥇 相簿區（新增 🎬 幻燈片/Slideshow 掣） -->
+  <!-- 🥇 相簿區 -->
   <div class="section-title">🖼️ 貓貓專屬多媒體相簿</div>
   <div class="album-controls">
     <select id="albumSelect" class="album-select" onchange="switchAlbum()"><option value="default">📁 預設相簿</option></select>
@@ -132,7 +139,7 @@
   </div>
   <div class="toast-box" id="toast"></div>
   
-  <!-- 全螢幕燈箱 & Slideshow 控制面板 -->
+  <!-- 全螢幕燈箱 & Slideshow 控制面板（包含 3秒/6秒/10秒 控制） -->
   <div class="lightbox" id="lightbox">
     <span class="close-btn" onclick="closeLightbox()">&times;</span>
     <div id="lightboxContent"></div>
@@ -140,16 +147,24 @@
       <button class="slide-btn" onclick="prevSlide()">◀</button>
       <button class="slide-btn" id="playPauseBtn" onclick="toggleSlideshowPlay()">⏸️</button>
       <button class="slide-btn" onclick="nextSlide()">▶</button>
+      
+      <!-- ⏱️ 3秒 / 6秒 / 10秒 切換選擇器 -->
+      <div class="speed-btn-group">
+        <button class="speed-btn" id="spd3" onclick="setSlideshowSpeed(3000)">3秒</button>
+        <button class="speed-btn active" id="spd6" onclick="setSlideshowSpeed(6000)">6秒</button>
+        <button class="speed-btn" id="spd10" onclick="setSlideshowSpeed(10000)">10秒</button>
+      </div>
     </div>
-    <p id="lightboxCaption" style="margin-top:8px;"></p>
+    <p id="lightboxCaption"></p>
   </div>
 
   <script>
     let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
-    let albumMediaList = []; // 現時相簿播放清單
+    let albumMediaList = []; 
     let slideIndex = 0;
     let slideTimer = null;
     let isPlayingSlideshow = false;
+    let slideshowInterval = 6000; // 預設 6 秒切換
 
     const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
     const request = indexedDB.open("OpenMeowMasterDB", 3);
@@ -267,7 +282,7 @@
     }
     function loadMedia() {
       const mediaGrid = document.getElementById('mediaGrid'); mediaGrid.innerHTML = "";
-      albumMediaList = []; // 重置相簿清單
+      albumMediaList = [];
       db.transaction("media", "readonly").objectStore("media").openCursor().onsuccess = function(e) {
         const cursor = e.target.result;
         if (cursor) {
@@ -304,7 +319,7 @@
       };
     }
 
-    /* 🎬 Slideshow 幻燈片核心邏輯 */
+    /* 🎬 Slideshow 核心（3秒/6秒/10秒 動態切換） */
     function openLightboxIndex(idx) {
       if (albumMediaList.length === 0) return;
       slideIndex = idx;
@@ -349,12 +364,26 @@
       resetSlideTimer();
     }
 
+    function setSlideshowSpeed(ms) {
+      slideshowInterval = ms;
+      document.getElementById('spd3').classList.remove('active');
+      document.getElementById('spd6').classList.remove('active');
+      document.getElementById('spd10').classList.remove('active');
+      
+      if (ms === 3000) document.getElementById('spd3').classList.add('active');
+      if (ms === 6000) document.getElementById('spd6').classList.add('active');
+      if (ms === 10000) document.getElementById('spd10').classList.add('active');
+      
+      showToast(`⏱️ 輪播速度已設定為 ${ms/1000} 秒！`);
+      if (isPlayingSlideshow) resetSlideTimer();
+    }
+
     function resetSlideTimer() {
       clearInterval(slideTimer);
       if (isPlayingSlideshow) {
         slideTimer = setInterval(() => {
           nextSlide();
-        }, 3000); // 3 秒自動切換下一張
+        }, slideshowInterval);
       }
     }
 

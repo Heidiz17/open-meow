@@ -14,44 +14,59 @@
     
     .btn-main { background: #d63031; color: white; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-block; }
     .btn-blue { background: #0984e3; color: white; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-block; }
+    .btn-danger { background: #d63031; color: white; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-block; }
 
-    /* 1. 貓貓相簿區 (排第一) */
+    /* 1. 貓貓相簿區 */
     .album-controls { background: #ffeaa7; padding: 12px; border-radius: 12px; margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
     .album-select { padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; font-weight: bold; }
     
-    /* 縮圖網格：預設兩欄 (一左一右)，支援切換四欄 */
+    /* 預設兩欄網格 (兩格大圖) */
     .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .media-grid.four-cols { grid-template-columns: repeat(4, 1fr); }
-    
     .media-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 6px rgba(0,0,0,0.1); text-align: center; position: relative; padding-bottom: 5px; }
+    
+    /* 2格時圖片高度為 140px */
     .media-card img, .media-card video { width: 100%; height: 140px; object-fit: cover; cursor: pointer; display: block; }
     .media-card p { margin: 5px 0 2px; font-weight: bold; font-size: 14px; color: #2d3436; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 0 5px; }
     .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(214, 48, 49, 0.85); color: white; border: none; border-radius: 50%; width: 26px; height: 26px; font-weight: bold; cursor: pointer; z-index: 10; }
 
-    /* 2. 背景音樂區 (排第二) */
+    /* 切換四欄（4格）：16:9 電視機打橫精巧縮圖 */
+    .media-grid.four-cols { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .media-grid.four-cols .media-card img, 
+    .media-grid.four-cols .media-card video { 
+      height: auto; 
+      aspect-ratio: 16 / 9;
+      object-fit: cover; 
+    }
+    .media-grid.four-cols .media-card p { font-size: 11px; margin: 3px 0 1px; }
+
+    /* 2. 背景音樂區 */
     .music-box { background: #74b9ff; color: white; padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 15px; }
     .music-box input { display: none; }
     audio { width: 100%; margin-top: 8px; border-radius: 8px; }
 
-    /* 3. 三通道 Mixer 混音器 (排第三) */
+    /* 3. 三通道 Mixer 混音器 */
     .mixer-box { background: #2d3436; color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
     .mixer-title { font-size: 18px; color: #ffeaa7; margin-bottom: 10px; font-weight: bold; text-align: center; }
     .mixer-channel { display: flex; align-items: center; justify-content: space-between; margin: 8px 0; gap: 10px; }
     .mixer-channel label { font-size: 14px; min-width: 110px; font-weight: bold; }
     .mixer-channel input[type=range] { flex: 1; }
 
-    /* 4. 貓聲按鈕區 (排第四) */
+    /* 4. 貓聲按鈕區 */
     .sound-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
     .sound-btn { background: white; border: 2px solid #ffeaa7; border-radius: 12px; padding: 10px 5px; text-align: center; cursor: pointer; font-size: 14px; font-weight: bold; color: #d63031; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .sound-btn:active { transform: scale(0.93); background: #ffeaa7; }
     .sound-btn span { display: block; font-size: 22px; margin-bottom: 3px; }
 
-    /* 浮條與燈箱 */
+    /* 浮條與全螢幕放大燈箱 */
     .toast-box { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(45, 52, 54, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-size: 15px; font-weight: bold; display: none; z-index: 2000; text-align: center; max-width: 90%; }
-    .lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; }
-    .lightbox img, .lightbox video { max-width: 90%; max-height: 75%; border-radius: 10px; }
-    .lightbox p { color: white; font-size: 20px; margin-top: 12px; font-weight: bold; }
-    .close-btn { position: absolute; top: 15px; right: 20px; color: white; font-size: 35px; cursor: pointer; font-weight: bold; }
+    
+    .lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.92); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; padding: 10px; }
+    
+    #lightboxContent { width: 100%; height: 85vh; display: flex; justify-content: center; align-items: center; }
+    #lightboxContent img, #lightboxContent video { width: 95vw; height: 85vh; object-fit: contain; border-radius: 12px; }
+    
+    .lightbox p { color: white; font-size: 20px; margin-top: 10px; font-weight: bold; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+    .close-btn { position: absolute; top: 15px; right: 20px; color: white; font-size: 40px; cursor: pointer; font-weight: bold; z-index: 3100; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
   </style>
 </head>
 <body>
@@ -59,20 +74,21 @@
   <h1>🐾 Open 貓貓助手</h1>
   <p class="subtitle">專屬多媒體相簿 + 離線 MP3 + 三通道 Mixer 混音</p>
 
-  <!-- 1. 🖼️ 專屬貓貓相簿區 (排第一) -->
+  <!-- 1. 🖼️ 專屬貓貓相簿區 -->
   <div class="section-title">🖼️ 貓貓專屬多媒體相簿</div>
   <div class="album-controls">
     <select id="albumSelect" class="album-select" onchange="switchAlbum()">
       <option value="default">📁 預設貓貓相簿</option>
     </select>
     <button class="btn-blue" onclick="createAlbum()">➕ 新建相簿</button>
-    <label class="btn-main" for="mediaInput">📸 揼入相片/影片</label>
-    <input type="file" id="mediaInput" accept="image/*,video/*" style="display:none;" onchange="uploadMedia(event)">
-    <button class="btn-blue" style="background:#6c5ce7;" onclick="toggleGrid()">📐 切換 2格/4格</button>
+    <button class="btn-danger" onclick="deleteCurrentAlbum()">🗑️ 刪除相簿</button>
+    <label class="btn-main" for="mediaInput">📸 揼入相片/影片 (可多選)</label>
+    <input type="file" id="mediaInput" accept="image/*,video/*" multiple style="display:none;" onchange="uploadMedia(event)">
+    <button class="btn-blue" style="background:#6c5ce7;" onclick="toggleGrid()">📐 切換 2格/4格(16:9)</button>
   </div>
   <div class="media-grid" id="mediaGrid"></div>
 
-  <!-- 2. 🎵 專屬背景音樂區 (排第二) -->
+  <!-- 2. 🎵 專屬背景音樂區 -->
   <div class="section-title">🎵 專屬背景音樂 (MP3)</div>
   <div class="music-box">
     <label class="btn-blue" for="musicInput">➕ 選擇自訂 MP3</label>
@@ -81,7 +97,7 @@
     <audio id="bgPlayer" controls style="display: none;"></audio>
   </div>
 
-  <!-- 3. 🎛️ 三通道 Mixer 混音器 (修正版：MP3 + 貓聲 + Video影片原聲) -->
+  <!-- 3. 🎛️ 三通道 Mixer 混音器 -->
   <div class="mixer-box">
     <div class="mixer-title">🎛️ 聲音 Mixer 混音主控台</div>
     <div class="mixer-channel">
@@ -98,11 +114,11 @@
     </div>
   </div>
 
-  <!-- 4. 🔊 30 種真貓語解密 (排第四) -->
+  <!-- 4. 🔊 30 種真貓語解密 -->
   <div class="section-title">🔊 30 種真貓語解密（即點即播）</div>
   <div class="sound-grid" id="soundGrid"></div>
 
-  <!-- 底部 Toast 與 燈箱 -->
+  <!-- 底部 Toast 與 全螢幕放大燈箱 -->
   <div class="toast-box" id="toast"></div>
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
     <span class="close-btn">&times;</span>
@@ -173,7 +189,7 @@
       soundGrid.appendChild(btn);
     });
 
-    // 🎛️ 音量實時控制 (Mixer：背景樂 + 貓叫聲 + Video影片原聲)
+    // 🎛️ 音量實時控制
     function updateVolumes() {
       const bgPlayer = document.getElementById('bgPlayer');
       if (bgPlayer) bgPlayer.volume = document.getElementById('volBgm').value;
@@ -198,7 +214,7 @@
       toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
 
-    // --- 相簿管理 ---
+    // --- 相簿管理 (新增、刪除) ---
     function createAlbum() {
       const name = prompt("請輸入新相簿名稱：", "黑貓仔寫真");
       if (name) {
@@ -207,6 +223,49 @@
         tx.objectStore("albums").add({ id: id, name: name });
         tx.oncomplete = function() { loadAlbums(id); };
       }
+    }
+
+    function deleteCurrentAlbum() {
+      if (currentAlbum === "default") {
+        alert("⚠️ 「預設貓貓相簿」係系統保護相簿，唔可以刪除呀！");
+        return;
+      }
+
+      // 檢查相簿內是否有檔案
+      const tx = db.transaction("media", "readonly");
+      let count = 0;
+      tx.objectStore("media").openCursor().onsuccess = function(e) {
+        const cursor = e.target.result;
+        if (cursor) {
+          if (cursor.value.albumId === currentAlbum) count++;
+          cursor.continue();
+        } else {
+          let confirmMsg = "確定要刪除呢個相簿？";
+          if (count > 0) confirmMsg = `⚠️ 呢個相簿入面仲有 ${count} 個檔案！確定要連埋啲相一齊刪除？`;
+          
+          if (confirm(confirmMsg)) {
+            // 刪除相簿紀錄
+            const txAlbum = db.transaction("albums", "readwrite");
+            txAlbum.objectStore("albums").delete(currentAlbum);
+            
+            // 刪除相簿內的相片/影片
+            const txMedia = db.transaction("media", "readwrite");
+            const storeMedia = txMedia.objectStore("media");
+            storeMedia.openCursor().onsuccess = function(ev) {
+              const c = ev.target.result;
+              if (c) {
+                if (c.value.albumId === currentAlbum) c.delete();
+                c.continue();
+              }
+            };
+
+            txMedia.oncomplete = function() {
+              showToast("🗑️ 相簿已成功刪除！");
+              loadAlbums("default");
+            };
+          }
+        }
+      };
     }
 
     function loadAlbums(selectId) {
@@ -238,20 +297,28 @@
       document.getElementById('mediaGrid').classList.toggle('four-cols');
     }
 
-    // --- 多媒體 (相片/影片) 上傳與讀取 ---
+    // --- 批次（多選）上傳相片/影片 ---
     function uploadMedia(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        const isVideo = file.type.startsWith('video/');
-        reader.onload = function(e) {
-          const caption = prompt("請輸入標題：", file.name) || "貓貓紀錄";
-          const item = { albumId: currentAlbum, src: e.target.result, caption: caption, isVideo: isVideo };
-          const tx = db.transaction("media", "readwrite");
-          tx.objectStore("media").add(item);
-          tx.oncomplete = function() { loadMedia(); };
-        };
-        reader.readAsDataURL(file);
+      const files = Array.from(event.target.files);
+      if (files.length > 0) {
+        let loadedCount = 0;
+        files.forEach(file => {
+          const reader = new FileReader();
+          const isVideo = file.type.startsWith('video/');
+          reader.onload = function(e) {
+            const item = { albumId: currentAlbum, src: e.target.result, caption: file.name.split('.')[0], isVideo: isVideo };
+            const tx = db.transaction("media", "readwrite");
+            tx.objectStore("media").add(item);
+            tx.oncomplete = function() {
+              loadedCount++;
+              if (loadedCount === files.length) {
+                loadMedia();
+                showToast(`✅ 成功揼入 ${files.length} 個多媒體檔案！`);
+              }
+            };
+          };
+          reader.readAsDataURL(file);
+        });
       }
     }
 
@@ -322,15 +389,14 @@
       };
     }
 
-    // 燈箱播放 (圖片/影片)
+    // 全螢幕極致放大燈箱
     function openLightboxMedia(src, caption, isVideo) {
       const content = document.getElementById('lightboxContent');
       if (isVideo) {
-        content.innerHTML = `<video id="activeVideo" src="${src}" controls autoplay style="max-width:90%; max-height:75%; border-radius:10px;"></video>`;
-        document.getElementById('lightboxCaption').innerText = caption;
+        content.innerHTML = `<video id="activeVideo" src="${src}" controls autoplay></video>`;
+        document.getElementById('lightboxCaption').innerText = "🎬 " + caption;
         document.getElementById('lightbox').style.display = 'flex';
         
-        // 綁定影片至 Mixer 第 3 通道 (volVideo)
         setTimeout(() => {
           currentActiveVideo = document.getElementById('activeVideo');
           if (currentActiveVideo) {
@@ -338,8 +404,8 @@
           }
         }, 100);
       } else {
-        content.innerHTML = `<img src="${src}" style="max-width:90%; max-height:75%; border-radius:10px;">`;
-        document.getElementById('lightboxCaption').innerText = caption;
+        content.innerHTML = `<img src="${src}">`;
+        document.getElementById('lightboxCaption').innerText = "📷 " + caption;
         document.getElementById('lightbox').style.display = 'flex';
         currentActiveVideo = null;
       }
@@ -355,5 +421,4 @@
     }
   </script>
 </body>
-      </html>
-  
+</html>

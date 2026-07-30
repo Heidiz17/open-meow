@@ -61,7 +61,7 @@
     .media-grid.four-cols .media-card img, .media-grid.four-cols .media-card video { height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
     .media-grid.four-cols .media-card p { font-size: 10px; margin: 2px 0 1px; }
 
-    /* 🎵 多歌單音樂唱機面板（零虛位、極致緊湊版） */
+    /* 🎵 多歌單音樂唱機面板（完美緊湊、零虛位版） */
     .music-box { background: rgba(116, 185, 255, 0.95); backdrop-filter: blur(8px); color: white; padding: 8px 10px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4); text-align: center; }
     .playlist-controls { display: flex; gap: 4px; justify-content: space-between; align-items: center; flex-wrap: nowrap; margin-bottom: 6px; }
     .playlist-controls .btn-compact { padding: 5px 6px; font-size: 11px; }
@@ -70,7 +70,7 @@
     .playlist-list { max-height: 100px; overflow-y: auto; background: rgba(0,0,0,0.15); border-radius: 8px; padding: 4px; margin-top: 4px; text-align: left; }
     .track-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; font-size: 11px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
     .track-item.active { background: rgba(255,255,255,0.3); color: #ffeaa7; border-radius: 4px; }
-    .track-del { color: #ff7675; cursor: pointer; margin-left: 6px; }
+    .track-del { color: #ff7675; cursor: pointer; margin-left: 6px; padding: 2px 6px; font-weight: 900; }
     audio { width: 100%; margin-top: 6px; border-radius: 8px; height: 36px; }
 
     .mixer-box { background: rgba(45, 52, 54, 0.95); backdrop-filter: blur(10px); color: white; padding: 12px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 5px 12px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2); }
@@ -180,12 +180,15 @@
     let playMode = 'loop';
 
     const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
-    const request = indexedDB.open("OpenMeowMasterDB", 3);
+    
+    // ⚠️ 版本升級到 4，強制重建資料庫以支援無限首 MP3 自動編號！
+    const request = indexedDB.open("OpenMeowMasterDB", 4);
     request.onupgradeneeded = function(e) {
       db = e.target.result;
       if (!db.objectStoreNames.contains("media")) db.createObjectStore("media", { keyPath: "id", autoIncrement: true });
       if (!db.objectStoreNames.contains("albums")) db.createObjectStore("albums", { keyPath: "id" });
-      if (!db.objectStoreNames.contains("music")) db.createObjectStore("music", { keyPath: "id", autoIncrement: true });
+      if (db.objectStoreNames.contains("music")) db.deleteObjectStore("music"); // 💡 清除舊的單曲死循環表
+      db.createObjectStore("music", { keyPath: "id", autoIncrement: true }); // 💡 升級為 autoIncrement 無限歌單
       if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
     };
     request.onsuccess = function(e) { db = e.target.result; loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); };
@@ -313,7 +316,7 @@
     }
     function deleteMedia(id) { if (confirm("確定要刪除呢個檔案？")) { const tx = db.transaction("media", "readwrite"); tx.objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
 
-    /* 🎵 歌單 Jukebox 核心（支援逐首累加） */
+    /* 🎵 歌單 Jukebox 核心（支援無限首自動累加編號） */
     function uploadMusic(event) {
       const file = event.target.files[0];
       if (file) {
@@ -323,8 +326,8 @@
           tx.objectStore("music").add({ name: file.name, src: e.target.result });
           tx.oncomplete = function() {
             loadSavedMusic();
-            showToast(`🎵 已成功加入歌曲：${file.name}`);
-            event.target.value = ""; // 清空輸入，方便再選下一首
+            showToast(`🎵 成功加入歌單：${file.name}`);
+            event.target.value = ""; 
           };
         }; reader.readAsDataURL(file);
       }
@@ -337,7 +340,7 @@
       db.transaction("music", "readonly").objectStore("music").openCursor().onsuccess = function(e) {
         const cursor = e.target.result;
         if (cursor) {
-          musicList.push(cursor.value);
+          musicList.push({ id: cursor.key, name: cursor.value.name, src: cursor.value.src });
           cursor.continue();
         } else {
           renderPlaylist();
@@ -352,7 +355,7 @@
       const display = document.getElementById('playlistDisplay');
       display.innerHTML = "";
       if (musicList.length === 0) {
-        display.innerHTML = "<div style='text-align:center; color:#dfe6e9; padding:6px; font-size:11px;'>（未有歌單，請點擊上方按鈕加入 MP3）</div>";
+        display.innerHTML = "<div style='text-align:center; color:#dfe6e9; padding:6px; font-size:11px;'>（歌單暫時空空如也，快點擊上方按鈕加入 MP3）</div>";
         document.getElementById('musicName').innerText = "（未選擇音樂）";
         return;
       }
@@ -408,7 +411,7 @@
       if (confirm("確定要從歌單刪除呢首歌？")) {
         const tx = db.transaction("music", "readwrite");
         tx.objectStore("music").delete(id);
-        tx.oncomplete = function() { loadSavedMusic(); };
+        tx.oncomplete = function() { loadSavedMusic(); showToast("🗑️ 歌曲已成功刪除！"); };
       }
     }
 

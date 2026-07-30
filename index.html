@@ -61,9 +61,16 @@
     .media-grid.four-cols .media-card img, .media-grid.four-cols .media-card video { height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
     .media-grid.four-cols .media-card p { font-size: 10px; margin: 2px 0 1px; }
 
-    .music-box { background: rgba(116, 185, 255, 0.92); backdrop-filter: blur(8px); color: white; padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4); }
-    .music-box input { display: none; }
-    audio { width: 100%; margin-top: 6px; border-radius: 8px; }
+    /* 🎵 多歌單音樂唱機面板 */
+    .music-box { background: rgba(116, 185, 255, 0.95); backdrop-filter: blur(8px); color: white; padding: 12px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4); text-align: center; }
+    .playlist-controls { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
+    .mode-btn { background: rgba(255,255,255,0.25); color: white; border: 1px solid rgba(255,255,255,0.6); padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; }
+    .mode-btn.active { background: #2d3436; color: #ffeaa7; border-color: #ffeaa7; }
+    .playlist-list { max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.15); border-radius: 8px; padding: 4px; margin-top: 6px; text-align: left; }
+    .track-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; font-size: 12px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+    .track-item.active { background: rgba(255,255,255,0.3); color: #ffeaa7; border-radius: 4px; }
+    .track-del { color: #ff7675; cursor: pointer; margin-left: 6px; }
+    audio { width: 100%; margin-top: 8px; border-radius: 8px; }
 
     .mixer-box { background: rgba(45, 52, 54, 0.95); backdrop-filter: blur(10px); color: white; padding: 12px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 5px 12px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2); }
     .mixer-title { font-size: 15px; color: #ffeaa7; font-style: italic; margin-bottom: 8px; font-weight: 800; text-align: center; letter-spacing: 1px; }
@@ -78,7 +85,6 @@
 
     .toast-box { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(45, 52, 54, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 900; display: none; z-index: 2000; text-align: center; max-width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     
-    /* 🖼️ Slideshow 幻燈片全螢幕樣式 */
     .lightbox { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.94); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; padding: 15px; }
     #lightboxContent { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; margin: auto; transition: opacity 0.3s ease-in-out; }
     #lightboxContent img, #lightboxContent video { max-width: 90vw; max-height: 75vh; width: auto; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.5); }
@@ -87,7 +93,6 @@
     .slide-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; width: 38px; height: 38px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
     .slide-btn:active { background: #00b894; }
     
-    /* 秒數選擇掣樣式 */
     .speed-btn-group { display: flex; gap: 4px; background: rgba(255,255,255,0.15); padding: 3px 6px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); }
     .speed-btn { background: transparent; color: #dfe6e9; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; }
     .speed-btn.active { background: #00b894; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
@@ -123,13 +128,19 @@
   <div class="section-title">🔊 30 種真貓語解密（即點即播）</div>
   <div class="sound-grid" id="soundGrid"></div>
 
-  <!-- 🥉 聽歌與 Mixer 置底 -->
-  <div class="section-title">🎵 專屬背景音樂 (MP3)</div>
+  <!-- 🥉 聽歌 Jukebox & Mixer 置底 -->
+  <div class="section-title">🎵 專屬背景音樂歌單 (MP3 Jukebox)</div>
   <div class="music-box">
-    <label class="btn-compact btn-add" for="musicInput">➕ 選擇自訂 MP3</label>
-    <input type="file" id="musicInput" accept="audio/*" onchange="uploadMusic(event)">
-    <div id="musicName" style="margin-top: 6px; font-weight: bold; font-size: 13px;">（未選擇音樂）</div>
-    <audio id="bgPlayer" controls style="display: none;"></audio>
+    <div class="playlist-controls">
+      <label class="btn-compact btn-add" for="musicInput">➕ 批量揼入 MP3</label>
+      <input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="uploadMusic(event)">
+      <button class="mode-btn active" id="modeLoop" onclick="setPlayMode('loop')">🔁 順序播放</button>
+      <button class="mode-btn" id="modeSingle" onclick="setPlayMode('single')">🔂 單曲循環</button>
+      <button class="mode-btn" id="modeRandom" onclick="setPlayMode('random')">🔀 隨機播放</button>
+    </div>
+    <div id="musicName" style="margin: 4px 0; font-weight: bold; font-size: 13px;">（未選擇音樂）</div>
+    <div class="playlist-list" id="playlistDisplay"></div>
+    <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
   </div>
   <div class="mixer-box">
     <div class="mixer-title">🎛️ 聲音 MIXER 混音主控台</div>
@@ -139,7 +150,6 @@
   </div>
   <div class="toast-box" id="toast"></div>
   
-  <!-- 全螢幕燈箱 & Slideshow 控制面板（包含 3秒/6秒/10秒 控制） -->
   <div class="lightbox" id="lightbox">
     <span class="close-btn" onclick="closeLightbox()">&times;</span>
     <div id="lightboxContent"></div>
@@ -147,8 +157,6 @@
       <button class="slide-btn" onclick="prevSlide()">◀</button>
       <button class="slide-btn" id="playPauseBtn" onclick="toggleSlideshowPlay()">⏸️</button>
       <button class="slide-btn" onclick="nextSlide()">▶</button>
-      
-      <!-- ⏱️ 3秒 / 6秒 / 10秒 切換選擇器 -->
       <div class="speed-btn-group">
         <button class="speed-btn" id="spd3" onclick="setSlideshowSpeed(3000)">3秒</button>
         <button class="speed-btn active" id="spd6" onclick="setSlideshowSpeed(6000)">6秒</button>
@@ -164,7 +172,12 @@
     let slideIndex = 0;
     let slideTimer = null;
     let isPlayingSlideshow = false;
-    let slideshowInterval = 6000; // 預設 6 秒切換
+    let slideshowInterval = 6000;
+
+    /* 🎵 歌單數據變數 */
+    let musicList = [];
+    let currentTrackIdx = 0;
+    let playMode = 'loop'; // 'loop', 'single', 'random'
 
     const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
     const request = indexedDB.open("OpenMeowMasterDB", 3);
@@ -172,7 +185,7 @@
       db = e.target.result;
       if (!db.objectStoreNames.contains("media")) db.createObjectStore("media", { keyPath: "id", autoIncrement: true });
       if (!db.objectStoreNames.contains("albums")) db.createObjectStore("albums", { keyPath: "id" });
-      if (!db.objectStoreNames.contains("music")) db.createObjectStore("music", { keyPath: "id" });
+      if (!db.objectStoreNames.contains("music")) db.createObjectStore("music", { keyPath: "id", autoIncrement: true });
       if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
     };
     request.onsuccess = function(e) { db = e.target.result; loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); };
@@ -299,27 +312,113 @@
       };
     }
     function deleteMedia(id) { if (confirm("確定要刪除呢個檔案？")) { const tx = db.transaction("media", "readwrite"); tx.objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
-    
+
+    /* 🎵 歌單 Jukebox 核心邏輯 */
     function uploadMusic(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader(); reader.onload = function(e) {
-          const tx = db.transaction("music", "readwrite"); tx.objectStore("music").put({ id: "bgm", name: file.name, src: e.target.result });
-          tx.oncomplete = function() { loadSavedMusic(); };
-        }; reader.readAsDataURL(file);
+      const files = Array.from(event.target.files);
+      if (files.length > 0) {
+        let loadedCount = 0;
+        files.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const tx = db.transaction("music", "readwrite");
+            tx.objectStore("music").add({ name: file.name, src: e.target.result });
+            tx.oncomplete = function() {
+              loadedCount++;
+              if (loadedCount === files.length) {
+                loadSavedMusic();
+                showToast(`🎵 成功揼入 ${files.length} 首 MP3 歌曲！`);
+              }
+            };
+          }; reader.readAsDataURL(file);
+        });
       }
     }
+
     function loadSavedMusic() {
-      const store = db.transaction("music", "readonly").objectStore("music").get("bgm");
-      store.onsuccess = function() {
-        if (store.result) {
-          document.getElementById('musicName').innerText = "🎵 播放中：" + store.result.name;
-          const player = document.getElementById('bgPlayer'); player.src = store.result.src; player.style.display = "block"; updateVolumes();
+      musicList = [];
+      const playlistDisplay = document.getElementById('playlistDisplay');
+      playlistDisplay.innerHTML = "";
+      db.transaction("music", "readonly").objectStore("music").openCursor().onsuccess = function(e) {
+        const cursor = e.target.result;
+        if (cursor) {
+          musicList.push(cursor.value);
+          cursor.continue();
+        } else {
+          renderPlaylist();
+          if (musicList.length > 0 && !document.getElementById('bgPlayer').src) {
+            playTrack(0);
+          }
         }
       };
     }
 
-    /* 🎬 Slideshow 核心（3秒/6秒/10秒 動態切換） */
+    function renderPlaylist() {
+      const display = document.getElementById('playlistDisplay');
+      display.innerHTML = "";
+      if (musicList.length === 0) {
+        display.innerHTML = "<div style='text-align:center; color:#dfe6e9; padding:6px; font-size:12px;'>（未有歌單，請點擊上方批量揼入 MP3）</div>";
+        document.getElementById('musicName').innerText = "（未選擇音樂）";
+        return;
+      }
+      musicList.forEach((track, idx) => {
+        const div = document.createElement('div');
+        div.className = `track-item ${idx === currentTrackIdx ? 'active' : ''}`;
+        div.innerHTML = `<span>🎵 ${idx + 1}. ${track.name}</span><span class="track-del" onclick="deleteTrack(event, ${track.id})">✕</span>`;
+        div.onclick = () => playTrack(idx);
+        display.appendChild(div);
+      });
+      document.getElementById('musicName').innerText = `🎵 播放中 (${currentTrackIdx + 1}/${musicList.length})：${musicList[currentTrackIdx].name}`;
+    }
+
+    function playTrack(idx) {
+      if (musicList.length === 0) return;
+      currentTrackIdx = idx;
+      const player = document.getElementById('bgPlayer');
+      player.src = musicList[currentTrackIdx].src;
+      player.play().catch(e => console.log(e));
+      renderPlaylist();
+      updateVolumes();
+    }
+
+    function setPlayMode(mode) {
+      playMode = mode;
+      document.getElementById('modeLoop').classList.remove('active');
+      document.getElementById('modeSingle').classList.remove('active');
+      document.getElementById('modeRandom').classList.remove('active');
+      
+      if (mode === 'loop') document.getElementById('modeLoop').classList.add('active');
+      if (mode === 'single') document.getElementById('modeSingle').classList.add('active');
+      if (mode === 'random') document.getElementById('modeRandom').classList.add('active');
+      
+      const modeNames = { loop: "🔁 順序循環", single: "🔂 單曲循環", random: "🔀 隨機播放" };
+      showToast(`🎵 播放模式改為：${modeNames[mode]}`);
+    }
+
+    function handleTrackEnded() {
+      if (musicList.length === 0) return;
+      if (playMode === 'single') {
+        playTrack(currentTrackIdx); // 單曲循環
+      } else if (playMode === 'random') {
+        let randIdx = Math.floor(Math.random() * musicList.length);
+        playTrack(randIdx);
+      } else {
+        // 順序播放 (loop)
+        let nextIdx = (currentTrackIdx + 1) % musicList.length;
+        playTrack(nextIdx);
+      }
+    }
+
+    function deleteTrack(e, id) {
+      e.stopPropagation();
+      if (confirm("確定要從歌單刪除呢首歌？")) {
+        const tx = db.transaction("music", "readwrite");
+        tx.objectStore("music").delete(id);
+        tx.oncomplete = function() { loadSavedMusic(); };
+      }
+    }
+
+    /* 🎬 Slideshow 核心 */
     function openLightboxIndex(idx) {
       if (albumMediaList.length === 0) return;
       slideIndex = idx;

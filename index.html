@@ -37,7 +37,7 @@
       background: rgba(255, 234, 167, 0.95); backdrop-filter: blur(10px); padding: 8px 10px; border-radius: 12px; margin-bottom: 12px; 
       display: flex; gap: 6px; flex-wrap: wrap; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.4);
     }
-    .album-select { padding: 6px 8px; border-radius: 8px; border: 1px solid #ccc; background: #fff; color: #2d3436; font-size: 13px; font-weight: bold; flex: 1 1 auto; min-width: 110px; }
+    .album-select { padding: 6px 8px; border-radius: 8px; border: 1px solid #ccc; background: #fff; color: #2d3436; font-size: 13px; font-weight: bold; flex: 1 1 auto; min-width: 110px; cursor: pointer; }
     
     .btn-compact { 
       padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 800; font-style: italic; border: none; cursor: pointer; display: inline-flex; align-items: center; 
@@ -61,7 +61,7 @@
     .media-grid.four-cols .media-card img, .media-grid.four-cols .media-card video { height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
     .media-grid.four-cols .media-card p { font-size: 10px; margin: 2px 0 1px; }
 
-    /* 🎵 多歌單音樂唱機面板（完美緊湊、零虛位版） */
+    /* 🎵 多歌單音樂唱機面板 */
     .music-box { background: rgba(116, 185, 255, 0.95); backdrop-filter: blur(8px); color: white; padding: 8px 10px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4); text-align: center; }
     .playlist-controls { display: flex; gap: 4px; justify-content: space-between; align-items: center; flex-wrap: nowrap; margin-bottom: 6px; }
     .playlist-controls .btn-compact { padding: 5px 6px; font-size: 11px; }
@@ -83,6 +83,33 @@
     .sound-btn { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(4px); border: 1.5px solid #ffeaa7; border-radius: 12px; padding: 8px 4px; text-align: center; cursor: pointer; font-size: 12px; font-weight: bold; color: #d63031; box-shadow: 0 3px 6px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8); transition: all 0.1s; }
     .sound-btn:active { transform: scale(0.93); background: #ffeaa7; }
     .sound-btn span { display: block; font-size: 18px; margin-bottom: 2px; }
+
+    /* ⚠️ 底部溫馨提示卡片 */
+    .notice-card {
+      background: rgba(255, 234, 167, 0.9);
+      backdrop-filter: blur(6px);
+      border: 1.5px dashed #e17055;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 20px;
+      margin-bottom: 15px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .notice-card h4 {
+      margin: 0 0 5px;
+      font-size: 13px;
+      color: #d63031;
+      font-style: italic;
+      font-weight: 900;
+    }
+    .notice-card p {
+      margin: 0;
+      font-size: 11px;
+      color: #2d3436;
+      font-weight: bold;
+      line-height: 1.5;
+    }
 
     .toast-box { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(45, 52, 54, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 900; display: none; z-index: 2000; text-align: center; max-width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     
@@ -113,9 +140,9 @@
   </div>
 
   <!-- 🥇 相簿區 -->
-  <div class="section-title">🖼️ 貓貓專屬多媒體相簿</div>
+  <div class="section-title">🖼️ 貓貓專屬多媒體相簿（💡 長按下拉選單可直接改名！）</div>
   <div class="album-controls">
-    <select id="albumSelect" class="album-select" onchange="switchAlbum()"><option value="default">📁 預設相簿</option></select>
+    <select id="albumSelect" class="album-select" onchange="switchAlbum()"></select>
     <button class="btn-compact btn-add" onclick="createAlbum()">➕ 新建</button>
     <button class="btn-compact btn-del" onclick="deleteCurrentAlbum()">🗑️ 刪除</button>
     <label class="btn-compact btn-upload" for="mediaInput">📸 揼入相片/影片</label>
@@ -149,6 +176,12 @@
     <div class="mixer-channel"><label>🐱 貓貓真聲：</label><input type="range" id="volCat" min="0" max="1" step="0.05" value="1.0" oninput="updateVolumes()"></div>
     <div class="mixer-channel"><label>🎬 影片原聲：</label><input type="range" id="volVideo" min="0" max="1" step="0.05" value="0.9" oninput="updateVolumes()"></div>
   </div>
+
+  <!-- ⚠️ 底部溫馨提示 -->
+  <div class="notice-card">
+    <h4>⚠️ 終極溫馨提示</h4>
+    <p>如果大家清除瀏覽器快取，相簿入面嘅相就會消失，要從頭再加過㗎喇！<br>所以如果想留住珍貴相簿，請盡量唔好清除瀏覽器資料或快取啦！</p>
+  </div>
   <div class="toast-box" id="toast"></div>
   
   <div class="lightbox" id="lightbox">
@@ -179,19 +212,20 @@
     let currentTrackIdx = 0;
     let playMode = 'loop';
 
+    let pressTimer = null; // 💡 長按計時器
+
     const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
     
-    // ⚠️ 版本升級到 4，強制重建資料庫以支援無限首 MP3 自動編號！
     const request = indexedDB.open("OpenMeowMasterDB", 4);
     request.onupgradeneeded = function(e) {
       db = e.target.result;
       if (!db.objectStoreNames.contains("media")) db.createObjectStore("media", { keyPath: "id", autoIncrement: true });
       if (!db.objectStoreNames.contains("albums")) db.createObjectStore("albums", { keyPath: "id" });
-      if (db.objectStoreNames.contains("music")) db.deleteObjectStore("music"); // 💡 清除舊的單曲死循環表
-      db.createObjectStore("music", { keyPath: "id", autoIncrement: true }); // 💡 升級為 autoIncrement 無限歌單
+      if (db.objectStoreNames.contains("music")) db.deleteObjectStore("music");
+      db.createObjectStore("music", { keyPath: "id", autoIncrement: true });
       if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
     };
-    request.onsuccess = function(e) { db = e.target.result; loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); };
+    request.onsuccess = function(e) { db = e.target.result; loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); initAlbumLongPress(); };
 
     const catSounds = [
       { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" }, { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },
@@ -257,6 +291,51 @@
       const name = prompt("請輸入新相簿名稱：", "黑貓仔寫真");
       if (name) { const id = "album_" + Date.now(); const tx = db.transaction("albums", "readwrite"); tx.objectStore("albums").add({ id: id, name: name }); tx.oncomplete = function() { loadAlbums(id); }; }
     }
+    
+    /* 💡 長按相簿改名核心邏輯 */
+    function initAlbumLongPress() {
+      const select = document.getElementById('albumSelect');
+      
+      select.addEventListener('touchstart', () => {
+        pressTimer = setTimeout(() => {
+          triggerRenameCurrentAlbum();
+        }, 800); // 按住 0.8 秒觸發
+      });
+      
+      select.addEventListener('touchend', () => { clearTimeout(pressTimer); });
+      select.addEventListener('touchmove', () => { clearTimeout(pressTimer); });
+
+      // 同時支援桌面端滑鼠長按（mousedown / mouseup）
+      select.addEventListener('mousedown', () => {
+        pressTimer = setTimeout(() => {
+          triggerRenameCurrentAlbum();
+        }, 800);
+      });
+      select.addEventListener('mouseup', () => { clearTimeout(pressTimer); });
+    }
+
+    function triggerRenameCurrentAlbum() {
+      if (currentAlbum === "default") {
+        showToast("⚠️ 「預設相簿」名字係系統保護，唔可以改名呀！");
+        return;
+      }
+      const tx = db.transaction("albums", "readonly");
+      tx.objectStore("albums").get(currentAlbum).onsuccess = function(e) {
+        const album = e.target.result;
+        if (album) {
+          const newName = prompt("✏️ 請輸入新嘅相簿名稱：", album.name);
+          if (newName && newName.trim() !== "") {
+            const txWrite = db.transaction("albums", "readwrite");
+            txWrite.objectStore("albums").put({ id: currentAlbum, name: newName.trim() });
+            txWrite.oncomplete = function() {
+              showToast(`✨ 相簿已成功改名為：「${newName.trim()}」`);
+              loadAlbums(currentAlbum);
+            };
+          }
+        }
+      };
+    }
+
     function deleteCurrentAlbum() {
       if (currentAlbum === "default") { alert("⚠️ 「預設相簿」係系統保護相簿，唔可以刪除呀！"); return; }
       let count = 0; db.transaction("media", "readonly").objectStore("media").openCursor().onsuccess = function(e) {
@@ -316,7 +395,7 @@
     }
     function deleteMedia(id) { if (confirm("確定要刪除呢個檔案？")) { const tx = db.transaction("media", "readwrite"); tx.objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
 
-    /* 🎵 歌單 Jukebox 核心（支援無限首自動累加編號） */
+    /* 🎵 歌單 Jukebox 核心 */
     function uploadMusic(event) {
       const file = event.target.files[0];
       if (file) {

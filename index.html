@@ -6,94 +6,146 @@
   <title>🐾 Open 貓貓 - 終極多媒體相簿混音版</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: #f7f9fc; color: #333; margin: 0; padding: 15px; padding-bottom: 90px; }
-    h1 { text-align: center; color: #ff6b6b; font-size: 26px; margin-bottom: 5px; }
-    p.subtitle { text-align: center; color: #666; font-size: 15px; margin-top: 0; }
     
-    .section-title { font-size: 20px; color: #2d3436; border-left: 5px solid #ff6b6b; padding-left: 10px; margin: 20px 0 12px; font-weight: bold; }
+    /* 預設動態背景（可由用戶自訂底纸覆蓋） */
+    body { 
+      background-color: #f7f9fc; 
+      background-size: cover; 
+      background-position: center; 
+      background-attachment: fixed;
+      color: #333; 
+      margin: 0; 
+      padding: 12px; 
+      padding-bottom: 90px; 
+      transition: background 0.3s ease;
+    }
     
-    .btn-main { background: #d63031; color: white; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-block; }
-    .btn-blue { background: #0984e3; color: white; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-block; }
-    .btn-danger { background: #d63031; color: white; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-block; }
+    /* 頂部標題列與換底紙工具箱 */
+    .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 5px; }
+    h1 { color: #ff6b6b; font-size: 24px; margin: 0; }
+    .wallpaper-btn-group { display: flex; gap: 5px; }
 
-    /* 1. 貓貓相簿區 */
-    .album-controls { background: #ffeaa7; padding: 12px; border-radius: 12px; margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    .album-select { padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; font-weight: bold; }
+    .section-title { font-size: 18px; color: #2d3436; border-left: 4px solid #ff6b6b; padding-left: 8px; margin: 15px 0 10px; font-weight: bold; background: rgba(255,255,255,0.8); backdrop-filter: blur(5px); border-radius: 0 8px 8px 0; display: inline-block; padding-right: 10px; }
     
-    /* 預設兩欄網格 (兩格大圖) */
-    .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .media-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 6px rgba(0,0,0,0.1); text-align: center; position: relative; padding-bottom: 5px; }
-    
-    /* 2格時圖片高度為 140px */
-    .media-card img, .media-card video { width: 100%; height: 140px; object-fit: cover; cursor: pointer; display: block; }
-    .media-card p { margin: 5px 0 2px; font-weight: bold; font-size: 14px; color: #2d3436; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 0 5px; }
-    .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(214, 48, 49, 0.85); color: white; border: none; border-radius: 50%; width: 26px; height: 26px; font-weight: bold; cursor: pointer; z-index: 10; }
+    /* 1. 貓貓相簿極致省空間工具欄 (解決米色空白) */
+    .album-controls { 
+      background: rgba(255, 234, 167, 0.9); 
+      backdrop-filter: blur(8px);
+      padding: 8px 10px; /* 壓細 Padding */
+      border-radius: 12px; 
+      margin-bottom: 12px; 
+      display: flex; 
+      gap: 6px; 
+      flex-wrap: wrap; 
+      align-items: center; 
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
 
-    /* 切換四欄（4格）：16:9 電視機打橫精巧縮圖 */
-    .media-grid.four-cols { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .album-select { 
+      padding: 6px 8px; 
+      border-radius: 8px; 
+      border: 1px solid #ccc; 
+      font-size: 13px; 
+      font-weight: bold; 
+      flex: 1 1 auto; 
+    }
+
+    /* 精簡版細按鈕 */
+    .btn-compact { 
+      padding: 6px 10px; 
+      border-radius: 8px; 
+      font-size: 13px; 
+      font-weight: bold; 
+      border: none; 
+      cursor: pointer; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 3px; 
+      white-space: nowrap; 
+    }
+
+    .btn-add { background: #0984e3; color: white; }
+    .btn-del { background: #d63031; color: white; }
+    .btn-upload { background: #e17055; color: white; }
+    .btn-grid { background: #6c5ce7; color: white; }
+    .btn-theme { background: #2d3436; color: #ffeaa7; }
+
+    /* 相簿網格 */
+    .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .media-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(4px); border-radius: 10px; overflow: hidden; box-shadow: 0 3px 6px rgba(0,0,0,0.1); text-align: center; position: relative; padding-bottom: 4px; }
+    .media-card img, .media-card video { width: 100%; height: 130px; object-fit: cover; cursor: pointer; display: block; }
+    .media-card p { margin: 4px 0 2px; font-weight: bold; font-size: 13px; color: #2d3436; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 0 4px; }
+    .delete-btn { position: absolute; top: 4px; right: 4px; background: rgba(214, 48, 49, 0.85); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-weight: bold; cursor: pointer; z-index: 10; }
+
+    /* 切換四欄 (4格)：16:9 電視機打橫縮圖 */
+    .media-grid.four-cols { grid-template-columns: repeat(4, 1fr); gap: 5px; }
     .media-grid.four-cols .media-card img, 
     .media-grid.four-cols .media-card video { 
       height: auto; 
       aspect-ratio: 16 / 9;
       object-fit: cover; 
     }
-    .media-grid.four-cols .media-card p { font-size: 11px; margin: 3px 0 1px; }
+    .media-grid.four-cols .media-card p { font-size: 10px; margin: 2px 0 1px; }
 
     /* 2. 背景音樂區 */
-    .music-box { background: #74b9ff; color: white; padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 15px; }
+    .music-box { background: rgba(116, 185, 255, 0.9); backdrop-filter: blur(8px); color: white; padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 12px; }
     .music-box input { display: none; }
-    audio { width: 100%; margin-top: 8px; border-radius: 8px; }
+    audio { width: 100%; margin-top: 6px; border-radius: 8px; }
 
     /* 3. 三通道 Mixer 混音器 */
-    .mixer-box { background: #2d3436; color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-    .mixer-title { font-size: 18px; color: #ffeaa7; margin-bottom: 10px; font-weight: bold; text-align: center; }
-    .mixer-channel { display: flex; align-items: center; justify-content: space-between; margin: 8px 0; gap: 10px; }
-    .mixer-channel label { font-size: 14px; min-width: 110px; font-weight: bold; }
+    .mixer-box { background: rgba(45, 52, 54, 0.92); backdrop-filter: blur(10px); color: white; padding: 12px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    .mixer-title { font-size: 16px; color: #ffeaa7; margin-bottom: 8px; font-weight: bold; text-align: center; }
+    .mixer-channel { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; gap: 8px; }
+    .mixer-channel label { font-size: 13px; min-width: 100px; font-weight: bold; }
     .mixer-channel input[type=range] { flex: 1; }
 
     /* 4. 貓聲按鈕區 */
-    .sound-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
-    .sound-btn { background: white; border: 2px solid #ffeaa7; border-radius: 12px; padding: 10px 5px; text-align: center; cursor: pointer; font-size: 14px; font-weight: bold; color: #d63031; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .sound-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+    .sound-btn { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(4px); border: 2px solid #ffeaa7; border-radius: 12px; padding: 8px 4px; text-align: center; cursor: pointer; font-size: 13px; font-weight: bold; color: #d63031; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .sound-btn:active { transform: scale(0.93); background: #ffeaa7; }
-    .sound-btn span { display: block; font-size: 22px; margin-bottom: 3px; }
+    .sound-btn span { display: block; font-size: 20px; margin-bottom: 2px; }
 
-    /* 浮條與全螢幕放大燈箱 */
-    .toast-box { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(45, 52, 54, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-size: 15px; font-weight: bold; display: none; z-index: 2000; text-align: center; max-width: 90%; }
-    
+    /* 浮條與全螢幕燈箱 */
+    .toast-box { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(45, 52, 54, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; display: none; z-index: 2000; text-align: center; max-width: 90%; }
     .lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.92); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; padding: 10px; }
-    
     #lightboxContent { width: 100%; height: 85vh; display: flex; justify-content: center; align-items: center; }
     #lightboxContent img, #lightboxContent video { width: 95vw; height: 85vh; object-fit: contain; border-radius: 12px; }
-    
-    .lightbox p { color: white; font-size: 20px; margin-top: 10px; font-weight: bold; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-    .close-btn { position: absolute; top: 15px; right: 20px; color: white; font-size: 40px; cursor: pointer; font-weight: bold; z-index: 3100; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+    .lightbox p { color: white; font-size: 18px; margin-top: 8px; font-weight: bold; text-align: center; }
+    .close-btn { position: absolute; top: 15px; right: 20px; color: white; font-size: 38px; cursor: pointer; font-weight: bold; z-index: 3100; }
   </style>
 </head>
 <body>
 
-  <h1>🐾 Open 貓貓助手</h1>
-  <p class="subtitle">專屬多媒體相簿 + 離線 MP3 + 三通道 Mixer 混音</p>
+  <!-- 頂部標題與換底紙功能 -->
+  <div class="header-box">
+    <h1>🐾 Open 貓貓助手</h1>
+    <div class="wallpaper-btn-group">
+      <button class="btn-compact btn-theme" onclick="changeWallpaperPreset()">🎨 預設風格</button>
+      <label class="btn-compact btn-add" style="background:#00b894;" for="wpInput">🖼️ 換自訂底紙</label>
+      <input type="file" id="wpInput" accept="image/*" style="display:none;" onchange="uploadCustomWallpaper(event)">
+    </div>
+  </div>
 
-  <!-- 1. 🖼️ 專屬貓貓相簿區 -->
+  <!-- 1. 🖼️ 專屬貓貓相簿區 (極致精簡省位版) -->
   <div class="section-title">🖼️ 貓貓專屬多媒體相簿</div>
   <div class="album-controls">
     <select id="albumSelect" class="album-select" onchange="switchAlbum()">
-      <option value="default">📁 預設貓貓相簿</option>
+      <option value="default">📁 預設相簿</option>
     </select>
-    <button class="btn-blue" onclick="createAlbum()">➕ 新建相簿</button>
-    <button class="btn-danger" onclick="deleteCurrentAlbum()">🗑️ 刪除相簿</button>
-    <label class="btn-main" for="mediaInput">📸 揼入相片/影片 (可多選)</label>
+    <button class="btn-compact btn-add" onclick="createAlbum()">➕ 新建</button>
+    <button class="btn-compact btn-del" onclick="deleteCurrentAlbum()">🗑️ 刪除</button>
+    <label class="btn-compact btn-upload" for="mediaInput">📸 揼入相片/影片</label>
     <input type="file" id="mediaInput" accept="image/*,video/*" multiple style="display:none;" onchange="uploadMedia(event)">
-    <button class="btn-blue" style="background:#6c5ce7;" onclick="toggleGrid()">📐 切換 2格/4格(16:9)</button>
+    <button class="btn-compact btn-grid" onclick="toggleGrid()">📐 2格/4格</button>
   </div>
   <div class="media-grid" id="mediaGrid"></div>
 
   <!-- 2. 🎵 專屬背景音樂區 -->
   <div class="section-title">🎵 專屬背景音樂 (MP3)</div>
   <div class="music-box">
-    <label class="btn-blue" for="musicInput">➕ 選擇自訂 MP3</label>
+    <label class="btn-compact btn-add" for="musicInput">➕ 選擇自訂 MP3</label>
     <input type="file" id="musicInput" accept="audio/*" onchange="uploadMusic(event)">
-    <div id="musicName" style="margin-top: 6px; font-weight: bold;">（未選擇音樂）</div>
+    <div id="musicName" style="margin-top: 6px; font-weight: bold; font-size: 13px;">（未選擇音樂）</div>
     <audio id="bgPlayer" controls style="display: none;"></audio>
   </div>
 
@@ -118,7 +170,7 @@
   <div class="section-title">🔊 30 種真貓語解密（即點即播）</div>
   <div class="sound-grid" id="soundGrid"></div>
 
-  <!-- 底部 Toast 與 全螢幕放大燈箱 -->
+  <!-- 底部 Toast 與 燈箱 -->
   <div class="toast-box" id="toast"></div>
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
     <span class="close-btn">&times;</span>
@@ -131,19 +183,28 @@
     let currentAlbum = "default";
     let currentCatAudio = null;
     let currentActiveVideo = null;
+    let currentPresetIdx = 0;
 
-    const request = indexedDB.open("OpenMeowMasterDB", 2);
+    const presetWallpapers = [
+      "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", // 預設柔和灰白
+      "linear-gradient(135deg, #2d3436 0%, #000000 100%)", // 黑金奢華暗黑
+      "linear-gradient(135deg, #f3a683 0%, #f7d794 100%)"  // 暖黃萌貓卡通
+    ];
+
+    const request = indexedDB.open("OpenMeowMasterDB", 3);
     request.onupgradeneeded = function(e) {
       db = e.target.result;
       if (!db.objectStoreNames.contains("media")) db.createObjectStore("media", { keyPath: "id", autoIncrement: true });
       if (!db.objectStoreNames.contains("albums")) db.createObjectStore("albums", { keyPath: "id" });
       if (!db.objectStoreNames.contains("music")) db.createObjectStore("music", { keyPath: "id" });
+      if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
     };
     request.onsuccess = function(e) {
       db = e.target.result;
       loadAlbums();
       loadMedia();
       loadSavedMusic();
+      loadSavedWallpaper();
     };
 
     // 🐾 30 個真貓聲檔案綁定
@@ -189,6 +250,49 @@
       soundGrid.appendChild(btn);
     });
 
+    // 🖼️ 換底紙 (Wallpaper) 功能
+    function uploadCustomWallpaper(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const wpData = e.target.result;
+          document.body.style.backgroundImage = `url(${wpData})`;
+          saveWallpaperSetting("custom", wpData);
+          showToast("✨ 成功換上自訂底紙！");
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function changeWallpaperPreset() {
+      currentPresetIdx = (currentPresetIdx + 1) % presetWallpapers.length;
+      const bgStyle = presetWallpapers[currentPresetIdx];
+      document.body.style.backgroundImage = "none";
+      document.body.style.background = bgStyle;
+      saveWallpaperSetting("preset", bgStyle);
+      showToast("🎨 切換預設風格底紙！");
+    }
+
+    function saveWallpaperSetting(type, val) {
+      const tx = db.transaction("settings", "readwrite");
+      tx.objectStore("settings").put({ key: "wallpaper", type: type, val: val });
+    }
+
+    function loadSavedWallpaper() {
+      const tx = db.transaction("settings", "readonly");
+      const req = tx.objectStore("settings").get("wallpaper");
+      req.onsuccess = function() {
+        if (req.result) {
+          if (req.result.type === "custom") {
+            document.body.style.backgroundImage = `url(${req.result.val})`;
+          } else {
+            document.body.style.background = req.result.val;
+          }
+        }
+      };
+    }
+
     // 🎛️ 音量實時控制
     function updateVolumes() {
       const bgPlayer = document.getElementById('bgPlayer');
@@ -214,7 +318,7 @@
       toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
 
-    // --- 相簿管理 (新增、刪除) ---
+    // --- 相簿管理 ---
     function createAlbum() {
       const name = prompt("請輸入新相簿名稱：", "黑貓仔寫真");
       if (name) {
@@ -227,11 +331,9 @@
 
     function deleteCurrentAlbum() {
       if (currentAlbum === "default") {
-        alert("⚠️ 「預設貓貓相簿」係系統保護相簿，唔可以刪除呀！");
+        alert("⚠️ 「預設相簿」係系統保護相簿，唔可以刪除呀！");
         return;
       }
-
-      // 檢查相簿內是否有檔案
       const tx = db.transaction("media", "readonly");
       let count = 0;
       tx.objectStore("media").openCursor().onsuccess = function(e) {
@@ -242,13 +344,10 @@
         } else {
           let confirmMsg = "確定要刪除呢個相簿？";
           if (count > 0) confirmMsg = `⚠️ 呢個相簿入面仲有 ${count} 個檔案！確定要連埋啲相一齊刪除？`;
-          
           if (confirm(confirmMsg)) {
-            // 刪除相簿紀錄
             const txAlbum = db.transaction("albums", "readwrite");
             txAlbum.objectStore("albums").delete(currentAlbum);
             
-            // 刪除相簿內的相片/影片
             const txMedia = db.transaction("media", "readwrite");
             const storeMedia = txMedia.objectStore("media");
             storeMedia.openCursor().onsuccess = function(ev) {
@@ -258,7 +357,6 @@
                 c.continue();
               }
             };
-
             txMedia.oncomplete = function() {
               showToast("🗑️ 相簿已成功刪除！");
               loadAlbums("default");
@@ -270,7 +368,7 @@
 
     function loadAlbums(selectId) {
       const select = document.getElementById('albumSelect');
-      select.innerHTML = '<option value="default">📁 預設貓貓相簿</option>';
+      select.innerHTML = '<option value="default">📁 預設相簿</option>';
       const tx = db.transaction("albums", "readonly");
       tx.objectStore("albums").openCursor().onsuccess = function(e) {
         const cursor = e.target.result;
@@ -297,7 +395,7 @@
       document.getElementById('mediaGrid').classList.toggle('four-cols');
     }
 
-    // --- 批次（多選）上傳相片/影片 ---
+    // --- 多選上傳 ---
     function uploadMedia(event) {
       const files = Array.from(event.target.files);
       if (files.length > 0) {
@@ -360,65 +458,4 @@
       }
     }
 
-    // --- 背景 MP3 管理 ---
-    function uploadMusic(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const musicData = { id: "bgm", name: file.name, src: e.target.result };
-          const tx = db.transaction("music", "readwrite");
-          tx.objectStore("music").put(musicData);
-          tx.oncomplete = function() { loadSavedMusic(); };
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function loadSavedMusic() {
-      const tx = db.transaction("music", "readonly");
-      const store = tx.objectStore("music").get("bgm");
-      store.onsuccess = function() {
-        if (store.result) {
-          document.getElementById('musicName').innerText = "🎵 播放中：" + store.result.name;
-          const player = document.getElementById('bgPlayer');
-          player.src = store.result.src;
-          player.style.display = "block";
-          updateVolumes();
-        }
-      };
-    }
-
-    // 全螢幕極致放大燈箱
-    function openLightboxMedia(src, caption, isVideo) {
-      const content = document.getElementById('lightboxContent');
-      if (isVideo) {
-        content.innerHTML = `<video id="activeVideo" src="${src}" controls autoplay></video>`;
-        document.getElementById('lightboxCaption').innerText = "🎬 " + caption;
-        document.getElementById('lightbox').style.display = 'flex';
-        
-        setTimeout(() => {
-          currentActiveVideo = document.getElementById('activeVideo');
-          if (currentActiveVideo) {
-            currentActiveVideo.volume = document.getElementById('volVideo').value;
-          }
-        }, 100);
-      } else {
-        content.innerHTML = `<img src="${src}">`;
-        document.getElementById('lightboxCaption').innerText = "📷 " + caption;
-        document.getElementById('lightbox').style.display = 'flex';
-        currentActiveVideo = null;
-      }
-    }
-
-    function closeLightbox() {
-      if (currentActiveVideo) {
-        currentActiveVideo.pause();
-        currentActiveVideo = null;
-      }
-      document.getElementById('lightbox').style.display = 'none';
-      document.getElementById('lightboxContent').innerHTML = "";
-    }
-  </script>
-</body>
-</html>
+   

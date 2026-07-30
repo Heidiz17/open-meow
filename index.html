@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🐾 OPEN 貓貓助手 - 日系暖色潮牌版</title>
+  <title>🐾 OPEN 貓貓助手 - Heidiz & Gemini P-Chan Production</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
@@ -105,6 +105,7 @@
     </div>
   </div>
   <div class="media-grid" id="mediaGrid"></div>
+
   <div class="section-title">
     <span>🔊 30 種真貓語解密</span>
     <span class="sub-tip">💡 提示：即點即播，隨時聽貓貓心聲</span>
@@ -127,35 +128,13 @@
     <div class="playlist-list" id="playlistDisplay"></div>
     <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
   </div>
+  
   <div class="mixer-box">
     <div class="mixer-title">🎛️ 聲音 MIXER 混音主控台</div>
     <div class="mixer-channel"><label>🎵 背景 MP3：</label><input type="range" id="volBgm" min="0" max="1" step="0.05" value="0.8" oninput="updateVolumes()"></div>
     <div class="mixer-channel"><label>🐱 貓貓真聲：</label><input type="range" id="volCat" min="0" max="1" step="0.05" value="1.0" oninput="updateVolumes()"></div>
     <div class="mixer-channel"><label>🎬 影片原聲：</label><input type="range" id="volVideo" min="0" max="1" step="0.05" value="0.9" oninput="updateVolumes()"></div>
   </div>
-
-  <div class="notice-card">
-    <h4>⚠️ 終極溫馨提示</h4>
-    <p>如果大家清除瀏覽器快取，相簿入面嘅相就會消失，要從頭再加過㗎喇！<br>所以如果想留住珍貴相簿，請盡量唔好清除瀏覽器資料或快取啦！</p>
-  </div>
-  <div class="toast-box" id="toast"></div>
-  
-  <div class="lightbox" id="lightbox">
-    <span class="close-btn" onclick="closeLightbox()">&times;</span>
-    <div id="lightboxContent"></div>
-    <div class="lightbox-controls">
-      <button class="slide-btn" onclick="prevSlide()">◀</button>
-      <button class="slide-btn" id="playPauseBtn" onclick="toggleSlideshowPlay()">⏸️</button>
-      <button class="slide-btn" onclick="nextSlide()">▶</button>
-      <div class="speed-btn-group">
-        <button class="speed-btn" id="spd3" onclick="setSlideshowSpeed(3000)">3秒</button>
-        <button class="speed-btn active" id="spd6" onclick="setSlideshowSpeed(6000)">6秒</button>
-        <button class="speed-btn" id="spd10" onclick="setSlideshowSpeed(10000)">10秒</button>
-      </div>
-    </div>
-    <p id="lightboxCaption"></p>
-  </div>
-
   <script>
     let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
     let albumMediaList = [], slideIndex = 0, slideTimer = null, isPlayingSlideshow = false, slideshowInterval = 6000;
@@ -464,16 +443,11 @@
       clearInterval(slideTimer);
       if (isPlayingSlideshow) { slideTimer = setInterval(() => { nextSlide(); }, slideshowInterval); }
     }
-        function toggleSlideshowPlay() {
+    function toggleSlideshowPlay() {
       isPlayingSlideshow = !isPlayingSlideshow;
       document.getElementById('playPauseBtn').innerText = isPlayingSlideshow ? "⏸️" : "▶️";
-      if (isPlayingSlideshow) { 
-        resetSlideTimer(); 
-      } else { 
-        clearInterval(slideTimer); 
-      }
+      if (isPlayingSlideshow) { resetSlideTimer(); } else { clearInterval(slideTimer); }
     }
-
     function nextSlide() { slideIndex++; showSlide(slideIndex); if (isPlayingSlideshow) resetSlideTimer(); }
     function prevSlide() { slideIndex--; showSlide(slideIndex); if (isPlayingSlideshow) resetSlideTimer(); }
     function closeLightbox() {
@@ -481,13 +455,25 @@
       if (currentActiveVideo) { currentActiveVideo.pause(); currentActiveVideo = null; }
       document.getElementById('lightboxContent').innerHTML = "";
       document.getElementById('lightbox').style.display = 'none';
-    function closeLightbox() {
-      clearInterval(slideTimer); isPlayingSlideshow = false;
-      if (currentActiveVideo) { currentActiveVideo.pause(); currentActiveVideo = null; }
-      document.getElementById('lightboxContent').innerHTML = "";
-      document.getElementById('lightbox').style.display = 'none';
     }
   </script>
+  <div class="toast-box" id="toast"></div>
+  
+  <div class="lightbox" id="lightbox">
+    <span class="close-btn" onclick="closeLightbox()">&times;</span>
+    <div id="lightboxContent"></div>
+    <div class="lightbox-controls">
+      <button class="slide-btn" onclick="prevSlide()">◀</button>
+      <button class="slide-btn" id="playPauseBtn" onclick="toggleSlideshowPlay()">⏸️</button>
+      <button class="slide-btn" onclick="nextSlide()">▶</button>
+      <div class="speed-btn-group">
+        <button class="speed-btn" id="spd3" onclick="setSlideshowSpeed(3000)">3秒</button>
+        <button class="speed-btn active" id="spd6" onclick="setSlideshowSpeed(6000)">6秒</button>
+        <button class="speed-btn" id="spd10" onclick="setSlideshowSpeed(10000)">10秒</button>
+      </div>
+    </div>
+    <p id="lightboxCaption"></p>
+  </div>
 
   <!-- ⚠️ 底部溫馨提示 -->
   <div class="notice-card">
@@ -499,7 +485,5 @@
   <div style="text-align: center; color: rgba(255,255,255,0.85); font-size: 10px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
     © 2026 Heidiz & Gemini P-Chan Production. All Rights Reserved.
   </div>
-
 </body>
 </html>
-

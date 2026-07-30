@@ -15,18 +15,15 @@
       color: #2d3436; margin: 0; padding: 12px; padding-bottom: 90px; transition: background 0.3s ease; user-select: none;
     }
     
-    /* 🚀 日系新東名潮牌招牌字（深墨灰+雙層白陰影，100% 防撞色） */
     .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
     h1 { 
       font-size: 26px; font-weight: 900; font-style: italic; margin: 0;
-      letter-spacing: 1.5px;
-      color: #2d3436;
+      letter-spacing: 1.5px; color: #2d3436;
       text-shadow: 2px 2px 0px #ffffff, 4px 4px 10px rgba(0,0,0,0.15);
       transform: skewX(-6deg);
     }
     .wallpaper-btn-group { display: flex; gap: 6px; }
 
-    /* 標題與卡片 */
     .section-title { 
       font-size: 15px; color: #2d3436; font-style: italic;
       border-left: 5px solid #0984e3; padding-left: 8px; 
@@ -52,6 +49,7 @@
     .btn-del { background: #d63031; color: white; }
     .btn-upload { background: #e17055; color: white; }
     .btn-grid { background: #6c5ce7; color: white; }
+    .btn-slide { background: #00b894; color: white; }
     .btn-theme { background: #2d3436; color: #ffeaa7; }
 
     .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
@@ -80,10 +78,14 @@
 
     .toast-box { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(45, 52, 54, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 900; display: none; z-index: 2000; text-align: center; max-width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     
-    .lightbox { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.92); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; padding: 15px; }
-    #lightboxContent { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; margin: auto; }
+    /* 🖼️ Slideshow 幻燈片全螢幕樣式 */
+    .lightbox { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.94); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; padding: 15px; }
+    #lightboxContent { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; margin: auto; transition: opacity 0.3s ease-in-out; }
     #lightboxContent img, #lightboxContent video { max-width: 90vw; max-height: 80vh; width: auto; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.5); }
-    .lightbox p { color: white; font-size: 16px; font-style: italic; margin-top: 10px; font-weight: bold; text-align: center; }
+    .lightbox-controls { display: flex; gap: 15px; align-items: center; margin-top: 10px; z-index: 3100; }
+    .slide-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; width: 40px; height: 40px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    .slide-btn:active { background: #00b894; }
+    .lightbox p { color: white; font-size: 15px; font-style: italic; margin: 0; font-weight: bold; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
     .close-btn { position: absolute; top: 15px; right: 20px; color: white; font-size: 38px; cursor: pointer; font-weight: bold; z-index: 3100; }
   </style>
 </head>
@@ -97,7 +99,7 @@
     </div>
   </div>
 
-  <!-- 🥇 第一順位：相簿區置頂 -->
+  <!-- 🥇 相簿區（新增 🎬 幻燈片/Slideshow 掣） -->
   <div class="section-title">🖼️ 貓貓專屬多媒體相簿</div>
   <div class="album-controls">
     <select id="albumSelect" class="album-select" onchange="switchAlbum()"><option value="default">📁 預設相簿</option></select>
@@ -106,14 +108,15 @@
     <label class="btn-compact btn-upload" for="mediaInput">📸 揼入相片/影片</label>
     <input type="file" id="mediaInput" accept="image/*,video/*" multiple style="display:none;" onchange="uploadMedia(event)">
     <button class="btn-compact btn-grid" onclick="toggleGrid()">📐 2格/4格</button>
+    <button class="btn-compact btn-slide" onclick="startSlideshow()">▶️ 幻燈片</button>
   </div>
   <div class="media-grid" id="mediaGrid"></div>
 
-  <!-- 🥈 第二順位：貓貓音中間 -->
+  <!-- 🥈 貓貓音中間 -->
   <div class="section-title">🔊 30 種真貓語解密（即點即播）</div>
   <div class="sound-grid" id="soundGrid"></div>
 
-  <!-- 🥉 第三順位：聽歌與 Mixer 置底 -->
+  <!-- 🥉 聽歌與 Mixer 置底 -->
   <div class="section-title">🎵 專屬背景音樂 (MP3)</div>
   <div class="music-box">
     <label class="btn-compact btn-add" for="musicInput">➕ 選擇自訂 MP3</label>
@@ -128,14 +131,26 @@
     <div class="mixer-channel"><label>🎬 影片原聲：</label><input type="range" id="volVideo" min="0" max="1" step="0.05" value="0.9" oninput="updateVolumes()"></div>
   </div>
   <div class="toast-box" id="toast"></div>
-  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-    <span class="close-btn">&times;</span>
+  
+  <!-- 全螢幕燈箱 & Slideshow 控制面板 -->
+  <div class="lightbox" id="lightbox">
+    <span class="close-btn" onclick="closeLightbox()">&times;</span>
     <div id="lightboxContent"></div>
-    <p id="lightboxCaption"></p>
+    <div class="lightbox-controls">
+      <button class="slide-btn" onclick="prevSlide()">◀</button>
+      <button class="slide-btn" id="playPauseBtn" onclick="toggleSlideshowPlay()">⏸️</button>
+      <button class="slide-btn" onclick="nextSlide()">▶</button>
+    </div>
+    <p id="lightboxCaption" style="margin-top:8px;"></p>
   </div>
 
   <script>
     let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
+    let albumMediaList = []; // 現時相簿播放清單
+    let slideIndex = 0;
+    let slideTimer = null;
+    let isPlayingSlideshow = false;
+
     const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
     const request = indexedDB.open("OpenMeowMasterDB", 3);
     request.onupgradeneeded = function(e) {
@@ -252,20 +267,24 @@
     }
     function loadMedia() {
       const mediaGrid = document.getElementById('mediaGrid'); mediaGrid.innerHTML = "";
+      albumMediaList = []; // 重置相簿清單
       db.transaction("media", "readonly").objectStore("media").openCursor().onsuccess = function(e) {
         const cursor = e.target.result;
         if (cursor) {
           if (cursor.value.albumId === currentAlbum) {
+            albumMediaList.push(cursor.value);
             const card = document.createElement('div'); card.className = 'media-card';
+            const index = albumMediaList.length - 1;
             card.innerHTML = cursor.value.isVideo ? 
-              `<button class="delete-btn" onclick="deleteMedia(${cursor.key})">✕</button><video src="${cursor.value.src}" onclick="openLightboxMedia('${cursor.value.src}', '${cursor.value.caption}', true)"></video><p>🎬 ${cursor.value.caption}</p>` :
-              `<button class="delete-btn" onclick="deleteMedia(${cursor.key})">✕</button><img src="${cursor.value.src}" onclick="openLightboxMedia('${cursor.value.src}', '${cursor.value.caption}', false)"><p>📷 ${cursor.value.caption}</p>`;
+              `<button class="delete-btn" onclick="deleteMedia(${cursor.key})">✕</button><video src="${cursor.value.src}" onclick="openLightboxIndex(${index})"></video><p>🎬 ${cursor.value.caption}</p>` :
+              `<button class="delete-btn" onclick="deleteMedia(${cursor.key})">✕</button><img src="${cursor.value.src}" onclick="openLightboxIndex(${index})"><p>📷 ${cursor.value.caption}</p>`;
             mediaGrid.appendChild(card);
           } cursor.continue();
         }
       };
     }
     function deleteMedia(id) { if (confirm("確定要刪除呢個檔案？")) { const tx = db.transaction("media", "readwrite"); tx.objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
+    
     function uploadMusic(event) {
       const file = event.target.files[0];
       if (file) {
@@ -284,17 +303,90 @@
         }
       };
     }
-    function openLightboxMedia(src, caption, isVideo) {
+
+    /* 🎬 Slideshow 幻燈片核心邏輯 */
+    function openLightboxIndex(idx) {
+      if (albumMediaList.length === 0) return;
+      slideIndex = idx;
+      showSlide(slideIndex);
+      document.getElementById('lightbox').style.display = 'flex';
+    }
+
+    function showSlide(idx) {
+      if (albumMediaList.length === 0) return;
+      if (idx >= albumMediaList.length) slideIndex = 0;
+      if (idx < 0) slideIndex = albumMediaList.length - 1;
+      
+      const item = albumMediaList[slideIndex];
       const content = document.getElementById('lightboxContent');
-      if (isVideo) {
-        content.innerHTML = `<video id="activeVideo" src="${src}" controls autoplay></video>`;
-        document.getElementById('lightboxCaption').innerText = "🎬 " + caption; document.getElementById('lightbox').style.display = 'flex';
-        setTimeout(() => { currentActiveVideo = document.getElementById('activeVideo'); if (currentActiveVideo) currentActiveVideo.volume = document.getElementById('volVideo').value; }, 100);
-      } else {
-        content.innerHTML = `<img src="${src}">`; document.getElementById('lightboxCaption').innerText = "📷 " + caption; document.getElementById('lightbox').style.display = 'flex'; currentActiveVideo = null;
+      content.style.opacity = 0;
+      
+      setTimeout(() => {
+        if (item.isVideo) {
+          content.innerHTML = `<video id="activeVideo" src="${item.src}" controls autoplay></video>`;
+          document.getElementById('lightboxCaption').innerText = `🎬 (${slideIndex + 1}/${albumMediaList.length}) ${item.caption}`;
+          setTimeout(() => {
+            currentActiveVideo = document.getElementById('activeVideo');
+            if (currentActiveVideo) currentActiveVideo.volume = document.getElementById('volVideo').value;
+          }, 100);
+        } else {
+          content.innerHTML = `<img src="${item.src}">`;
+          document.getElementById('lightboxCaption').innerText = `📷 (${slideIndex + 1}/${albumMediaList.length}) ${item.caption}`;
+          currentActiveVideo = null;
+        }
+        content.style.opacity = 1;
+      }, 150);
+    }
+
+    function startSlideshow() {
+      if (albumMediaList.length === 0) {
+        showToast("⚠️ 相簿裡面未有檔案呀！請先揼入相片～");
+        return;
+      }
+      openLightboxIndex(0);
+      isPlayingSlideshow = true;
+      document.getElementById('playPauseBtn').innerText = "⏸️";
+      resetSlideTimer();
+    }
+
+    function resetSlideTimer() {
+      clearInterval(slideTimer);
+      if (isPlayingSlideshow) {
+        slideTimer = setInterval(() => {
+          nextSlide();
+        }, 3000); // 3 秒自動切換下一張
       }
     }
-    function closeLightbox() { if (currentActiveVideo) { currentActiveVideo.pause(); currentActiveVideo = null; } document.getElementById('lightboxContent').innerHTML = ""; document.getElementById('lightbox').style.display = 'none'; }
+
+    function toggleSlideshowPlay() {
+      isPlayingSlideshow = !isPlayingSlideshow;
+      document.getElementById('playPauseBtn').innerText = isPlayingSlideshow ? "⏸️" : "▶️";
+      if (isPlayingSlideshow) {
+        resetSlideTimer();
+      } else {
+        clearInterval(slideTimer);
+      }
+    }
+
+    function nextSlide() {
+      slideIndex++;
+      showSlide(slideIndex);
+      if (isPlayingSlideshow) resetSlideTimer();
+    }
+
+    function prevSlide() {
+      slideIndex--;
+      showSlide(slideIndex);
+      if (isPlayingSlideshow) resetSlideTimer();
+    }
+
+    function closeLightbox() {
+      clearInterval(slideTimer);
+      isPlayingSlideshow = false;
+      if (currentActiveVideo) { currentActiveVideo.pause(); currentActiveVideo = null; }
+      document.getElementById('lightboxContent').innerHTML = "";
+      document.getElementById('lightbox').style.display = 'none';
+    }
   </script>
 </body>
 </html>

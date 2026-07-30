@@ -61,7 +61,7 @@
     .media-grid.four-cols .media-card img, .media-grid.four-cols .media-card video { height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
     .media-grid.four-cols .media-card p { font-size: 10px; margin: 2px 0 1px; }
 
-    /* 🎵 多歌單音樂唱機面板（完美緊湊、零虛位版） */
+    /* 🎵 多歌單音樂唱機面板（零虛位、極致緊湊版） */
     .music-box { background: rgba(116, 185, 255, 0.95); backdrop-filter: blur(8px); color: white; padding: 8px 10px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4); text-align: center; }
     .playlist-controls { display: flex; gap: 4px; justify-content: space-between; align-items: center; flex-wrap: nowrap; margin-bottom: 6px; }
     .playlist-controls .btn-compact { padding: 5px 6px; font-size: 11px; }
@@ -72,7 +72,6 @@
     .track-item.active { background: rgba(255,255,255,0.3); color: #ffeaa7; border-radius: 4px; }
     .track-del { color: #ff7675; cursor: pointer; margin-left: 6px; }
     audio { width: 100%; margin-top: 6px; border-radius: 8px; height: 36px; }
-
 
     .mixer-box { background: rgba(45, 52, 54, 0.95); backdrop-filter: blur(10px); color: white; padding: 12px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 5px 12px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2); }
     .mixer-title { font-size: 15px; color: #ffeaa7; font-style: italic; margin-bottom: 8px; font-weight: 800; text-align: center; letter-spacing: 1px; }
@@ -134,13 +133,13 @@
   <div class="section-title">🎵 專屬背景音樂歌單 (MP3 Jukebox)</div>
   <div class="music-box">
     <div class="playlist-controls">
-      <label class="btn-compact btn-add" for="musicInput">➕ 批量揼入 MP3</label>
-      <input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="uploadMusic(event)">
+      <label class="btn-compact btn-add" for="musicInput">➕ 揼入 MP3</label>
+      <input type="file" id="musicInput" accept="audio/*" style="display:none;" onchange="uploadMusic(event)">
       <button class="mode-btn active" id="modeLoop" onclick="setPlayMode('loop')">🔁 順序播放</button>
       <button class="mode-btn" id="modeSingle" onclick="setPlayMode('single')">🔂 單曲循環</button>
       <button class="mode-btn" id="modeRandom" onclick="setPlayMode('random')">🔀 隨機播放</button>
     </div>
-    <div id="musicName" style="margin: 4px 0; font-weight: bold; font-size: 13px;">（未選擇音樂）</div>
+    <div id="musicName" style="margin: 4px 0; font-weight: bold; font-size: 12px;">（未選擇音樂）</div>
     <div class="playlist-list" id="playlistDisplay"></div>
     <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
   </div>
@@ -176,10 +175,9 @@
     let isPlayingSlideshow = false;
     let slideshowInterval = 6000;
 
-    /* 🎵 歌單數據變數 */
     let musicList = [];
     let currentTrackIdx = 0;
-    let playMode = 'loop'; // 'loop', 'single', 'random'
+    let playMode = 'loop';
 
     const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
     const request = indexedDB.open("OpenMeowMasterDB", 3);
@@ -315,25 +313,20 @@
     }
     function deleteMedia(id) { if (confirm("確定要刪除呢個檔案？")) { const tx = db.transaction("media", "readwrite"); tx.objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
 
-    /* 🎵 歌單 Jukebox 核心邏輯 */
+    /* 🎵 歌單 Jukebox 核心（支援逐首累加） */
     function uploadMusic(event) {
-      const files = Array.from(event.target.files);
-      if (files.length > 0) {
-        let loadedCount = 0;
-        files.forEach(file => {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            const tx = db.transaction("music", "readwrite");
-            tx.objectStore("music").add({ name: file.name, src: e.target.result });
-            tx.oncomplete = function() {
-              loadedCount++;
-              if (loadedCount === files.length) {
-                loadSavedMusic();
-                showToast(`🎵 成功揼入 ${files.length} 首 MP3 歌曲！`);
-              }
-            };
-          }; reader.readAsDataURL(file);
-        });
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const tx = db.transaction("music", "readwrite");
+          tx.objectStore("music").add({ name: file.name, src: e.target.result });
+          tx.oncomplete = function() {
+            loadSavedMusic();
+            showToast(`🎵 已成功加入歌曲：${file.name}`);
+            event.target.value = ""; // 清空輸入，方便再選下一首
+          };
+        }; reader.readAsDataURL(file);
       }
     }
 
@@ -359,7 +352,7 @@
       const display = document.getElementById('playlistDisplay');
       display.innerHTML = "";
       if (musicList.length === 0) {
-        display.innerHTML = "<div style='text-align:center; color:#dfe6e9; padding:6px; font-size:12px;'>（未有歌單，請點擊上方批量揼入 MP3）</div>";
+        display.innerHTML = "<div style='text-align:center; color:#dfe6e9; padding:6px; font-size:11px;'>（未有歌單，請點擊上方按鈕加入 MP3）</div>";
         document.getElementById('musicName').innerText = "（未選擇音樂）";
         return;
       }
@@ -400,12 +393,11 @@
     function handleTrackEnded() {
       if (musicList.length === 0) return;
       if (playMode === 'single') {
-        playTrack(currentTrackIdx); // 單曲循環
+        playTrack(currentTrackIdx);
       } else if (playMode === 'random') {
         let randIdx = Math.floor(Math.random() * musicList.length);
         playTrack(randIdx);
       } else {
-        // 順序播放 (loop)
         let nextIdx = (currentTrackIdx + 1) % musicList.length;
         playTrack(nextIdx);
       }

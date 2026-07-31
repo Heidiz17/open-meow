@@ -108,13 +108,13 @@
 
   <div class="section-title">
     <span>🔊 30 種真貓語解密</span>
-    <span class="sub-tip">💡 提示：即點即播，隨時聽貓貓心聲</span>
+    <span class="sub-tip">💡 提示 : 即點即播，隨時聽貓貓心聲</span>
   </div>
   <div class="sound-grid" id="soundGrid"></div>
 
   <div class="section-title">
     <span>🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
-    <span class="sub-tip">💡 提示：支援無限首自動編號與多模式循環</span>
+    <span class="sub-tip">💡 提示 : 支援無限首自動編號與多模式循環</span>
   </div>
   <div class="music-box">
     <div class="playlist-controls">
@@ -139,6 +139,7 @@
     let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
     let albumMediaList = [], slideIndex = 0, slideTimer = null, isPlayingSlideshow = false, slideshowInterval = 6000;
     let musicList = [], currentTrackIdx = 0, playMode = 'loop', pressTimer = null;
+    let touchStartX = 0, touchEndX = 0;
 
     const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
     
@@ -213,6 +214,8 @@
       const toast = document.getElementById('toast'); toast.innerText = msg; toast.style.display = 'block';
       clearTimeout(toastTimer); toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
+  </script>
+  <script>
     function createAlbum() {
       const name = prompt("請輸入新相簿名稱：", "黑貓仔寫真");
       if (name) {
@@ -335,6 +338,8 @@
       };
     }
     function deleteMedia(id) { if (confirm("確定要刪除呢個檔案？")) { const tx = db.transaction("media", "readwrite"); tx.objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
+  </script>
+  <script>
     function uploadMusic(event) {
       const file = event.target.files[0];
       if (file) {
@@ -401,7 +406,16 @@
     function openLightboxIndex(idx) {
       if (albumMediaList.length === 0) return;
       slideIndex = idx; showSlide(slideIndex);
-      document.getElementById('lightbox').style.display = 'flex';
+      const lightbox = document.getElementById('lightbox');
+      lightbox.style.display = 'flex';
+      
+      lightbox.ontouchstart = (e) => { touchStartX = e.changedTouches[0].screenX; };
+      lightbox.ontouchend = (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const threshold = 50;
+        if (touchEndX < touchStartX - threshold) nextSlide();
+        if (touchEndX > touchStartX + threshold) prevSlide();
+      };
     }
     function showSlide(idx) {
       if (albumMediaList.length === 0) return;

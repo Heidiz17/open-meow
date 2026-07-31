@@ -91,56 +91,10 @@
     .mixer-channel { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; gap: 8px; }
     .mixer-channel label { font-size: 12px; min-width: 100px; font-weight: bold; color: #dfe6e9; }
     .mixer-channel input[type=range] { flex: 1; accent-color: #0984e3; }
-    .sound-grid {
-      display: flex !important;
-      grid-template-columns: none !important;
-      overflow-x: auto !important;
-      scroll-snap-type: x mandatory;
-      gap: 12px;
-      padding: 15px 10px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      min-height: 140px;
-      align-items: center;
-    }
-    .sound-grid::-webkit-scrollbar { display: none; }
-
-    .sound-btn {
-      flex: 0 0 110px !important;
-      width: 110px !important;
-      height: 120px !important;
-      scroll-snap-align: center;
-      background: rgba(255, 255, 255, var(--panel-alpha, 0.45));
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 12px;
-      padding: 10px 4px;
-      text-align: center;
-      color: #fff;
-      font-size: 13px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      word-break: break-all;
-      display: flex !important;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      opacity: 0.8;
-      transform: scale(0.95);
-    }
-
-    /* 💡 呢段之前漏咗！加返即刻動態放大 + 發金光！ */
-    .sound-btn.active-card {
-      opacity: 1.0 !important;
-      transform: scale(1.1) !important;
-      border-color: rgba(255, 215, 0, 0.9) !important;
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5) !important;
-    }
-
-    .sound-btn span { display: block; font-size: 26px; margin-bottom: 4px; }
-    
+    .sound-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; width: 100%; }
+    .sound-btn { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(4px); border: 1.5px solid #ffeaa7; border-radius: 12px; padding: 8px 4px; text-align: center; cursor: pointer; font-size: 12px; font-weight: bold; color: #d63031; box-shadow: 0 3px 6px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8); transition: all 0.1s; }
+    .sound-btn:active { transform: scale(0.93); background: #ffeaa7; }
+    .sound-btn span { display: block; font-size: 18px; margin-bottom: 2px; }
     .notice-card { background-color: rgba(214, 48, 49, 0.25) !important; border: 1.5px dashed #ff7675; border-radius: 12px; padding: 12px; margin-top: 20px; margin-bottom: 15px; text-align: center; width: 100%; }
     .notice-card h4 { margin: 0 0 6px; font-size: 14px; color: #ff7675; font-style: italic; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
     .notice-card p { margin: 0; font-size: 12px; color: #fffa65; font-weight: bold; line-height: 1.6; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
@@ -331,29 +285,6 @@
       const toast = document.getElementById('toast'); toast.innerText = msg; toast.style.display = 'block';
       clearTimeout(toastTimer); toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
-        /* 🐾 打橫滑動動態放大中間卡片 */
-    const soundGrid = document.getElementById('soundGrid');
-    if (soundGrid) {
-      soundGrid.addEventListener('scroll', () => {
-        const gridRect = soundGrid.getBoundingClientRect();
-        const gridCenter = gridRect.left + gridRect.width / 2;
-        const cards = soundGrid.querySelectorAll('.sound-btn');
-        
-        cards.forEach(card => {
-          const cardRect = card.getBoundingClientRect();
-          const cardCenter = cardRect.left + cardRect.width / 2;
-          const dist = Math.abs(gridCenter - cardCenter);
-          
-          if (dist < 60) {
-            card.classList.add('active-card');
-          } else {
-            card.classList.remove('active-card');
-          }
-        });
-      });
-      soundGrid.dispatchEvent(new Event('scroll'));
-    }
-    
   </script>
   <script>
     function createAlbum() {

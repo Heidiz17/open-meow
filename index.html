@@ -247,11 +247,18 @@
       req.onsuccess = function() { if (req.result) { if (req.result.type === "custom") { document.body.style.backgroundImage = `url(${req.result.val})`; } else { document.body.style.background = req.result.val; } } };
     }
         /* 🎛️ 不透明度 Slider 控制器邏輯 */
-    function updatePanelOpacity(val) {
+      function updatePanelOpacity(val) {
       document.documentElement.style.setProperty('--panel-alpha', val);
+      // 💡 當拉到 0 嗰陣，連磨砂模糊都變 0px，直情扣晒底層！
+      const blurVal = (val == 0) ? '0px' : '12px';
+      document.querySelectorAll('.section-title, .album-controls, .music-box, .mixer-box, .sound-btn').forEach(el => {
+        el.style.backdropFilter = `blur(${blurVal})`;
+        el.style.webkitBackdropFilter = `blur(${blurVal})`;
+      });
       document.getElementById('opacityValDisplay').innerText = Math.round(val * 100) + "%";
       if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "panelOpacity", val: val });
     }
+
     function loadSavedOpacity() {
       const req = db.transaction("settings", "readonly").objectStore("settings").get("panelOpacity");
       req.onsuccess = function() {

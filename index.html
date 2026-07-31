@@ -95,9 +95,9 @@
     .sound-btn { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(4px); border: 1.5px solid #ffeaa7; border-radius: 12px; padding: 8px 4px; text-align: center; cursor: pointer; font-size: 12px; font-weight: bold; color: #d63031; box-shadow: 0 3px 6px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8); transition: all 0.1s; }
     .sound-btn:active { transform: scale(0.93); background: #ffeaa7; }
     .sound-btn span { display: block; font-size: 18px; margin-bottom: 2px; }
-    .notice-card { background: rgba(255, 234, 167, 0.9); backdrop-filter: blur(6px); border: 1.5px dashed #e17055; border-radius: 12px; padding: 12px; margin-top: 20px; margin-bottom: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; }
-    .notice-card h4 { margin: 0 0 5px; font-size: 13px; color: #d63031; font-style: italic; font-weight: 900; }
-    .notice-card p { margin: 0; font-size: 11px; color: #2d3436; font-weight: bold; line-height: 1.5; }
+    .notice-card { background-color: rgba(214, 48, 49, 0.25) !important; border: 1.5px dashed #ff7675; border-radius: 12px; padding: 12px; margin-top: 20px; margin-bottom: 15px; text-align: center; width: 100%; }
+    .notice-card h4 { margin: 0 0 6px; font-size: 14px; color: #ff7675; font-style: italic; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+    .notice-card p { margin: 0; font-size: 12px; color: #fffa65; font-weight: bold; line-height: 1.6; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
     .toast-box { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(45, 52, 54, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 900; display: none; z-index: 2000; text-align: center; max-width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     .lightbox { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.94); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; padding: 15px; }
     #lightboxContent { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; margin: auto; transition: opacity 0.3s ease-in-out; }
@@ -152,7 +152,7 @@
 
   <div class="section-title">
     <span>🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
-    <span class="sub-tip">💡 提示 : 支援無限首自動編號與多模式循環</span>
+    <span class="sub-tip">💡 提示 : 支援無限首自動編號與多模式循環 | 導入歌單後請 refresh 可保持最大音量</span>
   </div>
   <div class="music-box">
     <div class="playlist-controls">

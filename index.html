@@ -169,12 +169,19 @@
     <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
   </div>
   
-  <div class="mixer-box">
-    <div class="mixer-title">🎛️ 聲音 MIXER 混音主控台</div>
+    <div class="mixer-box">
+    <div class="mixer-title">🎛️ 聲音 MIXER 與介面主控台</div>
+    <!-- 🎛️ 0% - 100% 介面不透明度 Slider -->
+    <div class="mixer-channel">
+      <label>🎛️ 介面不透明度：</label>
+      <input type="range" id="volOpacity" min="0" max="1" step="0.05" value="0.45" oninput="updatePanelOpacity(this.value)">
+      <span id="opacityValDisplay" style="font-size: 11px; min-width: 35px; text-align: right;">45%</span>
+    </div>
     <div class="mixer-channel"><label>🎵 背景 MP3：</label><input type="range" id="volBgm" min="0" max="1" step="0.05" value="0.8" oninput="updateVolumes()"></div>
     <div class="mixer-channel"><label>🐱 貓貓真聲：</label><input type="range" id="volCat" min="0" max="1" step="0.05" value="1.0" oninput="updateVolumes()"></div>
     <div class="mixer-channel"><label>🎬 影片原聲：</label><input type="range" id="volVideo" min="0" max="1" step="0.05" value="0.9" oninput="updateVolumes()"></div>
   </div>
+
   <script>
     let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
     let albumMediaList = [], slideIndex = 0, slideTimer = null, isPlayingSlideshow = false, slideshowInterval = 6000;
@@ -192,7 +199,7 @@
       db.createObjectStore("music", { keyPath: "id", autoIncrement: true });
       if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
     };
-    request.onsuccess = function(e) { db = e.target.result; loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); initAlbumLongPress(); };
+    request.onsuccess = function(e) { db = e.target.result; loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); loadSavedOpacity(); initAlbumLongPress(); };
 
     const catSounds = [
       { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" }, { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },
@@ -239,6 +246,23 @@
       const req = db.transaction("settings", "readonly").objectStore("settings").get("wallpaper");
       req.onsuccess = function() { if (req.result) { if (req.result.type === "custom") { document.body.style.backgroundImage = `url(${req.result.val})`; } else { document.body.style.background = req.result.val; } } };
     }
+        /* 🎛️ 不透明度 Slider 控制器邏輯 */
+    function updatePanelOpacity(val) {
+      document.documentElement.style.setProperty('--panel-alpha', val);
+      document.getElementById('opacityValDisplay').innerText = Math.round(val * 100) + "%";
+      if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "panelOpacity", val: val });
+    }
+    function loadSavedOpacity() {
+      const req = db.transaction("settings", "readonly").objectStore("settings").get("panelOpacity");
+      req.onsuccess = function() {
+        if (req.result) {
+          const val = req.result.val;
+          document.getElementById('volOpacity').value = val;
+          updatePanelOpacity(val);
+        }
+      };
+    }
+
     function updateVolumes() {
       if (document.getElementById('bgPlayer')) document.getElementById('bgPlayer').volume = document.getElementById('volBgm').value;
       if (currentCatAudio) currentCatAudio.volume = document.getElementById('volCat').value;

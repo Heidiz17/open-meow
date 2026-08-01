@@ -8,22 +8,27 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#f7d794">
+    <!-- 100% 正宗瀨戶體 SetoFont 下載連結 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mplus-fonts/setofont@master/setofont.css">
+  
   <style>
     /* 🎨 CSS 變數：由 JS 隨時動態控制顏色與透明度 */
     :root {
       --panel-rgb: 9, 132, 227;
       --panel-alpha: 0.45;
     }
-
-    /* 引入真正的日系 Q 版可愛字體 Kiwi Maru */
-    @import url('https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@500&display=swap');
     
     * { box-sizing: border-box; font-family: 'Arial Black', Impact, system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
     
-    /* 強制 Q 版可愛字體 Class */
-    body.jp-font, body.jp-font *, body.jp-font h1, body.jp-font button, body.jp-font span, body.jp-font label {
-      font-family: 'Kiwi Maru', 'Comic Sans MS', sans-serif !important;
-      font-style: normal !important;
+    /* 日風：強制「凍企 (打直)」+ 正宗 Q 版瀨戶體 */
+    body.jp-font, 
+    body.jp-font *, 
+    body.jp-font h1, 
+    body.jp-font button, 
+    body.jp-font span, 
+    body.jp-font label {
+      font-family: 'SetoFont', 'Comic Sans MS', cursive, sans-serif !important;
+      font-style: normal !important; /* 強制凍企，不打斜！ */
     }
     
     /* 右上角港日切換按鈕樣式 */

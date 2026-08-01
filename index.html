@@ -15,7 +15,30 @@
       --panel-alpha: 0.45;
     }
 
+        /* 引入日系可愛手寫字體 SetoFont */
+    @import url('https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap');
+    
     * { box-sizing: border-box; font-family: 'Arial Black', Impact, system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    
+    /* 日系可愛字體 Class */
+    body.jp-font, body.jp-font * {
+      font-family: 'Yuji Syuku', 'Comic Sans MS', cursive, sans-serif !important;
+    }
+    
+    /* 右上角港日切換按鈕樣式 */
+    .btn-font-toggle {
+      background: rgba(255, 234, 167, 0.9);
+      color: #2d3436;
+      border: 1.5px solid #ffffff;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-font-toggle:active { transform: scale(0.92); }
     
     body { 
       background-size: cover !important; 
@@ -115,7 +138,8 @@
 <body>
   <div class="header-box">
     <h1>🐾 OPEN 貓貓助手</h1>
-    <div class="wallpaper-btn-group">
+        <div class="wallpaper-btn-group">
+      <button class="btn-font-toggle" onclick="toggleFontTheme()">🔤 港/日</button>
       <button class="btn-compact btn-theme" onclick="changeWallpaperPreset()">🎨 預設風格</button>
       <label class="btn-compact btn-add" style="background:#00b894;" for="wpInput">🖼️ 換底紙</label>
       <input type="file" id="wpInput" accept="image/*" style="display:none;" onchange="uploadCustomWallpaper(event)">
@@ -199,7 +223,25 @@
       db.createObjectStore("music", { keyPath: "id", autoIncrement: true });
       if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
     };
-    request.onsuccess = function(e) { db = e.target.result; loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); loadSavedOpacity(); initAlbumLongPress(); };
+    request.onsuccess = function(e) { db = e.target.result; loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); loadSavedOpacity(); loadSavedFontTheme(); initAlbumLongPress(); };
+
+// 🔤 港日字體切換功能邏輯
+function toggleFontTheme() {
+  document.body.classList.toggle('jp-font');
+  const isJp = document.body.classList.contains('jp-font');
+  showToast(isJp ? "✨ 已切換至：日系可愛字體！" : "✨ 已切換至：經典港系粗體！");
+  if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontTheme", val: isJp ? "jp" : "hk" });
+}
+
+function loadSavedFontTheme() {
+  const req = db.transaction("settings", "readonly").objectStore("settings").get("fontTheme");
+  req.onsuccess = function() {
+    if (req.result && req.result.val === "jp") {
+      document.body.classList.add('jp-font');
+    }
+  };
+}
+    
 
     const catSounds = [
       { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" }, { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },

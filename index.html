@@ -20,10 +20,11 @@
     
     * { box-sizing: border-box; font-family: 'Arial Black', Impact, system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
     
-    /* 日系可愛字體 Class */
-    body.jp-font, body.jp-font * {
-      font-family: 'Yuji Syuku', 'Comic Sans MS', cursive, sans-serif !important;
+        /* 強制日系可愛字體 Class */
+    body.jp-font, body.jp-font *, body.jp-font h1, body.jp-font button, body.jp-font span, body.jp-font select, body.jp-font label {
+      font-family: 'Yuji Syuku', 'Comic Sans MS', 'Microsoft JhengHei', sans-serif !important;
     }
+    
     
     /* 右上角港日切換按鈕樣式 */
     .btn-font-toggle {
@@ -138,12 +139,12 @@
 <body>
   <div class="header-box">
     <h1>🐾 OPEN 貓貓助手</h1>
-        <div class="wallpaper-btn-group">
-      <button class="btn-font-toggle" onclick="toggleFontTheme()">🔤 港/日</button>
+      <div class="wallpaper-btn-group">
       <button class="btn-compact btn-theme" onclick="changeWallpaperPreset()">🎨 預設風格</button>
       <label class="btn-compact btn-add" style="background:#00b894;" for="wpInput">🖼️ 換底紙</label>
       <input type="file" id="wpInput" accept="image/*" style="display:none;" onchange="uploadCustomWallpaper(event)">
-    </div>
+      <button class="btn-font-toggle" onclick="toggleFontTheme()">🔤 港/日</button>
+      </div>
   </div>
 
   <div class="section-title">

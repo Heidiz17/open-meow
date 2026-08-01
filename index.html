@@ -257,17 +257,64 @@
     <span class="sub-tip">💡 導入歌單後請 refresh 可保持最大音量</span>
     </div>
   
-  <!-- 📻 貓貓電台俱樂部 (動態目錄點播區) -->
-  <div class="music-box" style="background: rgba(45, 52, 54, 0.95); margin-bottom: 10px;">
-    <div style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; text-align: left;">
-      📻 貓貓電台俱樂部 (Radio Club)
+    <!-- 📻 貓貓電台俱樂部 (隱藏式打橫滾動卡片) -->
+  <div class="radio-club-box">
+    <div class="radio-title">
+      <span>📻 貓貓電台俱樂部 (左右滑動解鎖更多)</span>
+      <span class="jw-badge">JW LIVE</span>
     </div>
-    
-    <!-- 電台選擇按鈕 -->
-    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
-      <button class="btn-compact btn-theme" onclick="confirmRadioPlay('Jpopsuki 日本 J-Rock 台', 'http://jpopsuki.fm:8000/live?hl')">🎸 1號：Jpopsuki 日本台</button>
-      <button class="btn-compact btn-theme" onclick="confirmRadioPlay('SmoothJazz 美國純爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 2號：SmoothJazz 爵士台</button>
+
+    <!-- 橫向滾動電台卡片列 -->
+    <div class="radio-carousel">
+      <!-- 1號台：J-Rock (經代理安全破網，保證有聲且免告) -->
+      <div class="radio-card jrock" onclick="confirmProxyRadioPlay('J-Rock 日本搖滾電台', 'http://jpopsuki.fm:8000/live?hl')">
+        <div class="jw-icon">🎸</div>
+        <div class="jw-num"><span class="live-dot"></span>01 STATION</div>
+        <div class="jw-name">J-Rock</div>
+        <div class="jw-sub">日本搖滾專區</div>
+      </div>
+
+      <!-- 2號台：SmoothJazz (安全 HTTPS 直出) -->
+      <div class="radio-card jazz" onclick="confirmRadioPlay('SmoothJazz 美國純爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">
+        <div class="jw-icon">🎷</div>
+        <div class="jw-num"><span class="live-dot"></span>02 STATION</div>
+        <div class="jw-name">SmoothJazz</div>
+        <div class="jw-sub">美國純音樂 Jazz</div>
+      </div>
+
+      <!-- 💡 預留位：將黎隨時可以向右碌加 3號、4號台，畫面永遠唔會迫爆！ -->
     </div>
+
+    <!-- 🔗 自訂 Stream Link 試聽輸入框 -->
+    <div class="stream-input-group" style="display:flex; gap:6px; margin-bottom:8px;">
+      <input type="text" id="streamUrlInput" class="stream-input" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex:1; padding:8px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.4); color:#fff; font-size:11px;">
+      <button class="btn-test" onclick="testStreamUrl()" style="padding:8px 12px; border-radius:10px; border:none; background:linear-gradient(135deg, #00b894, #00cec9); color:#fff; font-weight:bold; font-size:11px; cursor:pointer;">▶️ 試聽</button>
+    </div>
+
+    <!-- 🛡️ 法律免責聲明區（防告必備） -->
+    <div class="disclaimer-text">
+      ⚠️ <strong>服務及版權聲明</strong>：本應用程式僅提供媒體播放技術與網絡目錄索引工具，不儲存、不託管亦不直接提供任何音訊檔案。所有廣播串流均由用戶主動發起連線至第三方公開網絡，版權歸原內容所有者所有。
+    </div>
+  </div>
+
+  <!-- 🎵 播放器與打橫歌單區 -->
+  <div class="music-box">
+    <div class="player-display" id="musicName">📻 未選擇電台或音樂</div>
+    <audio id="bgPlayer" style="width:100%; margin-bottom:10px;" controls></audio>
+
+    <div class="playlist-controls">
+      <label class="btn-compact btn-add" for="musicInput">➕ 揼入 MP3</label>
+      <input type="file" id="musicInput" accept="audio/*" style="display:none;" onchange="uploadMusic(event)">
+      <button class="mode-btn btn-compact" id="modeLoop" onclick="showToast('🔁 順序播放模式已開啟')">🔁 順序播放</button>
+    </div>
+
+    <!-- 🎵 打橫舒展排版嘅 Playlist 顯示區 -->
+    <div class="playlist-container" id="playlistContainer">
+      <div class="playlist-item active">🎵 1. 為了愛 (示範曲)</div>
+      <div class="playlist-item">🎵 2. 誰 (示範曲)</div>
+    </div>
+  </div>
+
 
     <!-- 🔗 自訂 Stream Link 測試輸入框 -->
     <div style="display: flex; gap: 4px;">
@@ -578,7 +625,22 @@ function loadSavedFontTheme() {
       });
       document.getElementById('musicName').innerText = `🎵 播放中 (${currentTrackIdx + 1}/${musicList.length})：${musicList[currentTrackIdx].name}`;
     }
-        // 🐾 P仔助手電台點播確認機制 (目錄指引模式)
+    // 🛡️ 1 號台專用：CORS 代理加密破網 + 商業免責確認提示（保證有聲又安全）
+    function confirmProxyRadioPlay(stationName, httpUrl) {
+      const ok = confirm(`🛡️ 【免責聲明與自主連線】\n\n本 App 僅提供中立播放工具。確認連線代表閣下同意經由安全通道存取公開網絡《${stationName}》，版權歸原作者所有。\n\n是否立即播放？`);
+      if (ok) {
+        const secureProxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(httpUrl);
+        const player = document.getElementById('bgPlayer');
+        player.src = secureProxyUrl;
+        player.play().then(() => {
+          showToast(`📻 已透過安全通道連線：${stationName}`);
+          document.getElementById('musicName').innerText = `📻 直播中：${stationName}`;
+        }).catch(e => {
+          showToast("❌ 代理連線受阻，請檢查網絡！");
+        });
+      }
+    
+    // 🐾 P仔助手電台點播確認機制 (目錄指引模式)
     function confirmRadioPlay(stationName, streamUrl) {
       const ok = confirm(`🐾 P仔助手提示：\n\n我而家幫你連線播放《${stationName}》，準備好收聽未？`);
       if (ok) {

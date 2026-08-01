@@ -193,14 +193,31 @@
     <span class="sub-tip">💡 導入歌單後請 refresh 可保持最大音量</span>
     </div>
   
+  <!-- 📻 貓貓電台俱樂部 (動態目錄點播區) -->
+  <div class="music-box" style="background: rgba(45, 52, 54, 0.95); margin-bottom: 10px;">
+    <div style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; text-align: left;">
+      📻 貓貓電台俱樂部 (Radio Club)
+    </div>
+    
+    <!-- 電台選擇按鈕 -->
+    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
+      <button class="btn-compact btn-theme" onclick="confirmRadioPlay('Jpopsuki 日本 J-Rock 台', 'http://jpopsuki.fm:8000/live?hl')">🎸 1號：Jpopsuki 日本台</button>
+      <button class="btn-compact btn-theme" onclick="confirmRadioPlay('SmoothJazz 美國純爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 2號：SmoothJazz 爵士台</button>
+    </div>
+
+    <!-- 🔗 自訂 Stream Link 測試輸入框 -->
+    <div style="display: flex; gap: 4px;">
+      <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex: 1; padding: 6px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.4); background: rgba(0,0,0,0.5); color: #fff; font-size: 11px;">
+      <button class="btn-compact btn-add" onclick="testStreamUrl()" style="background:#00b894;">▶️ 試聽</button>
+    </div>
+  </div>
+
   <div class="music-box">
     <div class="playlist-controls">
       <label class="btn-compact btn-add" for="musicInput">➕ 揼入 MP3</label>
       <input type="file" id="musicInput" accept="audio/*" style="display:none;" onchange="uploadMusic(event)">
       <button class="mode-btn active" id="modeLoop" onclick="setPlayMode('loop')">🔁 順序播放</button>
-      <button class="mode-btn" id="modeSingle" onclick="setPlayMode('single')">🔂 單曲循環</button>
-      <button class="mode-btn" id="modeRandom" onclick="setPlayMode('random')">🔀 隨機播放</button>
-    </div>
+
     <div id="musicName" style="margin: 4px 0; font-weight: bold; font-size: 12px;">（未選擇音樂）</div>
     <div class="playlist-list" id="playlistDisplay"></div>
     <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
@@ -497,14 +514,35 @@ function loadSavedFontTheme() {
       });
       document.getElementById('musicName').innerText = `🎵 播放中 (${currentTrackIdx + 1}/${musicList.length})：${musicList[currentTrackIdx].name}`;
     }
-    function playTrack(idx) {
-      if (musicList.length === 0) return;
-      currentTrackIdx = idx;
-      const player = document.getElementById('bgPlayer');
-      player.src = musicList[currentTrackIdx].src;
-      player.play().catch(e => console.log(e));
-      renderPlaylist(); updateVolumes();
+        // 🐾 P仔助手電台點播確認機制 (目錄指引模式)
+    function confirmRadioPlay(stationName, streamUrl) {
+      const ok = confirm(`🐾 P仔助手提示：\n\n我而家幫你連線播放《${stationName}》，準備好收聽未？`);
+      if (ok) {
+        const player = document.getElementById('bgPlayer');
+        player.src = streamUrl;
+        player.play().then(() => {
+          showToast(`📻 已成功連線：${stationName}`);
+          document.getElementById('musicName').innerText = `📻 直播中：${stationName}`;
+        }).catch(e => {
+          showToast("❌ 電台連線失敗，請檢查網絡或 Link 是否有效！");
+        });
+      }
     }
+
+    // 🔗 自訂 Stream Link 即時試聽功能
+    function testStreamUrl() {
+      const url = document.getElementById('streamUrlInput').value.trim();
+      if (!url) { showToast("⚠️ 請先貼上電台 Stream Link 呀！"); return; }
+      const player = document.getElementById('bgPlayer');
+      player.src = url;
+      player.play().then(() => {
+        showToast("📻 正在測試播放電台 Stream...");
+        document.getElementById('musicName').innerText = "📻 試聽電台中：" + url;
+      }).catch(e => {
+        showToast("❌ 此 Link 無法直接播放或已被封鎖！");
+      });
+    }
+
     function setPlayMode(mode) {
       playMode = mode;
       document.getElementById('modeLoop').classList.remove('active');

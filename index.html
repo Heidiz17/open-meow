@@ -8,22 +8,35 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#f7d794">
-    <!-- 100% 正宗瀨戶體 SetoFont 下載連結 -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mplus-fonts/setofont@master/setofont.css">
-  
+  <!-- 100% 官方 Google Fonts 必成功下載日系可愛圓體 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
   <style>
+    
     /* 🎨 CSS 變數：由 JS 隨時動態控制顏色與透明度 */
     :root {
       --panel-rgb: 9, 132, 227;
       --panel-alpha: 0.45;
     }
     
-    /* 🌸 全頁一炮過 100% 正宗日系瀨戶體 (SetoFont) */
-    * { 
-      box-sizing: border-box; 
-      font-family: 'SetoFont', 'Comic Sans MS', cursive, sans-serif !important; 
-      -webkit-tap-highlight-color: transparent; 
+    * { box-sizing: border-box; font-family: 'Arial Black', Impact, system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    
+    /* 🌸 日風：強制全頁 100% 換成必成功下載嘅 Q 版日系圓體 (Zen Maru Gothic) */
+    body.jp-font, 
+    body.jp-font *, 
+    body.jp-font h1, 
+    body.jp-font h4,
+    body.jp-font button, 
+    body.jp-font span, 
+    body.jp-font label,
+    body.jp-font div,
+    body.jp-font p,
+    body.jp-font select {
+      font-family: 'Zen Maru Gothic', 'Comic Sans MS', cursive, sans-serif !important;
+      font-style: normal !important; /* 強制凍企，不打斜！ */
     }
+
 
     /* 右上角港日切換按鈕樣式 */
     .btn-font-toggle {

@@ -146,7 +146,71 @@
     .speed-btn.active { background: #00b894; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
     .lightbox p { color: white; font-size: 14px; font-style: italic; margin: 4px 0 0; font-weight: bold; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
     .close-btn { position: absolute; top: 15px; right: 20px; color: white; font-size: 38px; cursor: pointer; font-weight: bold; z-index: 3100; }
-  </style>
+    
+    /* 🎵 歌單完美修復：改為打橫舒展排版 */
+    .playlist-container {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      overflow-x: auto;
+      margin-top: 10px;
+      padding-bottom: 4px;
+    }
+    .playlist-item {
+      background: #181922;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      color: #dfe6e9;
+      white-space: nowrap;
+      border: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+    }
+    .playlist-item.active {
+      border-color: #00b894;
+      color: #55efc4;
+      font-weight: bold;
+    }
+
+    /* 🛡️ 法律免責聲明區 */
+    .disclaimer-text {
+      font-size: 10px;
+      color: #a4b0be;
+      line-height: 1.4;
+      background: rgba(0,0,0,0.3);
+      padding: 8px;
+      border-radius: 8px;
+      border-left: 3px solid #ffeaa7;
+      margin-top: 8px;
+    }
+
+    /* 📻 隱藏式橫向滾動電台列 (Carousel) */
+    .radio-carousel {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+    }
+    .radio-card {
+      min-width: 140px;
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      background: linear-gradient(135deg, #2d3436, #1e272e);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .radio-card:active { transform: scale(0.96); }
+    .radio-card.jrock { border-left: 4px solid #e17055; background: linear-gradient(135deg, #2c1a1d, #1e1e24); }
+    .radio-card.jazz { border-left: 4px solid #0984e3; background: linear-gradient(135deg, #132238, #1e1e24); }
+    </style>
 </head>
 <body>
   <div class="header-box">

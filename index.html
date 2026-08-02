@@ -179,17 +179,7 @@ audio { width: 100%; margin-top: 8px; border-radius: 20px; }
     </div>
   </div>
   <div class="media-grid" id="mediaGrid"></div>
-  <!-- 🎮 貓貓助手 RPG 存檔與讀檔專區 -->
-  <div class="section-title">
-    <span>💾 貓貓助手 RPG 存檔管理 (全機數據 1 鍵 Save/Load)</span>
-    <span class="sub-tip">💡 一鍵匯出/匯入全機相片、歌單與介面設定檔，永久防丟失！</span>
-  </div>
-  <div class="save-box" style="padding: 10px; border-radius: 12px; margin-bottom: 15px; display: flex; gap: 8px;">
-    <button class="btn-compact btn-rpg-save" onclick="exportFullRPGSave()" style="background: rgba(46, 204, 113, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px;">📤 匯出 RPG Save 檔</button>
-    <label class="btn-compact btn-rpg-load" for="rpgLoadInput" style="background: rgba(155, 89, 182, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px; text-align:center;">📥 讀取 RPG Save 檔</label>
-    <input type="file" id="rpgLoadInput" accept=".json" style="display:none;" onchange="importFullRPGSave(event)">
-  </div>
-
+  
   <div class="section-title">
     <span>🔊 30 種真貓語解密</span>
     <span class="sub-tip">💡 提示 : 即點即播，隨時聽貓貓心聲</span>
@@ -760,17 +750,27 @@ function playRealCatSound(item) {
     <p id="lightboxCaption"></p>
   </div>
 
-  <!-- ⚠️ 底部溫馨提示 -->
-    <div class="notice-card">
+    <!-- 💾 貓貓助手 RPG 存檔管理 (移至 Mixer 下方) -->
+  <div class="section-title">
+    <span>💾 貓貓助手 RPG 存檔管理 (全機數據 1 鍵 Save/Load)</span>
+    <span class="sub-tip">💡 一鍵匯出/匯入全機相片、歌單與介面設定檔，永久防丟失！</span>
+  </div>
+  <div class="save-box" style="padding: 10px; border-radius: 12px; margin-bottom: 15px; display: flex; gap: 8px;">
+    <button class="btn-compact btn-rpg-save" onclick="exportFullRPGSave()" style="background: rgba(46, 204, 113, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px;">📤 匯出 RPG Save 檔</button>
+    <label class="btn-compact btn-rpg-load" for="rpgLoadInput" style="background: rgba(155, 89, 182, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px; text-align:center;">📥 讀取 RPG Save 檔</label>
+    <input type="file" id="rpgLoadInput" accept=".json" style="display:none;" onchange="importFullRPGSave(event)">
+  </div>
+
+  <!-- ⚠️ 終極溫馨提示 (保留原紅黃經典配色，升級全新字眼) -->
+  <div class="notice-card">
     <h4>⚠️ 終極溫馨提示</h4>
     <p>
-      如果大家清除瀏覽器快取，相簿入面嘅相就會消失，<br>
-      要從頭再加過㗎喇！<br><br>
-      所以如果想留住珍貴相簿，<br>
-      請盡量唔好清除瀏覽器資料或快取啦！
+      如果大家清除瀏覽器快取，相簿同歌單資料就會消失，要從頭再加過㗎喇！<br><br>
+      <b>💡 防失聯小貼士：</b><br>
+      請善用上面嘅<b>「📤 匯出 RPG Save 檔」</b>功能，定期將全機數據下載備份！<br>
+      咁樣就算清咗快取或換手機，只要<b>「📥 讀取 Save 檔」</b>就可以 1 秒完美復原所有相片同歌單啦！
     </p>
-    </div>
-  
+  </div>
 
   <!-- ©️ 專屬版權招牌 (Heidiz & Gemini P-Chan Production) -->
   <div style="text-align: center; color: rgba(255,255,255,0.85); font-size: 10px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">

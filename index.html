@@ -528,7 +528,22 @@ function loadSavedFontTheme() {
         });
       }
     }
-
+    // 🛡️ 1 號台專用：CORS 代理加密破解 + 商業免責確認
+    function confirmProxyRadioPlay(stationName, httpUrl) {
+      const ok = confirm(`🛡️ 【免責聲明與自主連線】\n\n本 App 僅提供中立播放工具。確認連線代表閣下同意經由安全通道存取公開網絡《${stationName}》，版權歸原作者所有。\n\n是否立即播放？`);
+      if (ok) {
+        const secureProxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(httpUrl);
+        const player = document.getElementById('bgPlayer');
+        player.src = secureProxyUrl;
+        player.play().then(() => {
+          showToast(`📻 已透過安全通道連線：${stationName}`);
+          document.getElementById('musicName').innerText = `📻 直播中：${stationName}`;
+        }).catch(e => {
+          showToast("❌ 代理連線受阻，請檢查網絡！");
+        });
+      }
+    }
+    
     // 🔗 自訂 Stream Link 即時試聽功能
     function testStreamUrl() {
       const url = document.getElementById('streamUrlInput').value.trim();

@@ -618,15 +618,17 @@ function loadSavedFontTheme() {
     }
 
     function setPlayMode(mode) {
-      playMode = mode;
-      document.getElementById('modeLoop').classList.remove('active');
-      document.getElementById('modeSingle').classList.remove('active');
-      document.getElementById('modeRandom').classList.remove('active');
-      if (mode === 'loop') document.getElementById('modeLoop').classList.add('active');
-      if (mode === 'single') document.getElementById('modeSingle').classList.add('active');
-      if (mode === 'random') document.getElementById('modeRandom').classList.add('active');
-      showToast(`🎵 播放模式改為：${mode === 'loop' ? '順序循環' : mode === 'single' ? '單曲循環' : '隨機播放'}`);
-    }
+  playMode = mode;
+  const btnSeq = document.getElementById('btnSeq');
+  const btnLoop = document.getElementById('btnLoop');
+  const btnRand = document.getElementById('btnRand');
+  if (btnSeq) btnSeq.classList.toggle('active', mode === 'sequence');
+  if (btnLoop) btnLoop.classList.toggle('active', mode === 'single-loop');
+  if (btnRand) btnRand.classList.toggle('active', mode === 'random');
+  const modeName = mode === 'sequence' ? '順序播放' : (mode === 'single-loop' ? '單曲循環' : '隨機播放');
+  showToast(`🎵 播放模式改為：${modeName}`);
+}
+
     function handleTrackEnded() {
       if (musicList.length === 0) return;
       if (playMode === 'single') { playTrack(currentTrackIdx); } 

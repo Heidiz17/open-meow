@@ -281,7 +281,21 @@ function loadSavedFontTheme() {
     }
   };
 }
-    
+ // 🐱 30 種貓貓真聲播放引擎
+function playRealCatSound(item) {
+  if (currentCatAudio) {
+    currentCatAudio.pause();
+    currentCatAudio = null;
+  }
+  currentCatAudio = new Audio(item.file);
+  currentCatAudio.volume = document.getElementById('volCat').value;
+  currentCatAudio.play().then(() => {
+    showToast(`${item.emoji} 貓貓話：${item.desc}`);
+  }).catch(e => {
+    showToast(`❌ 找不到音訊檔 ${item.file}，請確認檔案已上傳！`);
+  });
+}
+
 
     const catSounds = [
       { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" }, { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },
@@ -427,7 +441,7 @@ function loadSavedFontTheme() {
       const name = prompt("請輸入新相簿名稱：", "黑貓仔寫真");
       if (name) {
         const id = "album_" + Date.now();
-        const tx = db.transaction("albums", "readwrite");
+        conconst tx = db.transaction("albums", "readwrite");
         tx.objectStore("albums").add({ id: id, name: name, order: Date.now() });
         tx.oncomplete = function() { loadAlbums(id); showToast("✨ 成功建立新相簿！"); };
       }

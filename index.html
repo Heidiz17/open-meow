@@ -281,20 +281,20 @@ function loadSavedFontTheme() {
     }
   };
 }
- // 🐱 30 種貓貓真聲播放引擎
-function playRealCatSound(item) {
-  if (currentCatAudio) {
-    currentCatAudio.pause();
-    currentCatAudio = null;
-  }
-  currentCatAudio = new Audio(item.file);
-  currentCatAudio.volume = document.getElementById('volCat').value;
-  currentCatAudio.play().then(() => {
-    showToast(`${item.emoji} 貓貓話：${item.desc}`);
-  }).catch(e => {
-    showToast(`❌ 找不到音訊檔 ${item.file}，請確認檔案已上傳！`);
-  });
-}
+    // 🐱 30 種貓貓真聲播放引擎
+    function playRealCatSound(item) {
+      if (currentCatAudio) {
+        currentCatAudio.pause();
+        currentCatAudio = null;
+      }
+      currentCatAudio = new Audio(item.file);
+      currentCatAudio.volume = document.getElementById('volCat').value;
+      currentCatAudio.play().then(() => {
+        showToast(item.emoji + " 貓貓話：" + item.desc);
+      }).catch(e => {
+        showToast("❌ 找不到音訊檔 " + item.file);
+      });
+    }
 
 
     const catSounds = [

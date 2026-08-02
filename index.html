@@ -13,13 +13,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
   <style>
-    
     /* 🎨 CSS 變數：由 JS 隨時動態控制顏色與透明度 */
     :root {
       --panel-rgb: 9, 132, 227;
       --panel-alpha: 0.45;
     }
-    
+
     * { box-sizing: border-box; font-family: 'Arial Black', Impact, system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
     
     /* 🌸 日風：強制全頁 100% 換成必成功下載嘅 Q 版日系圓體 (Zen Maru Gothic) */
@@ -34,11 +33,9 @@
     body.jp-font p,
     body.jp-font select {
       font-family: 'Zen Maru Gothic', 'Comic Sans MS', cursive, sans-serif !important;
-      font-style: normal !important; /* 強制凍企，不打斜！ */
+      font-style: normal !important;
     }
 
-
-    /* 右上角港日切換按鈕樣式 */
     .btn-font-toggle {
       background: rgba(255, 234, 167, 0.9);
       color: #2d3436;
@@ -52,7 +49,7 @@
       transition: all 0.2s ease;
     }
     .btn-font-toggle:active { transform: scale(0.92); }
-    
+
     body { 
       background-size: cover !important; 
       background-position: center !important; 
@@ -112,29 +109,36 @@
     .media-grid.four-cols { grid-template-columns: repeat(4, 1fr); gap: 5px; }
     .media-grid.four-cols .media-card img, .media-grid.four-cols .media-card video { height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
     .media-grid.four-cols .media-card p { font-size: 10px; margin: 2px 0 1px; }
+
     .music-box { background: rgba(0, 40, 80, 0.4); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 10px; margin-top: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
-.playlist-controls { display: flex; flex-wrap: nowrap; gap: 4px; overflow-x: auto; padding-bottom: 4px; }
-.playlist-controls .btn-compact { padding: 5px 8px; font-size: 11px; white-space: nowrap; flex: 1; text-align: center; }
-.mode-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; cursor: pointer; }
-.mode-btn.active { background: #2d3436; color: #ffeaa7; border-color: #ffeaa7; }
-.playlist-list { width: 100%; background: rgba(0, 0, 0, 0.25); border-radius: 8px; padding: 6px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; }
-.track-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; font-size: 12px; font-weight: bold; color: #fff; background: rgba(255, 255, 255, 0.1); border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1); }
-.track-item.active { background: rgba(0, 150, 255, 0.3); border-color: rgba(0, 200, 255, 0.6); }
-.track-del { color: #ff7675; cursor: pointer; font-weight: bold; margin-left: 8px; }
-audio { width: 100%; margin-top: 8px; border-radius: 20px; }
+    .playlist-controls { display: flex; flex-wrap: nowrap; gap: 4px; overflow-x: auto; padding-bottom: 4px; }
+    .playlist-controls .btn-compact { padding: 5px 8px; font-size: 11px; white-space: nowrap; flex: 1; text-align: center; }
+    .mode-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; cursor: pointer; }
+    .mode-btn.active { background: #2d3436; color: #ffeaa7; border-color: #ffeaa7; }
+    .playlist-list { width: 100%; background: rgba(0, 0, 0, 0.25); border-radius: 8px; padding: 6px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; }
+    .track-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; font-size: 12px; font-weight: bold; color: #fff; background: rgba(255, 255, 255, 0.1); border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1); }
+    .track-item.active { background: rgba(0, 150, 255, 0.3); border-color: rgba(0, 200, 255, 0.6); }
+    .track-del { color: #ff7675; cursor: pointer; font-weight: bold; margin-left: 8px; }
+    audio { width: 100%; margin-top: 8px; border-radius: 20px; }
+
     .mixer-box { background: rgba(45, 52, 54, 0.95); backdrop-filter: blur(10px); color: white; padding: 12px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 5px 12px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2); width: 100%; }
     .mixer-title { font-size: 15px; color: #ffeaa7; font-style: italic; margin-bottom: 8px; font-weight: 800; text-align: center; letter-spacing: 1px; }
     .mixer-channel { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; gap: 8px; }
     .mixer-channel label { font-size: 12px; min-width: 100px; font-weight: bold; color: #dfe6e9; }
     .mixer-channel input[type=range] { flex: 1; accent-color: #0984e3; }
+
     .sound-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; width: 100%; }
     .sound-btn { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(4px); border: 1.5px solid #ffeaa7; border-radius: 12px; padding: 8px 4px; text-align: center; cursor: pointer; font-size: 12px; font-weight: bold; color: #d63031; box-shadow: 0 3px 6px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8); transition: all 0.1s; }
     .sound-btn:active { transform: scale(0.93); background: #ffeaa7; }
     .sound-btn span { display: block; font-size: 18px; margin-bottom: 2px; }
+
     .notice-card { background-color: rgba(214, 48, 49, 0.25) !important; border: 1.5px dashed #ff7675; border-radius: 12px; padding: 12px; margin-top: 20px; margin-bottom: 15px; text-align: center; width: 100%; }
     .notice-card h4 { margin: 0 0 6px; font-size: 14px; color: #ff7675; font-style: italic; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
     .notice-card p { margin: 0; font-size: 12px; color: #fffa65; font-weight: bold; line-height: 1.6; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
+
     .toast-box { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(45, 52, 54, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 900; display: none; z-index: 2000; text-align: center; max-width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+
+    /* 🌟 4 號仔黃金燈箱 CSS 設定 (100% 正中央鎖屏) */
     .lightbox { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.94); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; padding: 15px; }
     #lightboxContent { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; margin: auto; transition: opacity 0.3s ease-in-out; }
     #lightboxContent img, #lightboxContent video { max-width: 90vw; max-height: 75vh; width: auto; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.5); }
@@ -151,13 +155,14 @@ audio { width: 100%; margin-top: 8px; border-radius: 20px; }
 <body>
   <div class="header-box">
     <h1>🐾 OPEN 貓貓助手</h1>
-      <div class="wallpaper-btn-group">
+    <div class="wallpaper-btn-group">
       <button class="btn-compact btn-theme" onclick="changeWallpaperPreset()">🎨 預設風格</button>
       <label class="btn-compact btn-add" style="background:#00b894;" for="wpInput">🖼️ 換底紙</label>
       <input type="file" id="wpInput" accept="image/*" style="display:none;" onchange="uploadCustomWallpaper(event)">
       <button class="btn-font-toggle" onclick="toggleFontTheme()">🔤 港/日</button>
-      </div>
+    </div>
   </div>
+
   <div class="section-title">
     <span>🖼️ 貓貓專屬多媒體相簿</span>
     <span class="sub-tip">💡 提示：長按下拉選單改名 | 支援 ◀ ▶ 左右調動相簿排位！</span>
@@ -179,7 +184,8 @@ audio { width: 100%; margin-top: 8px; border-radius: 20px; }
     </div>
   </div>
   <div class="media-grid" id="mediaGrid"></div>
-  <!-- 🎮 貓貓助手 RPG 存檔與讀檔專區 -->
+
+  <!-- 🎮 貓貓助手 RPG 存檔與讀檔專區 (6 號仔功能) -->
   <div class="section-title">
     <span>💾 貓貓助手 RPG 存檔管理 (全機數據 1 鍵 Save/Load)</span>
     <span class="sub-tip">💡 一鍵匯出/匯入全機相片、歌單與介面設定檔，永久防丟失！</span>
@@ -196,45 +202,42 @@ audio { width: 100%; margin-top: 8px; border-radius: 20px; }
   </div>
   <div class="sound-grid" id="soundGrid"></div>
 
-    <!-- 1. 貓貓電台擺最上面 -->
-    <div class="music-box" style="background: rgba(0,0,0,0.25); border-radius: 12px; padding: 10px; margin-bottom: 12px;">
-      <div style="font-size: 13px; font-weight: bold; color: #ffeaa7; margin-bottom: 6px;">
-        📻 貓貓電台俱樂部 (Radio Club)
-      </div>
-            <!-- 電台選擇按鈕 -->
-      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px;">
-        <button class="btn-compact btn-theme" onclick="confirmRadioPlay('JPOPSUKI 日本台', 'https://jpopsuki-proxy.heidiz-kung.workers.dev')">🎸 1號：JPOPSUKI 日本台</button>
-        <button class="btn-compact btn-theme" onclick="confirmRadioPlay('SMOOTHJAZZ 爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 2號：SMOOTHJAZZ 爵士台</button>
-      </div>
-      <!-- 自訂 Stream Link 測試輸入框 -->
-      <div style="display: flex; gap: 4px;">
-        <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex:1; padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-size: 12px;">
-        <button class="btn-compact btn-add" onclick="testStreamUrl()">▶️ 試聽</button>
-      </div>
-
-    <!-- 2. MP3 Jukebox 標題（緊貼下面嘅 MP3 播放視窗） -->
-    <div class="section-title">
-      <span>🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
-      <span class="sub-tip">💡 提示：支援無限首自動編號與多模式循環</span>
-      <span class="sub-tip">💡 導入歌單後請 refresh 可保持最大音量</span>
+  <!-- 📻 貓貓電台俱樂部 (6 號仔功能) -->
+  <div class="music-box" style="background: rgba(0,0,0,0.25); border-radius: 12px; padding: 10px; margin-bottom: 12px;">
+    <div style="font-size: 13px; font-weight: bold; color: #ffeaa7; margin-bottom: 6px;">
+      📻 貓貓電台俱樂部 (Radio Club)
     </div>
-
-    <!-- 3. MP3 播放器視窗 -->
-    <div class="music-box">
-      <div class="playlist-controls">
-        <label class="btn-compact btn-add"><input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="importMusic(event)">➕ 揼入 MP3</label>
-        <button class="btn-compact btn-mode" id="btnSeq" onclick="setPlayMode('sequence')">🔁 順序播放</button>
-        <button class="btn-compact btn-mode" id="btnLoop" onclick="setPlayMode('single-loop')">🔂 單曲循環</button>
-        <button class="btn-compact btn-mode" id="btnRand" onclick="setPlayMode('random')">🔀 隨機播放</button>
-      </div>
-      <div id="musicName" style="margin: 6px 0; font-size: 13px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000;">🎵 播放中 (0/0) : 暫無音樂</div>
-      <div class="playlist-list" id="playlistDisplay"></div>
-      <audio id="bgPlayer" controls onended="handleTrackEnded()" style="width: 100%; margin-top: 8px; border-radius: 20px;"></audio>
+    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px;">
+      <button class="btn-compact btn-theme" onclick="confirmRadioPlay('JPOPSUKI 日本台', 'https://jpopsuki-proxy.heidiz-kung.workers.dev')">🎸 1號：JPOPSUKI 日本台</button>
+      <button class="btn-compact btn-theme" onclick="confirmRadioPlay('SMOOTHJAZZ 爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 2號：SMOOTHJAZZ 爵士台</button>
     </div>
+    <div style="display: flex; gap: 4px;">
+      <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex:1; padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-size: 12px;">
+      <button class="btn-compact btn-add" onclick="testStreamUrl()">▶️ 試聽</button>
+    </div>
+  </div>
 
-    <div class="mixer-box">
+  <div class="section-title">
+    <span>🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
+    <span class="sub-tip">💡 提示 : 支援無限首自動編號與多模式循環</span>
+    <span class="sub-tip">💡 導入歌單後請 refresh 可保持最大音量</span>
+  </div>
+  
+  <div class="music-box">
+    <div class="playlist-controls">
+      <label class="btn-compact btn-add" for="musicInput">➕ 揼入 MP3</label>
+      <input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="uploadMusic(event)">
+      <button class="btn-compact mode-btn active" id="btnSeq" onclick="setPlayMode('sequence')">🔁 順序播放</button>
+      <button class="btn-compact mode-btn" id="btnLoop" onclick="setPlayMode('single-loop')">🔂 單曲循環</button>
+      <button class="btn-compact mode-btn" id="btnRand" onclick="setPlayMode('random')">🔀 隨機播放</button>
+    </div>
+    <div id="musicName" style="margin: 6px 0; font-size: 13px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000;">🎵 播放中 (0/0) : 暫無音樂</div>
+    <div class="playlist-list" id="playlistDisplay"></div>
+    <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
+  </div>
+  
+  <div class="mixer-box">
     <div class="mixer-title">🎛️ 聲音 MIXER 與介面主控台</div>
-    <!-- 🎛️ 0% - 100% 介面不透明度 Slider -->
     <div class="mixer-channel">
       <label>🎛️ 介面不透明度：</label>
       <input type="range" id="volOpacity" min="0" max="1" step="0.05" value="0.45" oninput="updatePanelOpacity(this.value)">
@@ -248,7 +251,7 @@ audio { width: 100%; margin-top: 8px; border-radius: 20px; }
   <script>
     let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
     let albumMediaList = [], slideIndex = 0, slideTimer = null, isPlayingSlideshow = false, slideshowInterval = 6000;
-    let musicList = [], currentTrackIdx = 0, playMode = 'loop', pressTimer = null;
+    let musicList = [], currentTrackIdx = 0, playMode = 'sequence', pressTimer = null;
     let touchStartX = 0, touchEndX = 0;
 
     const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
@@ -264,23 +267,21 @@ audio { width: 100%; margin-top: 8px; border-radius: 20px; }
     };
     request.onsuccess = function(e) { db = e.target.result; loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); loadSavedOpacity(); loadSavedFontTheme(); initAlbumLongPress(); };
 
-// 🔤 港日字體切換功能邏輯
-function toggleFontTheme() {
-  document.body.classList.toggle('jp-font');
-  const isJp = document.body.classList.contains('jp-font');
-  showToast(isJp ? "✨ 已切換至：日系可愛字體！" : "✨ 已切換至：經典港系粗體！");
-  if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontTheme", val: isJp ? "jp" : "hk" });
-}
-
-function loadSavedFontTheme() {
-  const req = db.transaction("settings", "readonly").objectStore("settings").get("fontTheme");
-  req.onsuccess = function() {
-    if (req.result && req.result.val === "jp") {
-      document.body.classList.add('jp-font');
+    function toggleFontTheme() {
+      document.body.classList.toggle('jp-font');
+      const isJp = document.body.classList.contains('jp-font');
+      showToast(isJp ? "✨ 已切換至：日系可愛字體！" : "✨ 已切換至：經典港系粗體！");
+      if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontTheme", val: isJp ? "jp" : "hk" });
     }
-  };
-}
-    
+
+    function loadSavedFontTheme() {
+      const req = db.transaction("settings", "readonly").objectStore("settings").get("fontTheme");
+      req.onsuccess = function() {
+        if (req.result && req.result.val === "jp") {
+          document.body.classList.add('jp-font');
+        }
+      };
+    }
 
     const catSounds = [
       { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" }, { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },
@@ -306,26 +307,19 @@ function loadSavedFontTheme() {
       btn.innerHTML = `<span>${item.emoji}</span>${item.name}`;
       btn.onclick = () => playRealCatSound(item); soundGrid.appendChild(btn);
     });
-function playRealCatSound(item) {
-  if (currentCatAudio) {
-    currentCatAudio.pause();
-    currentCatAudio = null;
-  }
-  currentCatAudio = new Audio('cat' + item.file.replace('cat', ''));
-  currentCatAudio.volume = document.getElementById('volCat').value;
-  currentCatAudio.play().then(() => {
-    showToast(`${item.emoji} ${item.name}：${item.desc}`);
-  }).catch(e => {
-    currentCatAudio = new Audio(item.file);
-    currentCatAudio.volume = document.getElementById('volCat').value;
-    currentCatAudio.play().then(() => {
-      showToast(`${item.emoji} ${item.name}：${item.desc}`);
-    }).catch(err => {
-      showToast(`❌ 搵唔到音效檔：${item.file}`);
-    });
-  });
-}
-    
+    function playRealCatSound(item) {
+      if (currentCatAudio) { currentCatAudio.pause(); currentCatAudio = null; }
+      currentCatAudio = new Audio('cat' + item.file.replace('cat', ''));
+      currentCatAudio.volume = document.getElementById('volCat').value;
+      currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(e => {
+        currentCatAudio = new Audio(item.file);
+        currentCatAudio.volume = document.getElementById('volCat').value;
+        currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(err => {
+          showToast(`🐾 貓語：${item.desc}`);
+        });
+      });
+    }
+
     function uploadCustomWallpaper(event) {
       const file = event.target.files[0];
       if (file) {
@@ -346,10 +340,9 @@ function playRealCatSound(item) {
       const req = db.transaction("settings", "readonly").objectStore("settings").get("wallpaper");
       req.onsuccess = function() { if (req.result) { if (req.result.type === "custom") { document.body.style.backgroundImage = `url(${req.result.val})`; } else { document.body.style.background = req.result.val; } } };
     }
-        /* 🎛️ 不透明度 Slider 控制器邏輯 */
-      function updatePanelOpacity(val) {
+
+    function updatePanelOpacity(val) {
       document.documentElement.style.setProperty('--panel-alpha', val);
-      // 💡 當拉到 0 嗰陣，連磨砂模糊都變 0px，直情扣晒底層！
       const blurVal = (val == 0) ? '0px' : '12px';
       document.querySelectorAll('.section-title, .album-controls, .music-box, .mixer-box, .sound-btn').forEach(el => {
         el.style.backdropFilter = `blur(${blurVal})`;
@@ -375,8 +368,7 @@ function playRealCatSound(item) {
       if (currentCatAudio) currentCatAudio.volume = document.getElementById('volCat').value;
       if (currentActiveVideo) currentActiveVideo.volume = document.getElementById('volVideo').value;
     }
-      
-          /* 🎮 核心 RPG 存檔引擎 (一次打包全機相簿 + 歌單 + 設定) */
+
     function exportFullRPGSave() {
       showToast("⏳ 正在打包全機 RPG 存檔，請稍候...");
       const rpgData = { albums: [], media: [], music: [], settings: [] };
@@ -400,7 +392,8 @@ function playRealCatSound(item) {
         showToast("💾 成功下載全機 RPG 存檔！");
       };
     }
-          function importFullRPGSave(event) {
+
+    function importFullRPGSave(event) {
       const file = event.target.files[0];
       if (!file) return;
       if (!confirm("⚠️ 讀取 RPG 存檔會覆蓋現有嘅相簿同歌單，確定要繼續？")) return;
@@ -431,9 +424,8 @@ function playRealCatSound(item) {
       };
       reader.readAsText(file);
       event.target.value = "";
-          }
-      
-    
+    }
+
     let toastTimer;
     function showToast(msg) {
       const toast = document.getElementById('toast'); toast.innerText = msg; toast.style.display = 'block';
@@ -566,14 +558,24 @@ function playRealCatSound(item) {
   </script>
   <script>
     function uploadMusic(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const tx = db.transaction("music", "readwrite");
-          tx.objectStore("music").add({ name: file.name, src: e.target.result });
-          tx.oncomplete = function() { loadSavedMusic(); showToast(`🎵 成功加入歌單：${file.name}`); event.target.value = ""; };
-        }; reader.readAsDataURL(file);
+      const files = Array.from(event.target.files);
+      if (files.length > 0) {
+        let loadedCount = 0;
+        files.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const tx = db.transaction("music", "readwrite");
+            tx.objectStore("music").add({ name: file.name, src: e.target.result });
+            tx.oncomplete = function() {
+              loadedCount++;
+              if (loadedCount === files.length) {
+                loadSavedMusic();
+                showToast(`🎵 成功加入 ${files.length} 首歌！`);
+                event.target.value = "";
+              }
+            };
+          }; reader.readAsDataURL(file);
+        });
       }
     }
     function loadSavedMusic() {
@@ -596,7 +598,13 @@ function playRealCatSound(item) {
       });
       document.getElementById('musicName').innerText = `🎵 播放中 (${currentTrackIdx + 1}/${musicList.length})：${musicList[currentTrackIdx].name}`;
     }
-        // 🐾 P仔助手電台點播確認機制 (目錄指引模式)
+    function playTrack(idx) {
+      if (musicList.length === 0) return;
+      currentTrackIdx = idx;
+      const player = document.getElementById('bgPlayer');
+      player.src = musicList[currentTrackIdx].src;
+      player.play().then(() => { renderPlaylist(); updateVolumes(); }).catch(e => console.log(e));
+    }
     function confirmRadioPlay(stationName, streamUrl) {
       const ok = confirm(`🐾 P仔助手提示：\n\n我而家幫你連線播放《${stationName}》，準備好收聽未？`);
       if (ok) {
@@ -610,18 +618,6 @@ function playRealCatSound(item) {
         });
       }
     }
-              // 🛡️ 1 號台：帶有返主頁提示嘅開啟模式（自動開新視窗/分頁）
-    function confirmProxyRadioPlay(stationName, httpUrl) {
-      const ok = confirm("🐾 P仔提示：\n\n即將跳往《" + stationName + "》播放頁面。\n\n💡 點擊播放後，請點選 Chrome 頂部「分頁按鈕」或按下「返回掣」，即可輕鬆飛返《貓貓助手》主介面，背景音樂會繼續播放！");
-      if (ok) {
-        window.open(httpUrl, '_blank');
-        showToast("📻 已開啟播放視窗：" + stationName);
-        document.getElementById("musicName").innerText = "📻 網頁播放中：" + stationName;
-      }
-    }
-
-
-    // 🔗 自訂 Stream Link 即時試聽功能
     function testStreamUrl() {
       const url = document.getElementById('streamUrlInput').value.trim();
       if (!url) { showToast("⚠️ 請先貼上電台 Stream Link 呀！"); return; }
@@ -634,22 +630,20 @@ function playRealCatSound(item) {
         showToast("❌ 此 Link 無法直接播放或已被封鎖！");
       });
     }
-
     function setPlayMode(mode) {
-  playMode = mode;
-  const btnSeq = document.getElementById('btnSeq');
-  const btnLoop = document.getElementById('btnLoop');
-  const btnRand = document.getElementById('btnRand');
-  if (btnSeq) btnSeq.classList.toggle('active', mode === 'sequence');
-  if (btnLoop) btnLoop.classList.toggle('active', mode === 'single-loop');
-  if (btnRand) btnRand.classList.toggle('active', mode === 'random');
-  const modeName = mode === 'sequence' ? '順序播放' : (mode === 'single-loop' ? '單曲循環' : '隨機播放');
-  showToast(`🎵 播放模式改為：${modeName}`);
-}
-
+      playMode = mode;
+      const btnSeq = document.getElementById('btnSeq');
+      const btnLoop = document.getElementById('btnLoop');
+      const btnRand = document.getElementById('btnRand');
+      if (btnSeq) btnSeq.classList.toggle('active', mode === 'sequence');
+      if (btnLoop) btnLoop.classList.toggle('active', mode === 'single-loop');
+      if (btnRand) btnRand.classList.toggle('active', mode === 'random');
+      const modeName = mode === 'sequence' ? '順序播放' : (mode === 'single-loop' ? '單曲循環' : '隨機播放');
+      showToast(`🎵 播放模式改為：${modeName}`);
+    }
     function handleTrackEnded() {
       if (musicList.length === 0) return;
-      if (playMode === 'single') { playTrack(currentTrackIdx); } 
+      if (playMode === 'single-loop') { playTrack(currentTrackIdx); } 
       else if (playMode === 'random') { playTrack(Math.floor(Math.random() * musicList.length)); } 
       else { playTrack((currentTrackIdx + 1) % musicList.length); }
     }
@@ -661,19 +655,9 @@ function playRealCatSound(item) {
         tx.oncomplete = function() { loadSavedMusic(); showToast("🗑️ 歌曲已成功刪除！"); };
       }
     }
-        // 🎵 核心播放引擎
-    function playTrack(idx) {
-      if (musicList.length === 0) return;
-      currentTrackIdx = idx;
-      const track = musicList[currentTrackIdx];
-      const player = document.getElementById('bgPlayer');
-      player.src = track.src;
-      player.play().then(() => {
-        renderPlaylist();
-      }).catch(e => console.log("等待互動播歌"));
-    }
-    
-          function openLightboxIndex(idx) {
+
+    /* 🌟 4 號仔 100% 成功燈箱 JS 邏輯 (完全不干擾畫面滾動) */
+    function openLightboxIndex(idx) {
       if (albumMediaList.length === 0) return;
       slideIndex = idx; showSlide(slideIndex);
       const lightbox = document.getElementById('lightbox');
@@ -760,7 +744,7 @@ function playRealCatSound(item) {
   </div>
 
   <!-- ⚠️ 底部溫馨提示 -->
-    <div class="notice-card">
+  <div class="notice-card">
     <h4>⚠️ 終極溫馨提示</h4>
     <p>
       如果大家清除瀏覽器快取，相簿入面嘅相就會消失，<br>
@@ -768,8 +752,7 @@ function playRealCatSound(item) {
       所以如果想留住珍貴相簿，<br>
       請盡量唔好清除瀏覽器資料或快取啦！
     </p>
-    </div>
-  
+  </div>
 
   <!-- ©️ 專屬版權招牌 (Heidiz & Gemini P-Chan Production) -->
   <div style="text-align: center; color: rgba(255,255,255,0.85); font-size: 10px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">

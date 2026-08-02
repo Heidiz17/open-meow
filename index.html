@@ -201,17 +201,16 @@ audio { width: 100%; margin-top: 8px; border-radius: 20px; }
       <div style="font-size: 13px; font-weight: bold; color: #ffeaa7; margin-bottom: 6px;">
         📻 貓貓電台俱樂部 (Radio Club)
       </div>
-      <!-- 電台選擇按鈕 -->
+            <!-- 電台選擇按鈕 -->
       <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px;">
-        <button class="btn-compact btn-theme" onclick="playStream('https://stream.jpopsuki.tv/listen.pls')">🎸 1號：JPOPSUKI 日本台</button>
-        <button class="btn-compact btn-theme" onclick="playStream('https://smoothjazz.com/listen.pls')">🎷 2號：SMOOTHJAZZ 爵士台</button>
+        <button class="btn-compact btn-theme" onclick="confirmRadioPlay('JPOPSUKI 日本台', 'https://jpopsuki-proxy.heidiz-kung.workers.dev')">🎸 1號：JPOPSUKI 日本台</button>
+        <button class="btn-compact btn-theme" onclick="confirmRadioPlay('SMOOTHJAZZ 爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 2號：SMOOTHJAZZ 爵士台</button>
       </div>
       <!-- 自訂 Stream Link 測試輸入框 -->
       <div style="display: flex; gap: 4px;">
         <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex:1; padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-size: 12px;">
-        <button class="btn-compact btn-add" onclick="playCustomStream()">▶️ 試聽</button>
+        <button class="btn-compact btn-add" onclick="testStreamUrl()">▶️ 試聽</button>
       </div>
-    </div>
 
     <!-- 2. MP3 Jukebox 標題（緊貼下面嘅 MP3 播放視窗） -->
     <div class="section-title">

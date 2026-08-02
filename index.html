@@ -117,8 +117,8 @@
     .playlist-controls .btn-compact { padding: 5px 6px; font-size: 11px; }
     .mode-btn { background: rgba(255,255,255,0.25); color: white; border: 1px solid rgba(255,255,255,0.6); padding: 5px 6px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; flex: 1; text-align: center; }
     .mode-btn.active { background: #2d3436; color: #ffeaa7; border-color: #ffeaa7; }
-    .playlist-list { width: 100%; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 6px; margin-top: 6px; text-align: left; display: flex; flex-direction: column; gap: 4px; }
-    .track-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; font-size: 12px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); cursor: pointer; background: rgba(0,0,0,0.2); border-radius: 6px; }
+    .playlist-list { width: 100%; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; }
+    .track-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; font-size: 13px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.25); border-radius: 6px; width: 100%; box-sizing: border-box; }
     .track-item.active { background: rgba(255,255,255,0.3); color: #ffeaa7; border-radius: 4px; }
     .track-del { color: #ff7675; cursor: pointer; margin-left: 6px; padding: 2px 6px; font-weight: 900; }
     audio { width: 100%; margin-top: 6px; border-radius: 8px; height: 36px; }
@@ -223,9 +223,10 @@
 
   <div class="music-box">
     <div class="playlist-controls">
-      <label class="btn-compact btn-add" for="musicInput">➕ 揼入 MP3</label>
-      <input type="file" id="musicInput" accept="audio/*" style="display:none;" onchange="uploadMusic(event)">
-      <button class="mode-btn active" id="modeLoop" onclick="setPlayMode('loop')">🔁 順序播放</button>
+  <label class="btn-compact btn-add"><input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="importMusic(event)">➕ 揼入 MP3</label>
+  <button class="btn-compact btn-mode" id="bgPlayBtn" onclick="togglePlayPauseBgMusic()">▶️ 播放 / ⏸️ 暫停</button>
+  <button class="btn-compact btn-mode" id="playModeBtn" onclick="togglePlayMode()">🔁 順序播放</button>
+</div>
 
     <div id="musicName" style="margin: 4px 0; font-weight: bold; font-size: 12px;">（未選擇音樂）</div>
     <div class="playlist-list" id="playlistDisplay"></div>

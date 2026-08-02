@@ -179,50 +179,60 @@ audio { width: 100%; margin-top: 8px; border-radius: 20px; }
     </div>
   </div>
   <div class="media-grid" id="mediaGrid"></div>
-  
+  <!-- 🎮 貓貓助手 RPG 存檔與讀檔專區 -->
+  <div class="section-title">
+    <span>💾 貓貓助手 RPG 存檔管理 (全機數據 1 鍵 Save/Load)</span>
+    <span class="sub-tip">💡 一鍵匯出/匯入全機相片、歌單與介面設定檔，永久防丟失！</span>
+  </div>
+  <div class="save-box" style="padding: 10px; border-radius: 12px; margin-bottom: 15px; display: flex; gap: 8px;">
+    <button class="btn-compact btn-rpg-save" onclick="exportFullRPGSave()" style="background: rgba(46, 204, 113, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px;">📤 匯出 RPG Save 檔</button>
+    <label class="btn-compact btn-rpg-load" for="rpgLoadInput" style="background: rgba(155, 89, 182, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px; text-align:center;">📥 讀取 RPG Save 檔</label>
+    <input type="file" id="rpgLoadInput" accept=".json" style="display:none;" onchange="importFullRPGSave(event)">
+  </div>
+
   <div class="section-title">
     <span>🔊 30 種真貓語解密</span>
     <span class="sub-tip">💡 提示 : 即點即播，隨時聽貓貓心聲</span>
   </div>
   <div class="sound-grid" id="soundGrid"></div>
 
-    <!-- 1. 貓貓電台擺最上面 -->
-    <div class="music-box" style="background: rgba(0,0,0,0.25); border-radius: 12px; padding: 10px; margin-bottom: 12px;">
-      <div style="font-size: 13px; font-weight: bold; color: #ffeaa7; margin-bottom: 6px;">
-        📻 貓貓電台俱樂部 (Radio Club)
-      </div>
-      <!-- 電台選擇按鈕 -->
-      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px;">
-        <button class="btn-compact btn-theme" onclick="playStream('https://cast.jpopsuki.fm/stream')">🎸 1號：JPOPSUKI 日本台</button>
-        <button class="btn-compact btn-theme" onclick="playStream('https://smoothjazz.com/stream/live')">🎷 2號：SMOOTHJAZZ 爵士台</button>
-      </div>
-      <!-- 自訂 Stream Link 測試輸入框 -->
-      <div style="display: flex; gap: 4px;">
-        <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex:1; padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-size: 12px;">
-        <button class="btn-compact btn-add" onclick="playCustomStream()">▶️ 試聽</button>
-      </div>
-    </div>
-
-    <!-- 2. MP3 Jukebox 標題（緊貼下面嘅 MP3 播放視窗） -->
     <div class="section-title">
-      <span>🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
-      <span class="sub-tip">💡 提示：支援無限首自動編號與多模式循環</span>
-      <span class="sub-tip">💡 導入歌單後請 refresh 可保持最大音量</span>
+    <span>🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
+    <span class="sub-tip">💡 提示 : 支援無限首自動編號與多模式循環</span>
+    <span class="sub-tip">💡 導入歌單後請 refresh 可保持最大音量</span>
+    </div>
+  
+  <!-- 📻 貓貓電台俱樂部 (動態目錄點播區) -->
+  <div class="music-box" style="background: rgba(45, 52, 54, 0.95); margin-bottom: 10px;">
+    <div style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; text-align: left;">
+      📻 貓貓電台俱樂部 (Radio Club)
+    </div>
+    
+    <!-- 電台選擇按鈕 -->
+    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
+      <button class="btn-compact btn-theme" onclick="confirmRadioPlay('Jpopsuki 日本 J-Rock 台', 'https://jpopsuki-proxy.heidiz-kung.workers.dev')">🎸 1號：Jpopsuki 日本台</button>
+      <button class="btn-compact btn-theme" onclick="confirmRadioPlay('SmoothJazz 美國純爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 2號：SmoothJazz 爵士台</button>
     </div>
 
-    <!-- 3. MP3 播放器視窗 -->
-    <div class="music-box">
-      <div class="playlist-controls">
-        <label class="btn-compact btn-add"><input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="importMusic(event)">➕ 揼入 MP3</label>
-        <button class="btn-compact btn-mode" id="btnSeq" onclick="setPlayMode('sequence')">🔁 順序播放</button>
-        <button class="btn-compact btn-mode" id="btnLoop" onclick="setPlayMode('single-loop')">🔂 單曲循環</button>
-        <button class="btn-compact btn-mode" id="btnRand" onclick="setPlayMode('random')">🔀 隨機播放</button>
-      </div>
-      <div id="musicName" style="margin: 6px 0; font-size: 13px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000;">🎵 播放中 (0/0) : 暫無音樂</div>
-      <div class="playlist-list" id="playlistDisplay"></div>
-      <audio id="bgPlayer" controls onended="handleTrackEnded()" style="width: 100%; margin-top: 8px; border-radius: 20px;"></audio>
+    <!-- 🔗 自訂 Stream Link 測試輸入框 -->
+    <div style="display: flex; gap: 4px;">
+      <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex: 1; padding: 6px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.4); background: rgba(0,0,0,0.5); color: #fff; font-size: 11px;">
+      <button class="btn-compact btn-add" onclick="testStreamUrl()" style="background:#00b894;">▶️ 試聽</button>
     </div>
+  </div>
 
+  <div class="music-box">
+  <div class="playlist-controls">
+    <label class="btn-compact btn-add"><input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="importMusic(event)">➕ 揼入 MP3</label>
+    <button class="btn-compact btn-mode" id="btnSeq" onclick="setPlayMode('sequence')">🔁 順序播放</button>
+    <button class="btn-compact btn-mode" id="btnLoop" onclick="setPlayMode('single-loop')">🔂 單曲循環</button>
+    <button class="btn-compact btn-mode" id="btnRand" onclick="setPlayMode('random')">🔀 隨機播放</button>
+  </div>
+  <div id="musicName" style="margin: 6px 0; font-size: 13px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000;">🎵 播放中 (0/0) : 暫無音樂</div>
+  <div class="playlist-list" id="playlistDisplay"></div>
+  <audio id="bgPlayer" controls onended="handleMusicEnded()" style="width: 100%; margin-top: 8px; border-radius: 20px;"></audio>
+</div>
+  
     <div class="mixer-box">
     <div class="mixer-title">🎛️ 聲音 MIXER 與介面主控台</div>
     <!-- 🎛️ 0% - 100% 介面不透明度 Slider -->
@@ -297,26 +307,7 @@ function loadSavedFontTheme() {
       btn.innerHTML = `<span>${item.emoji}</span>${item.name}`;
       btn.onclick = () => playRealCatSound(item); soundGrid.appendChild(btn);
     });
-function playRealCatSound(item) {
-  if (currentCatAudio) {
-    currentCatAudio.pause();
-    currentCatAudio = null;
-  }
-  currentCatAudio = new Audio('cat' + item.file.replace('cat', ''));
-  currentCatAudio.volume = document.getElementById('volCat').value;
-  currentCatAudio.play().then(() => {
-    showToast(`${item.emoji} ${item.name}：${item.desc}`);
-  }).catch(e => {
-    currentCatAudio = new Audio(item.file);
-    currentCatAudio.volume = document.getElementById('volCat').value;
-    currentCatAudio.play().then(() => {
-      showToast(`${item.emoji} ${item.name}：${item.desc}`);
-    }).catch(err => {
-      showToast(`❌ 搵唔到音效檔：${item.file}`);
-    });
-  });
-}
-    
+
     function uploadCustomWallpaper(event) {
       const file = event.target.files[0];
       if (file) {
@@ -556,7 +547,7 @@ function playRealCatSound(item) {
     function deleteMedia(id) { if (confirm("確定要刪除呢個檔案？")) { const tx = db.transaction("media", "readwrite"); tx.objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
   </script>
   <script>
-    function importMusic(event) {
+    function uploadMusic(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
@@ -587,25 +578,20 @@ function playRealCatSound(item) {
       });
       document.getElementById('musicName').innerText = `🎵 播放中 (${currentTrackIdx + 1}/${musicList.length})：${musicList[currentTrackIdx].name}`;
     }
-    
-    // 📻 電台播放核心引擎
-function playStream(url) {
-  const player = document.getElementById('bgPlayer');
-  player.src = url;
-  player.play().then(() => {
-    showToast("📻 正在連線播放電台...");
-    document.getElementById('musicName').innerText = "📻 電台直播中：" + url;
-  }).catch(e => {
-    showToast("❌ 電台連線失敗，請檢查網絡或 Link 是否有效！");
-  });
-}
-
-function playCustomStream() {
-  const url = document.getElementById('streamUrlInput').value.trim();
-  if (!url) { showToast("⚠️ 請先貼上電台 Stream Link 呀！"); return; }
-  playStream(url);
-}
-
+        // 🐾 P仔助手電台點播確認機制 (目錄指引模式)
+    function confirmRadioPlay(stationName, streamUrl) {
+      const ok = confirm(`🐾 P仔助手提示：\n\n我而家幫你連線播放《${stationName}》，準備好收聽未？`);
+      if (ok) {
+        const player = document.getElementById('bgPlayer');
+        player.src = streamUrl;
+        player.play().then(() => {
+          showToast(`📻 已成功連線：${stationName}`);
+          document.getElementById('musicName').innerText = `📻 直播中：${stationName}`;
+        }).catch(e => {
+          showToast("❌ 電台連線失敗，請檢查網絡或 Link 是否有效！");
+        });
+      }
+    }
               // 🛡️ 1 號台：帶有返主頁提示嘅開啟模式（自動開新視窗/分頁）
     function confirmProxyRadioPlay(stationName, httpUrl) {
       const ok = confirm("🐾 P仔提示：\n\n即將跳往《" + stationName + "》播放頁面。\n\n💡 點擊播放後，請點選 Chrome 頂部「分頁按鈕」或按下「返回掣」，即可輕鬆飛返《貓貓助手》主介面，背景音樂會繼續播放！");
@@ -632,17 +618,15 @@ function playCustomStream() {
     }
 
     function setPlayMode(mode) {
-  playMode = mode;
-  const btnSeq = document.getElementById('btnSeq');
-  const btnLoop = document.getElementById('btnLoop');
-  const btnRand = document.getElementById('btnRand');
-  if (btnSeq) btnSeq.classList.toggle('active', mode === 'sequence');
-  if (btnLoop) btnLoop.classList.toggle('active', mode === 'single-loop');
-  if (btnRand) btnRand.classList.toggle('active', mode === 'random');
-  const modeName = mode === 'sequence' ? '順序播放' : (mode === 'single-loop' ? '單曲循環' : '隨機播放');
-  showToast(`🎵 播放模式改為：${modeName}`);
-}
-
+      playMode = mode;
+      document.getElementById('modeLoop').classList.remove('active');
+      document.getElementById('modeSingle').classList.remove('active');
+      document.getElementById('modeRandom').classList.remove('active');
+      if (mode === 'loop') document.getElementById('modeLoop').classList.add('active');
+      if (mode === 'single') document.getElementById('modeSingle').classList.add('active');
+      if (mode === 'random') document.getElementById('modeRandom').classList.add('active');
+      showToast(`🎵 播放模式改為：${mode === 'loop' ? '順序循環' : mode === 'single' ? '單曲循環' : '隨機播放'}`);
+    }
     function handleTrackEnded() {
       if (musicList.length === 0) return;
       if (playMode === 'single') { playTrack(currentTrackIdx); } 
@@ -755,27 +739,17 @@ function playCustomStream() {
     <p id="lightboxCaption"></p>
   </div>
 
-    <!-- 💾 貓貓助手 RPG 存檔管理 (移至 Mixer 下方) -->
-  <div class="section-title">
-    <span>💾 貓貓助手 RPG 存檔管理 (全機數據 1 鍵 Save/Load)</span>
-    <span class="sub-tip">💡 一鍵匯出/匯入全機相片、歌單與介面設定檔，永久防丟失！</span>
-  </div>
-  <div class="save-box" style="padding: 10px; border-radius: 12px; margin-bottom: 15px; display: flex; gap: 8px;">
-    <button class="btn-compact btn-rpg-save" onclick="exportFullRPGSave()" style="background: rgba(46, 204, 113, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px;">📤 匯出 RPG Save 檔</button>
-    <label class="btn-compact btn-rpg-load" for="rpgLoadInput" style="background: rgba(155, 89, 182, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px; text-align:center;">📥 讀取 RPG Save 檔</label>
-    <input type="file" id="rpgLoadInput" accept=".json" style="display:none;" onchange="importFullRPGSave(event)">
-  </div>
-
-  <!-- ⚠️ 終極溫馨提示 (保留原紅黃經典配色，升級全新字眼) -->
-  <div class="notice-card">
+  <!-- ⚠️ 底部溫馨提示 -->
+    <div class="notice-card">
     <h4>⚠️ 終極溫馨提示</h4>
     <p>
-      如果大家清除瀏覽器快取，相簿同歌單資料就會消失，要從頭再加過㗎喇！<br><br>
-      <b>💡 防失聯小貼士：</b><br>
-      請善用上面嘅<b>「📤 匯出 RPG Save 檔」</b>功能，定期將全機數據下載備份！<br>
-      咁樣就算清咗快取或換手機，只要<b>「📥 讀取 Save 檔」</b>就可以 1 秒完美復原所有相片同歌單啦！
+      如果大家清除瀏覽器快取，相簿入面嘅相就會消失，<br>
+      要從頭再加過㗎喇！<br><br>
+      所以如果想留住珍貴相簿，<br>
+      請盡量唔好清除瀏覽器資料或快取啦！
     </p>
-  </div>
+    </div>
+  
 
   <!-- ©️ 專屬版權招牌 (Heidiz & Gemini P-Chan Production) -->
   <div style="text-align: center; color: rgba(255,255,255,0.85); font-size: 10px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">

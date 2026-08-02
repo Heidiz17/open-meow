@@ -136,7 +136,7 @@ audio { width: 100%; margin-top: 8px; border-radius: 20px; }
     .notice-card p { margin: 0; font-size: 12px; color: #fffa65; font-weight: bold; line-height: 1.6; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
     .toast-box { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(45, 52, 54, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 900; display: none; z-index: 2000; text-align: center; max-width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     .lightbox { display: none; position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(0,0,0,0.94); z-index: 3000; justify-content: center !important; align-items: center !important; flex-direction: column; padding: 15px; box-sizing: border-box; }
-    #lightboxContent { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; margin: auto; transition: opacity 0.3s ease-in-out; }
+    #lightboxContent { width: 100vw; height: 75vh; display: flex; justify-content: center; align-items: center; margin: auto; position: absolute; top: 0; bottom: 0; left: 0; right: 0; transition: opacity 0.3s ease-in-out; }
     #lightboxContent img, #lightboxContent video { max-width: 90vw; max-height: 75vh; width: auto; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.5); }
     .lightbox-controls { display: flex; gap: 10px; align-items: center; margin-top: 8px; z-index: 3100; flex-wrap: wrap; justify-content: center; }
     .slide-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; width: 38px; height: 38px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
@@ -673,12 +673,12 @@ function playRealCatSound(item) {
       }).catch(e => console.log("等待互動播歌"));
     }
     
-        function openLightboxIndex(idx) {
+            function openLightboxIndex(idx) {
       if (albumMediaList.length === 0) return;
       slideIndex = idx; showSlide(slideIndex);
       const lightbox = document.getElementById('lightbox');
       lightbox.style.display = 'flex';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // 🌟 強制拉返去頂部置中
       
       lightbox.ontouchstart = (e) => { touchStartX = e.changedTouches[0].screenX; };
       lightbox.ontouchend = (e) => {

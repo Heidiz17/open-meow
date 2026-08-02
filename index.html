@@ -307,26 +307,7 @@ function loadSavedFontTheme() {
       btn.innerHTML = `<span>${item.emoji}</span>${item.name}`;
       btn.onclick = () => playRealCatSound(item); soundGrid.appendChild(btn);
     });
-function playRealCatSound(item) {
-  if (currentCatAudio) {
-    currentCatAudio.pause();
-    currentCatAudio = null;
-  }
-  currentCatAudio = new Audio('cat' + item.file.replace('cat', ''));
-  currentCatAudio.volume = document.getElementById('volCat').value;
-  currentCatAudio.play().then(() => {
-    showToast(`${item.emoji} ${item.name}：${item.desc}`);
-  }).catch(e => {
-    currentCatAudio = new Audio(item.file);
-    currentCatAudio.volume = document.getElementById('volCat').value;
-    currentCatAudio.play().then(() => {
-      showToast(`${item.emoji} ${item.name}：${item.desc}`);
-    }).catch(err => {
-      showToast(`❌ 搵唔到音效檔：${item.file}`);
-    });
-  });
-}
-    
+
     function uploadCustomWallpaper(event) {
       const file = event.target.files[0];
       if (file) {

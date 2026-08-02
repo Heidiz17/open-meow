@@ -112,16 +112,16 @@
     .media-grid.four-cols { grid-template-columns: repeat(4, 1fr); gap: 5px; }
     .media-grid.four-cols .media-card img, .media-grid.four-cols .media-card video { height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
     .media-grid.four-cols .media-card p { font-size: 10px; margin: 2px 0 1px; }
-    .music-box { background: rgba(116, 185, 255, 0.95); backdrop-filter: blur(8px); color: white; padding: 10px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4); text-align: center; width: 100%; }
-    .playlist-controls { display: flex; gap: 4px; justify-content: space-between; align-items: center; flex-wrap: nowrap; margin-bottom: 6px; }
-    .playlist-controls .btn-compact { padding: 5px 6px; font-size: 11px; }
-    .mode-btn { background: rgba(255,255,255,0.25); color: white; border: 1px solid rgba(255,255,255,0.6); padding: 5px 6px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; flex: 1; text-align: center; }
-    .mode-btn.active { background: #2d3436; color: #ffeaa7; border-color: #ffeaa7; }
-    .playlist-list { max-height: 100px; overflow-y: auto; background: rgba(0,0,0,0.15); border-radius: 8px; padding: 4px; margin-top: 4px; text-align: left; }
-    .track-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; font-size: 11px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
-    .track-item.active { background: rgba(255,255,255,0.3); color: #ffeaa7; border-radius: 4px; }
-    .track-del { color: #ff7675; cursor: pointer; margin-left: 6px; padding: 2px 6px; font-weight: 900; }
-    audio { width: 100%; margin-top: 6px; border-radius: 8px; height: 36px; }
+    .music-box { background: rgba(0, 40, 80, 0.4); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 10px; margin-top: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+.playlist-controls { display: flex; flex-wrap: nowrap; gap: 4px; overflow-x: auto; padding-bottom: 4px; }
+.playlist-controls .btn-compact { padding: 5px 8px; font-size: 11px; white-space: nowrap; flex: 1; text-align: center; }
+.mode-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; cursor: pointer; }
+.mode-btn.active { background: #2d3436; color: #ffeaa7; border-color: #ffeaa7; }
+.playlist-list { width: 100%; background: rgba(0, 0, 0, 0.25); border-radius: 8px; padding: 6px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; }
+.track-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; font-size: 12px; font-weight: bold; color: #fff; background: rgba(255, 255, 255, 0.1); border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1); }
+.track-item.active { background: rgba(0, 150, 255, 0.3); border-color: rgba(0, 200, 255, 0.6); }
+.track-del { color: #ff7675; cursor: pointer; font-weight: bold; margin-left: 8px; }
+audio { width: 100%; margin-top: 8px; border-radius: 20px; }
     .mixer-box { background: rgba(45, 52, 54, 0.95); backdrop-filter: blur(10px); color: white; padding: 12px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 5px 12px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2); width: 100%; }
     .mixer-title { font-size: 15px; color: #ffeaa7; font-style: italic; margin-bottom: 8px; font-weight: 800; text-align: center; letter-spacing: 1px; }
     .mixer-channel { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; gap: 8px; }
@@ -196,42 +196,43 @@
   </div>
   <div class="sound-grid" id="soundGrid"></div>
 
+    <!-- 1. 貓貓電台擺最上面 -->
+    <div class="music-box" style="background: rgba(0,0,0,0.25); border-radius: 12px; padding: 10px; margin-bottom: 12px;">
+      <div style="font-size: 13px; font-weight: bold; color: #ffeaa7; margin-bottom: 6px;">
+        📻 貓貓電台俱樂部 (Radio Club)
+      </div>
+      <!-- 電台選擇按鈕 -->
+      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px;">
+        <button class="btn-compact btn-theme" onclick="playStream('https://stream.jpopsuki.tv/listen.pls')">🎸 1號：JPOPSUKI 日本台</button>
+        <button class="btn-compact btn-theme" onclick="playStream('https://smoothjazz.com/listen.pls')">🎷 2號：SMOOTHJAZZ 爵士台</button>
+      </div>
+      <!-- 自訂 Stream Link 測試輸入框 -->
+      <div style="display: flex; gap: 4px;">
+        <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex:1; padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-size: 12px;">
+        <button class="btn-compact btn-add" onclick="playCustomStream()">▶️ 試聽</button>
+      </div>
+    </div>
+
+    <!-- 2. MP3 Jukebox 標題（緊貼下面嘅 MP3 播放視窗） -->
     <div class="section-title">
-    <span>🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
-    <span class="sub-tip">💡 提示 : 支援無限首自動編號與多模式循環</span>
-    <span class="sub-tip">💡 導入歌單後請 refresh 可保持最大音量</span>
-    </div>
-  
-  <!-- 📻 貓貓電台俱樂部 (動態目錄點播區) -->
-  <div class="music-box" style="background: rgba(45, 52, 54, 0.95); margin-bottom: 10px;">
-    <div style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; text-align: left;">
-      📻 貓貓電台俱樂部 (Radio Club)
-    </div>
-    
-    <!-- 電台選擇按鈕 -->
-    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
-      <button class="btn-compact btn-theme" onclick="confirmRadioPlay('Jpopsuki 日本 J-Rock 台', 'https://jpopsuki-proxy.heidiz-kung.workers.dev')">🎸 1號：Jpopsuki 日本台</button>
-      <button class="btn-compact btn-theme" onclick="confirmRadioPlay('SmoothJazz 美國純爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 2號：SmoothJazz 爵士台</button>
+      <span>🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
+      <span class="sub-tip">💡 提示：支援無限首自動編號與多模式循環</span>
+      <span class="sub-tip">💡 導入歌單後請 refresh 可保持最大音量</span>
     </div>
 
-    <!-- 🔗 自訂 Stream Link 測試輸入框 -->
-    <div style="display: flex; gap: 4px;">
-      <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex: 1; padding: 6px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.4); background: rgba(0,0,0,0.5); color: #fff; font-size: 11px;">
-      <button class="btn-compact btn-add" onclick="testStreamUrl()" style="background:#00b894;">▶️ 試聽</button>
+    <!-- 3. MP3 播放器視窗 -->
+    <div class="music-box">
+      <div class="playlist-controls">
+        <label class="btn-compact btn-add"><input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="importMusic(event)">➕ 揼入 MP3</label>
+        <button class="btn-compact btn-mode" id="btnSeq" onclick="setPlayMode('sequence')">🔁 順序播放</button>
+        <button class="btn-compact btn-mode" id="btnLoop" onclick="setPlayMode('single-loop')">🔂 單曲循環</button>
+        <button class="btn-compact btn-mode" id="btnRand" onclick="setPlayMode('random')">🔀 隨機播放</button>
+      </div>
+      <div id="musicName" style="margin: 6px 0; font-size: 13px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000;">🎵 播放中 (0/0) : 暫無音樂</div>
+      <div class="playlist-list" id="playlistDisplay"></div>
+      <audio id="bgPlayer" controls onended="handleTrackEnded()" style="width: 100%; margin-top: 8px; border-radius: 20px;"></audio>
     </div>
-  </div>
 
-  <div class="music-box">
-    <div class="playlist-controls">
-      <label class="btn-compact btn-add" for="musicInput">➕ 揼入 MP3</label>
-      <input type="file" id="musicInput" accept="audio/*" style="display:none;" onchange="uploadMusic(event)">
-      <button class="mode-btn active" id="modeLoop" onclick="setPlayMode('loop')">🔁 順序播放</button>
-
-    <div id="musicName" style="margin: 4px 0; font-weight: bold; font-size: 12px;">（未選擇音樂）</div>
-    <div class="playlist-list" id="playlistDisplay"></div>
-    <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
-  </div>
-  
     <div class="mixer-box">
     <div class="mixer-title">🎛️ 聲音 MIXER 與介面主控台</div>
     <!-- 🎛️ 0% - 100% 介面不透明度 Slider -->
@@ -306,7 +307,26 @@ function loadSavedFontTheme() {
       btn.innerHTML = `<span>${item.emoji}</span>${item.name}`;
       btn.onclick = () => playRealCatSound(item); soundGrid.appendChild(btn);
     });
-
+function playRealCatSound(item) {
+  if (currentCatAudio) {
+    currentCatAudio.pause();
+    currentCatAudio = null;
+  }
+  currentCatAudio = new Audio('cat' + item.file.replace('cat', ''));
+  currentCatAudio.volume = document.getElementById('volCat').value;
+  currentCatAudio.play().then(() => {
+    showToast(`${item.emoji} ${item.name}：${item.desc}`);
+  }).catch(e => {
+    currentCatAudio = new Audio(item.file);
+    currentCatAudio.volume = document.getElementById('volCat').value;
+    currentCatAudio.play().then(() => {
+      showToast(`${item.emoji} ${item.name}：${item.desc}`);
+    }).catch(err => {
+      showToast(`❌ 搵唔到音效檔：${item.file}`);
+    });
+  });
+}
+    
     function uploadCustomWallpaper(event) {
       const file = event.target.files[0];
       if (file) {
@@ -617,15 +637,17 @@ function loadSavedFontTheme() {
     }
 
     function setPlayMode(mode) {
-      playMode = mode;
-      document.getElementById('modeLoop').classList.remove('active');
-      document.getElementById('modeSingle').classList.remove('active');
-      document.getElementById('modeRandom').classList.remove('active');
-      if (mode === 'loop') document.getElementById('modeLoop').classList.add('active');
-      if (mode === 'single') document.getElementById('modeSingle').classList.add('active');
-      if (mode === 'random') document.getElementById('modeRandom').classList.add('active');
-      showToast(`🎵 播放模式改為：${mode === 'loop' ? '順序循環' : mode === 'single' ? '單曲循環' : '隨機播放'}`);
-    }
+  playMode = mode;
+  const btnSeq = document.getElementById('btnSeq');
+  const btnLoop = document.getElementById('btnLoop');
+  const btnRand = document.getElementById('btnRand');
+  if (btnSeq) btnSeq.classList.toggle('active', mode === 'sequence');
+  if (btnLoop) btnLoop.classList.toggle('active', mode === 'single-loop');
+  if (btnRand) btnRand.classList.toggle('active', mode === 'random');
+  const modeName = mode === 'sequence' ? '順序播放' : (mode === 'single-loop' ? '單曲循環' : '隨機播放');
+  showToast(`🎵 播放模式改為：${modeName}`);
+}
+
     function handleTrackEnded() {
       if (musicList.length === 0) return;
       if (playMode === 'single') { playTrack(currentTrackIdx); } 

@@ -222,16 +222,16 @@
   </div>
 
   <div class="music-box">
-    <div class="playlist-controls">
-  <label class="btn-compact btn-add"><input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="importMusic(event)">➕ 揼入 MP3</label>
-  <button class="btn-compact btn-mode" id="bgPlayBtn" onclick="togglePlayPauseBgMusic()">▶️ 播放 / ⏸️ 暫停</button>
-  <button class="btn-compact btn-mode" id="playModeBtn" onclick="togglePlayMode()">🔁 順序播放</button>
-</div>
-
-    <div id="musicName" style="margin: 4px 0; font-weight: bold; font-size: 12px;">（未選擇音樂）</div>
-    <div class="playlist-list" id="playlistDisplay"></div>
-    <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
+  <div class="playlist-controls">
+    <label class="btn-compact btn-add"><input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="importMusic(event)">➕ 揼入 MP3</label>
+    <button class="btn-compact btn-mode" id="btnSeq" onclick="setPlayMode('sequence')">🔁 順序播放</button>
+    <button class="btn-compact btn-mode" id="btnLoop" onclick="setPlayMode('single-loop')">🔂 單曲循環</button>
+    <button class="btn-compact btn-mode" id="btnRand" onclick="setPlayMode('random')">🔀 隨機播放</button>
   </div>
+  <div id="musicName" style="margin: 6px 0; font-size: 13px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000;">🎵 播放中 (0/0) : 暫無音樂</div>
+  <div class="playlist-list" id="playlistDisplay"></div>
+  <audio id="bgPlayer" controls onended="handleMusicEnded()" style="width: 100%; margin-top: 8px; border-radius: 20px;"></audio>
+</div>
   
     <div class="mixer-box">
     <div class="mixer-title">🎛️ 聲音 MIXER 與介面主控台</div>

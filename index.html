@@ -196,43 +196,43 @@ audio { width: 100%; margin-top: 8px; border-radius: 20px; }
   </div>
   <div class="sound-grid" id="soundGrid"></div>
 
+    <!-- 1. 貓貓電台擺最上面 -->
+    <div class="music-box" style="background: rgba(0,0,0,0.25); border-radius: 12px; padding: 10px; margin-bottom: 12px;">
+      <div style="font-size: 13px; font-weight: bold; color: #ffeaa7; margin-bottom: 6px;">
+        📻 貓貓電台俱樂部 (Radio Club)
+      </div>
+      <!-- 電台選擇按鈕 -->
+      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px;">
+        <button class="btn-compact btn-theme" onclick="playStream('https://stream.jpopsuki.tv/listen.pls')">🎸 1號：JPOPSUKI 日本台</button>
+        <button class="btn-compact btn-theme" onclick="playStream('https://smoothjazz.com/listen.pls')">🎷 2號：SMOOTHJAZZ 爵士台</button>
+      </div>
+      <!-- 自訂 Stream Link 測試輸入框 -->
+      <div style="display: flex; gap: 4px;">
+        <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex:1; padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-size: 12px;">
+        <button class="btn-compact btn-add" onclick="playCustomStream()">▶️ 試聽</button>
+      </div>
+    </div>
+
+    <!-- 2. MP3 Jukebox 標題（緊貼下面嘅 MP3 播放視窗） -->
     <div class="section-title">
-    <span>🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
-    <span class="sub-tip">💡 提示 : 支援無限首自動編號與多模式循環</span>
-    <span class="sub-tip">💡 導入歌單後請 refresh 可保持最大音量</span>
-    </div>
-  
-  <!-- 📻 貓貓電台俱樂部 (動態目錄點播區) -->
-  <div class="music-box" style="background: rgba(45, 52, 54, 0.95); margin-bottom: 10px;">
-    <div style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; text-align: left;">
-      📻 貓貓電台俱樂部 (Radio Club)
-    </div>
-    
-    <!-- 電台選擇按鈕 -->
-    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
-      <button class="btn-compact btn-theme" onclick="confirmRadioPlay('Jpopsuki 日本 J-Rock 台', 'https://jpopsuki-proxy.heidiz-kung.workers.dev')">🎸 1號：Jpopsuki 日本台</button>
-      <button class="btn-compact btn-theme" onclick="confirmRadioPlay('SmoothJazz 美國純爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 2號：SmoothJazz 爵士台</button>
+      <span>🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
+      <span class="sub-tip">💡 提示：支援無限首自動編號與多模式循環</span>
+      <span class="sub-tip">💡 導入歌單後請 refresh 可保持最大音量</span>
     </div>
 
-    <!-- 🔗 自訂 Stream Link 測試輸入框 -->
-    <div style="display: flex; gap: 4px;">
-      <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex: 1; padding: 6px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.4); background: rgba(0,0,0,0.5); color: #fff; font-size: 11px;">
-      <button class="btn-compact btn-add" onclick="testStreamUrl()" style="background:#00b894;">▶️ 試聽</button>
+    <!-- 3. MP3 播放器視窗 -->
+    <div class="music-box">
+      <div class="playlist-controls">
+        <label class="btn-compact btn-add"><input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="importMusic(event)">➕ 揼入 MP3</label>
+        <button class="btn-compact btn-mode" id="btnSeq" onclick="setPlayMode('sequence')">🔁 順序播放</button>
+        <button class="btn-compact btn-mode" id="btnLoop" onclick="setPlayMode('single-loop')">🔂 單曲循環</button>
+        <button class="btn-compact btn-mode" id="btnRand" onclick="setPlayMode('random')">🔀 隨機播放</button>
+      </div>
+      <div id="musicName" style="margin: 6px 0; font-size: 13px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000;">🎵 播放中 (0/0) : 暫無音樂</div>
+      <div class="playlist-list" id="playlistDisplay"></div>
+      <audio id="bgPlayer" controls onended="handleTrackEnded()" style="width: 100%; margin-top: 8px; border-radius: 20px;"></audio>
     </div>
-  </div>
 
-  <div class="music-box">
-  <div class="playlist-controls">
-    <label class="btn-compact btn-add"><input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="importMusic(event)">➕ 揼入 MP3</label>
-    <button class="btn-compact btn-mode" id="btnSeq" onclick="setPlayMode('sequence')">🔁 順序播放</button>
-    <button class="btn-compact btn-mode" id="btnLoop" onclick="setPlayMode('single-loop')">🔂 單曲循環</button>
-    <button class="btn-compact btn-mode" id="btnRand" onclick="setPlayMode('random')">🔀 隨機播放</button>
-  </div>
-  <div id="musicName" style="margin: 6px 0; font-size: 13px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000;">🎵 播放中 (0/0) : 暫無音樂</div>
-  <div class="playlist-list" id="playlistDisplay"></div>
-  <audio id="bgPlayer" controls onended="handleMusicEnded()" style="width: 100%; margin-top: 8px; border-radius: 20px;"></audio>
-</div>
-  
     <div class="mixer-box">
     <div class="mixer-title">🎛️ 聲音 MIXER 與介面主控台</div>
     <!-- 🎛️ 0% - 100% 介面不透明度 Slider -->

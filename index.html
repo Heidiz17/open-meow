@@ -587,20 +587,25 @@ function playRealCatSound(item) {
       });
       document.getElementById('musicName').innerText = `🎵 播放中 (${currentTrackIdx + 1}/${musicList.length})：${musicList[currentTrackIdx].name}`;
     }
-        // 🐾 P仔助手電台點播確認機制 (目錄指引模式)
-    function confirmRadioPlay(stationName, streamUrl) {
-      const ok = confirm(`🐾 P仔助手提示：\n\n我而家幫你連線播放《${stationName}》，準備好收聽未？`);
-      if (ok) {
-        const player = document.getElementById('bgPlayer');
-        player.src = streamUrl;
-        player.play().then(() => {
-          showToast(`📻 已成功連線：${stationName}`);
-          document.getElementById('musicName').innerText = `📻 直播中：${stationName}`;
-        }).catch(e => {
-          showToast("❌ 電台連線失敗，請檢查網絡或 Link 是否有效！");
-        });
-      }
-    }
+    
+    // 📻 電台播放核心引擎
+function playStream(url) {
+  const player = document.getElementById('bgPlayer');
+  player.src = url;
+  player.play().then(() => {
+    showToast("📻 正在連線播放電台...");
+    document.getElementById('musicName').innerText = "📻 電台直播中：" + url;
+  }).catch(e => {
+    showToast("❌ 電台連線失敗，請檢查網絡或 Link 是否有效！");
+  });
+}
+
+function playCustomStream() {
+  const url = document.getElementById('streamUrlInput').value.trim();
+  if (!url) { showToast("⚠️ 請先貼上電台 Stream Link 呀！"); return; }
+  playStream(url);
+}
+
               // 🛡️ 1 號台：帶有返主頁提示嘅開啟模式（自動開新視窗/分頁）
     function confirmProxyRadioPlay(stationName, httpUrl) {
       const ok = confirm("🐾 P仔提示：\n\n即將跳往《" + stationName + "》播放頁面。\n\n💡 點擊播放後，請點選 Chrome 頂部「分頁按鈕」或按下「返回掣」，即可輕鬆飛返《貓貓助手》主介面，背景音樂會繼續播放！");

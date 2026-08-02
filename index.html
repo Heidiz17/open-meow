@@ -556,7 +556,7 @@ function playRealCatSound(item) {
     function deleteMedia(id) { if (confirm("確定要刪除呢個檔案？")) { const tx = db.transaction("media", "readwrite"); tx.objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
   </script>
   <script>
-    function uploadMusic(event) {
+    function importMusic(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();

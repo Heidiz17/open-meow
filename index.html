@@ -528,18 +528,24 @@ function loadSavedFontTheme() {
         });
       }
     }
-      // 🛡️ 1 號台：開啟微型瀏覽器視窗（既合規，又細粒唔阻眼！）
+          // 🛡️ 1 號台：彈出右下角極致迷你視窗（完全唔遮介面！）
     function confirmProxyRadioPlay(stationName, httpUrl) {
-      const ok = confirm(`🐾 P仔提示：\n\n即將為閣下開啟《${stationName}》之微型播放視窗。\n是否立即前往？`);
+      const ok = confirm("🐾 P仔提示：即將開啟右下角微型播放視窗，是否繼續？");
       if (ok) {
-        // 設定為微型視窗：闊 300px, 高 160px，並置中或靠邊開出
+        // 設定微型視窗尺寸
+        const winWidth = 260;
+        const winHeight = 110;
+        // 動態計算右下角座標
+        const winLeft = (screen.width || 1000) - winWidth;
+        const winTop = (screen.height || 800) - winHeight;
+        
         window.open(
           httpUrl, 
-          'JpopsukiMiniWin', 
-          'width=300,height=160,top=100,left=100,toolbar=no,menubar=no,scrollbars=no,resizable=yes'
+          'JpopsukiTinyWin', 
+          'width=' + winWidth + ',height=' + winHeight + ',top=' + winTop + ',left=' + winLeft + ',toolbar=no,menubar=no,scrollbars=no,resizable=yes'
         );
-        showToast(`📻 已開啟微型播放視窗：${stationName}`);
-        document.getElementById('musicName').innerText = `📻 視窗播放中：${stationName}`;
+        showToast("📻 已開啟右下角微型視窗：" + stationName);
+        document.getElementById('musicName').innerText = "📻 視窗播放中：" + stationName;
       }
     }
 

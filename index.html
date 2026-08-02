@@ -158,18 +158,6 @@
       <button class="btn-font-toggle" onclick="toggleFontTheme()">🔤 港/日</button>
       </div>
   </div>
-
-    <!-- 🎮 貓貓助手 RPG 存檔與讀檔專區 -->
-  <div class="section-title">
-    <span>💾 貓貓助手 RPG 存檔管理 (全機數據 1 鍵 Save/Load)</span>
-    <span class="sub-tip">💡 一鍵匯出/匯入全機相片、歌單與介面設定檔，永久防丟失！</span>
-  </div>
-  <div class="save-box" style="padding: 10px; border-radius: 12px; margin-bottom: 15px; display: flex; gap: 8px;">
-    <button class="btn-compact btn-rpg-save" onclick="exportFullRPGSave()" style="background: rgba(46, 204, 113, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px;">📤 匯出 RPG Save 檔</button>
-    <label class="btn-compact btn-rpg-load" for="rpgLoadInput" style="background: rgba(155, 89, 182, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px; text-align:center;">📥 讀取 RPG Save 檔</label>
-    <input type="file" id="rpgLoadInput" accept=".json" style="display:none;" onchange="importFullRPGSave(event)">
-  </div>
-
   <div class="section-title">
     <span>🖼️ 貓貓專屬多媒體相簿</span>
     <span class="sub-tip">💡 提示：長按下拉選單改名 | 支援 ◀ ▶ 左右調動相簿排位！</span>
@@ -191,6 +179,16 @@
     </div>
   </div>
   <div class="media-grid" id="mediaGrid"></div>
+  <!-- 🎮 貓貓助手 RPG 存檔與讀檔專區 -->
+  <div class="section-title">
+    <span>💾 貓貓助手 RPG 存檔管理 (全機數據 1 鍵 Save/Load)</span>
+    <span class="sub-tip">💡 一鍵匯出/匯入全機相片、歌單與介面設定檔，永久防丟失！</span>
+  </div>
+  <div class="save-box" style="padding: 10px; border-radius: 12px; margin-bottom: 15px; display: flex; gap: 8px;">
+    <button class="btn-compact btn-rpg-save" onclick="exportFullRPGSave()" style="background: rgba(46, 204, 113, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px;">📤 匯出 RPG Save 檔</button>
+    <label class="btn-compact btn-rpg-load" for="rpgLoadInput" style="background: rgba(155, 89, 182, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px; text-align:center;">📥 讀取 RPG Save 檔</label>
+    <input type="file" id="rpgLoadInput" accept=".json" style="display:none;" onchange="importFullRPGSave(event)">
+  </div>
 
   <div class="section-title">
     <span>🔊 30 種真貓語解密</span>

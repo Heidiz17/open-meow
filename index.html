@@ -673,11 +673,12 @@ function playRealCatSound(item) {
       }).catch(e => console.log("等待互動播歌"));
     }
     
-    function openLightboxIndex(idx) {
+        function openLightboxIndex(idx) {
       if (albumMediaList.length === 0) return;
       slideIndex = idx; showSlide(slideIndex);
       const lightbox = document.getElementById('lightbox');
       lightbox.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       
       lightbox.ontouchstart = (e) => { touchStartX = e.changedTouches[0].screenX; };
       lightbox.ontouchend = (e) => {
@@ -687,6 +688,7 @@ function playRealCatSound(item) {
         if (touchEndX > touchStartX + threshold) prevSlide();
       };
     }
+
     function showSlide(idx) {
       if (albumMediaList.length === 0) return;
       if (idx >= albumMediaList.length) slideIndex = 0;

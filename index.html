@@ -358,11 +358,65 @@ function loadSavedFontTheme() {
       if (currentCatAudio) currentCatAudio.volume = document.getElementById('volCat').value;
       if (currentActiveVideo) currentActiveVideo.volume = document.getElementById('volVideo').value;
     }
-    function playRealCatSound(item) {
-      if (currentCatAudio) { currentCatAudio.pause(); }
-      currentCatAudio = new Audio(item.file); currentCatAudio.volume = document.getElementById('volCat').value;
-      currentCatAudio.play().catch(e => console.log(e)); showToast(`🐾 貓語：${item.desc}`);
+      
+          /* 🎮 核心 RPG 存檔引擎 (一次打包全機相簿 + 歌單 + 設定) */
+    function exportFullRPGSave() {
+      showToast("⏳ 正在打包全機 RPG 存檔，請稍候...");
+      const rpgData = { albums: [], media: [], music: [], settings: [] };
+      const tx = db.transaction(["albums", "media", "music", "settings"], "readonly");
+      
+      tx.objectStore("albums").getAll().onsuccess = (e) => { rpgData.albums = e.target.result; };
+      tx.objectStore("media").getAll().onsuccess = (e) => { rpgData.media = e.target.result; };
+      tx.objectStore("music").getAll().onsuccess = (e) => { rpgData.music = e.target.result; };
+      tx.objectStore("settings").getAll().onsuccess = (e) => { rpgData.settings = e.target.result; };
+
+      tx.oncomplete = function() {
+        const jsonStr = JSON.stringify(rpgData);
+        const blob = new Blob([jsonStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const dateStr = new Date().toISOString().slice(0,10);
+        a.href = url;
+        a.download = `Meow_RPG_Save_${dateStr}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("💾 成功下載全機 RPG 存檔！");
+      };
     }
+          function importFullRPGSave(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (!confirm("⚠️ 讀取 RPG 存檔會覆蓋現有嘅相簿同歌單，確定要繼續？")) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const rpgData = JSON.parse(e.target.result);
+          const tx = db.transaction(["albums", "media", "music", "settings"], "readwrite");
+          
+          tx.objectStore("albums").clear();
+          tx.objectStore("media").clear();
+          tx.objectStore("music").clear();
+          tx.objectStore("settings").clear();
+
+          if (rpgData.albums) rpgData.albums.forEach(item => tx.objectStore("albums").add(item));
+          if (rpgData.media) rpgData.media.forEach(item => tx.objectStore("media").add(item));
+          if (rpgData.music) rpgData.music.forEach(item => tx.objectStore("music").add(item));
+          if (rpgData.settings) rpgData.settings.forEach(item => tx.objectStore("settings").add(item));
+
+          tx.oncomplete = function() {
+            showToast("🎉 全機 RPG 讀檔成功！即將刷新介面...");
+            setTimeout(() => { location.reload(); }, 1500);
+          };
+        } catch (err) {
+          alert("❌ 存檔格式錯誤，請確保揀選正確嘅 .json Save 檔！");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+          }
+      
+    
     let toastTimer;
     function showToast(msg) {
       const toast = document.getElementById('toast'); toast.innerText = msg; toast.style.display = 'block';

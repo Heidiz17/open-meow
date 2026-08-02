@@ -528,26 +528,34 @@ function loadSavedFontTheme() {
         });
       }
     }
-          // 🛡️ 1 號台：彈出右下角極致迷你視窗（完全唔遮介面！）
+      // 🛡️ 1 號台：真正的網頁內置「畫中畫」懸浮微型視窗
     function confirmProxyRadioPlay(stationName, httpUrl) {
-      const ok = confirm("🐾 P仔提示：即將開啟右下角微型播放視窗，是否繼續？");
+      const ok = confirm("🐾 P仔提示：即將開啟右下角畫中畫微型播放器，是否繼續？");
       if (ok) {
-        // 設定微型視窗尺寸
-        const winWidth = 260;
-        const winHeight = 110;
-        // 動態計算右下角座標
-        const winLeft = (screen.width || 1000) - winWidth;
-        const winTop = (screen.height || 800) - winHeight;
-        
-        window.open(
-          httpUrl, 
-          'JpopsukiTinyWin', 
-          'width=' + winWidth + ',height=' + winHeight + ',top=' + winTop + ',left=' + winLeft + ',toolbar=no,menubar=no,scrollbars=no,resizable=yes'
-        );
-        showToast("📻 已開啟右下角微型視窗：" + stationName);
-        document.getElementById('musicName').innerText = "📻 視窗播放中：" + stationName;
+        // 檢查是否已經存在 PIP 視窗，有就先移除
+        let oldPip = document.getElementById("pipRadioBox");
+        if (oldPip) oldPip.remove();
+
+        // 建立右下角懸浮畫中畫容器
+        const pipBox = document.createElement("div");
+        pipBox.id = "pipRadioBox";
+        pipBox.style.cssText = "position:fixed; bottom:15px; right:15px; width:260px; height:90px; background:#111; border:2px solid #ff0; border-radius:12px; z-index:999999; box-shadow:0 4px 15px rgba(0,0,0,0.5); overflow:hidden; font-family:sans-serif;";
+
+        // 內嵌頂部列與 iframe 播放器
+        pipBox.innerHTML = `
+          <div style="background:#222; color:#fff; padding:3px 8px; font-size:11px; display:flex; justify-content:space-between; align-items:center;">
+            <span>📻 畫中畫直播：${stationName}</span>
+            <button onclick="document.getElementById('pipRadioBox').remove()" style="background:#f44336; color:#fff; border:none; border-radius:4px; padding:1px 6px; cursor:pointer; font-size:11px;">✕ 關閉</button>
+          </div>
+          <iframe src="${httpUrl}" style="width:100%; height:60px; border:none; background:#000;"></iframe>
+        `;
+
+        document.body.appendChild(pipBox);
+        showToast("📻 已開啟畫中畫播放器：" + stationName);
+        document.getElementById("musicName").innerText = "📻 畫中畫播放中：" + stationName;
       }
     }
+
 
     // 🔗 自訂 Stream Link 即時試聽功能
     function testStreamUrl() {

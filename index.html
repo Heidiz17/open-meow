@@ -528,7 +528,7 @@ function loadSavedFontTheme() {
         });
       }
     }
-    // 🛡️ 1 號台專用：CORS 代理加密破解 + 商業免責確認
+  // 🛡️ 1 號台專用：CORS 代理加密破解 + 直接在原裝 Player 播放
     function confirmProxyRadioPlay(stationName, httpUrl) {
       const ok = confirm(`🛡️ 【免責聲明與自主連線】\n\n本 App 僅提供中立播放工具。確認連線代表閣下同意經由安全通道存取公開網絡《${stationName}》，版權歸原作者所有。\n\n是否立即播放？`);
       if (ok) {
@@ -543,6 +543,7 @@ function loadSavedFontTheme() {
         });
       }
     }
+
     
     // 🔗 自訂 Stream Link 即時試聽功能
     function testStreamUrl() {
@@ -582,6 +583,18 @@ function loadSavedFontTheme() {
         tx.oncomplete = function() { loadSavedMusic(); showToast("🗑️ 歌曲已成功刪除！"); };
       }
     }
+        // 🎵 核心播放引擎
+    function playTrack(idx) {
+      if (musicList.length === 0) return;
+      currentTrackIdx = idx;
+      const track = musicList[currentTrackIdx];
+      const player = document.getElementById('bgPlayer');
+      player.src = track.src;
+      player.play().then(() => {
+        renderPlaylist();
+      }).catch(e => console.log("等待互動播歌"));
+    }
+    
     function openLightboxIndex(idx) {
       if (albumMediaList.length === 0) return;
       slideIndex = idx; showSlide(slideIndex);

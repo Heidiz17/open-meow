@@ -3,121 +3,486 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🐾 Open 貓貓 - 獨立 Web App 版</title>
+  <title>🐾 OPEN 貓貓助手 - Heidiz & Gemini P-Chan Production</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#2d3436">
+  <meta name="theme-color" content="#f7d794">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --panel-rgb: 9, 132, 227;
+      --panel-alpha: 0.45;
+    }
+
+    * { box-sizing: border-box; font-family: 'Arial Black', Impact, system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    
+    body.jp-font, body.jp-font * {
+      font-family: 'Zen Maru Gothic', 'Comic Sans MS', cursive, sans-serif !important;
+      font-style: normal !important;
+    }
+
+    /* ☕ 專屬深朱古力啡 (Warm Deep Brown) 輕量霧化光暈 - 絕唔遮背景 */
     body { 
-      background-color: #f7f9fc; background-size: cover; background-position: center; background-attachment: fixed;
-      color: #333; margin: 0; padding: 12px; padding-bottom: 90px; transition: background 0.3s ease; user-select: none;
+      background-size: cover !important; 
+      background-position: center !important; 
+      background-repeat: no-repeat !important; 
+      background-attachment: fixed !important;
+      color: #ffffff; 
+      margin: 0; padding: 12px; padding-bottom: 90px; 
+      transition: background 0.3s ease; user-select: none;
+      text-shadow: 0px 0px 4px rgba(44, 24, 16, 0.9), 0px 1px 2px rgba(0, 0, 0, 0.6);
     }
-    .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
-    h1 { color: #ff6b6b; font-size: 24px; margin: 0; text-shadow: 1px 2px 4px rgba(0,0,0,0.15); }
-    .wallpaper-btn-group { display: flex; gap: 6px; }
-    .section-title { 
-      font-size: 17px; color: #2d3436; border-left: 5px solid #ff6b6b; padding-left: 8px; 
-      margin: 15px 0 10px; font-weight: bold; background: rgba(255,255,255,0.85); backdrop-filter: blur(5px); 
-      border-radius: 0 10px 10px 0; display: inline-block; padding-right: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+
+    .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+    
+    h1 { 
+      font-size: 26px; font-weight: 900; font-style: italic; margin: 0; letter-spacing: 1.5px; 
+      color: #ffffff; 
+      text-shadow: 0px 0px 6px rgba(44, 24, 16, 0.95), 2px 2px 4px rgba(0, 0, 0, 0.7);
+      transform: skewX(-6deg); 
     }
-    .album-controls { 
-      background: rgba(255, 234, 167, 0.95); backdrop-filter: blur(8px); padding: 8px 10px; border-radius: 12px; margin-bottom: 12px; 
-      display: flex; gap: 6px; flex-wrap: wrap; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.4);
+
+    .wallpaper-btn-group { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+
+    /* 💎 100% 水晶磨砂玻璃：拿走所有黑底框，透出最高清 Wallpaper */
+    .section-title-btn { 
+      font-size: 14px; color: #ffeaa7; font-style: italic; 
+      border-left: 5px solid #0984e3; padding: 10px 12px; margin: 10px 0 4px; font-weight: 900; 
+      border-radius: 0 12px 12px 0; display: flex; justify-content: space-between; align-items: center; 
+      width: 100%; cursor: pointer; user-select: none; transition: all 0.2s ease;
+      background-color: rgba(var(--panel-rgb), var(--panel-alpha)) !important;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.35);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      text-shadow: 0px 0px 4px rgba(44, 24, 16, 0.9);
     }
-    .album-select { padding: 6px 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 13px; font-weight: bold; flex: 1 1 auto; min-width: 110px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-    .btn-compact { 
-      padding: 6px 10px; border-radius: 8px; font-size: 13px; font-weight: bold; border: none; cursor: pointer; display: inline-flex; align-items: center; 
-      gap: 3px; white-space: nowrap; flex-shrink: 0; box-shadow: 0 3px 6px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3); transition: all 0.1s ease;
+    .section-title-btn:active { transform: scale(0.98); }
+    
+    .section-title-btn span.sub-tip { 
+      font-size: 11px; color: #fab1a0; font-weight: bold; display: block; margin-top: 3px; 
+      text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);
     }
-    .btn-compact:active { transform: translateY(2px); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-    .btn-add { background: #0984e3; color: white; }
-    .btn-del { background: #d63031; color: white; }
-    .btn-upload { background: #e17055; color: white; }
-    .btn-grid { background: #6c5ce7; color: white; }
-    .btn-theme { background: #2d3436; color: #ffeaa7; }
-    .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .media-card { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(4px); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.12); text-align: center; position: relative; padding-bottom: 4px; border: 1px solid rgba(255,255,255,0.5); }
+    .fold-arrow { font-size: 12px; color: #74b9ff; white-space: nowrap; font-weight: 900; padding-left: 6px; }
+    
+    .fold-content { display: none; margin-bottom: 12px; animation: fadeIn 0.3s ease-in-out; }
+    .fold-content.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 🎴 抽卡閃爍等待特效 */
+    .drawing-anim { animation: pulseGlow 0.8s infinite alternate; }
+    @keyframes pulseGlow {
+      from { opacity: 0.5; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1.01); }
+    }
+  </style>
+</head>
+  <style>
+    .btn-compact { padding: 8px 10px; border-radius: 8px; font-size: 12px; font-weight: 900; font-style: italic; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 2px; white-space: nowrap; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: all 0.1s ease; text-transform: uppercase; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+    .btn-compact:active { transform: translateY(2px) skewX(-6deg); }
+    .btn-add { background: rgba(9, 132, 227, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); }
+    .btn-del { background: rgba(214, 48, 49, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); }
+    .btn-move { background: rgba(225, 112, 85, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); }
+    .btn-upload { background: rgba(211, 84, 0, 0.9); color: white; flex: 1; border: 1px solid rgba(255,255,255,0.4); }
+    .btn-grid { background: rgba(108, 92, 231, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); }
+    .btn-slide { background: rgba(0, 184, 148, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); }
+    .btn-theme { background: rgba(45, 52, 54, 0.9); color: #ffeaa7; border: 1px solid rgba(255,255,255,0.4); }
+
+    .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
+    .media-card { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.3); text-align: center; position: relative; padding-bottom: 4px; border: 1px solid rgba(255,255,255,0.3); }
     .media-card img, .media-card video { width: 100%; height: 130px; object-fit: cover; cursor: pointer; display: block; }
-    .media-card p { margin: 4px 0 2px; font-weight: bold; font-size: 13px; color: #2d3436; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 0 4px; }
-    .delete-btn { position: absolute; top: 4px; right: 4px; background: rgba(214, 48, 49, 0.85); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-weight: bold; cursor: pointer; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-    .media-grid.four-cols { grid-template-columns: repeat(4, 1fr); gap: 5px; }
-    .media-grid.four-cols .media-card img, .media-grid.four-cols .media-card video { height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
-    .media-grid.four-cols .media-card p { font-size: 10px; margin: 2px 0 1px; }
-    .music-box { background: rgba(116, 185, 255, 0.92); backdrop-filter: blur(8px); color: white; padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4); }
-    .music-box input { display: none; }
-    audio { width: 100%; margin-top: 6px; border-radius: 8px; }
-    .mixer-box { background: rgba(45, 52, 54, 0.95); backdrop-filter: blur(10px); color: white; padding: 12px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 5px 12px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2); }
-    .mixer-title { font-size: 16px; color: #ffeaa7; margin-bottom: 8px; font-weight: bold; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-    .mixer-channel { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; gap: 8px; }
-    .mixer-channel label { font-size: 13px; min-width: 100px; font-weight: bold; }
-    .mixer-channel input[type=range] { flex: 1; }
-    .sound-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
-    .sound-btn { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(4px); border: 1.5px solid #ffeaa7; border-radius: 12px; padding: 8px 4px; text-align: center; cursor: pointer; font-size: 13px; font-weight: bold; color: #d63031; box-shadow: 0 3px 6px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8); transition: all 0.1s; }
-    .sound-btn:active { transform: scale(0.93); background: #ffeaa7; }
+    .media-card p { margin: 4px 0 2px; font-weight: bold; font-size: 12px; color: #ffffff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 0 4px; }
+    .delete-btn { position: absolute; top: 4px; right: 4px; background: rgba(214, 48, 49, 0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-weight: bold; cursor: pointer; z-index: 10; }
+
+    .music-box, .mixer-box, .album-controls { background-color: rgba(var(--panel-rgb), var(--panel-alpha)) !important; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.35); border-radius: 12px; padding: 12px; }
+    
+    /* 🎛️ Mixer 專屬：文字左邊，Slider 藍條靠右齊頭對齊！ */
+    .mixer-channel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
+    .mixer-channel label { font-size: 12px; font-weight: 900; color: #ffffff; white-space: nowrap; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9); }
+    .mixer-channel input[type=range] { flex: 1; max-width: 180px; margin-left: auto; cursor: pointer; }
+
+    /* 🐱 貓語 Soundboard 水晶全透明：拿走黑底，跟隨 Mixer 玻璃動態變換！ */
+    .sound-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 8px; width: 100%; }
+    .sound-btn { 
+      background-color: rgba(var(--panel-rgb), var(--panel-alpha)) !important; 
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); 
+      border: 1.5px solid rgba(255, 234, 167, 0.8); 
+      border-radius: 12px; padding: 8px 4px; text-align: center; cursor: pointer; 
+      font-size: 12px; font-weight: bold; color: #ffeaa7; 
+      box-shadow: 0 3px 6px rgba(0,0,0,0.25); transition: all 0.1s; 
+      text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9); 
+    }
+    .sound-btn:active { transform: scale(0.93); background: #ffeaa7 !important; color: #2d3436; }
     .sound-btn span { display: block; font-size: 20px; margin-bottom: 2px; }
-    .toast-box { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(45, 52, 54, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; display: none; z-index: 2000; text-align: center; max-width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-    .lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.92); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; padding: 10px; }
-    #lightboxContent { width: 100%; height: 85vh; display: flex; justify-content: center; align-items: center; }
-    #lightboxContent img, #lightboxContent video { width: 95vw; height: 85vh; object-fit: contain; border-radius: 12px; }
-    .lightbox p { color: white; font-size: 18px; margin-top: 8px; font-weight: bold; text-align: center; }
+
+    /* ⚠️ 警告提示紅色虛線框完美保留！ */
+    .notice-card { 
+      border: 2px dashed #ff7675; 
+      background: rgba(214, 48, 49, 0.35); 
+      border-radius: 12px; 
+      padding: 12px; 
+      margin-top: 15px; 
+      text-align: center; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .notice-card h4 { color: #ff7675; margin: 0 0 6px 0; font-size: 14px; text-shadow: 0px 0px 3px rgba(0,0,0,0.9); }
+    .notice-card p { color: #ffffff; margin: 0; font-size: 12px; font-weight: bold; line-height: 1.5; text-shadow: 0px 0px 3px rgba(0,0,0,0.9); }
+
+    .toast-box { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 900; display: none; z-index: 2000; text-align: center; max-width: 90%; border: 1px solid #ffeaa7; }
+
+    .lightbox { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; padding: 15px; }
+    #lightboxContent img, #lightboxContent video { max-width: 90vw; max-height: 75vh; width: auto; height: auto; object-fit: contain; border-radius: 12px; }
+    .lightbox-controls { display: flex; gap: 10px; align-items: center; margin-top: 8px; z-index: 3100; flex-wrap: wrap; justify-content: center; }
+    .slide-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; width: 38px; height: 38px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    .speed-btn-group { display: flex; gap: 4px; background: rgba(255,255,255,0.15); padding: 3px 6px; border-radius: 20px; }
+    .speed-btn { background: transparent; color: #dfe6e9; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; }
+    .speed-btn.active { background: #00b894; color: white; }
     .close-btn { position: absolute; top: 15px; right: 20px; color: white; font-size: 38px; cursor: pointer; font-weight: bold; z-index: 3100; }
   </style>
 </head>
 <body>
+  <!-- 頂欄標題與底紙/字體/全開全縮設定 -->
   <div class="header-box">
-    <h1>🐾 Open 貓貓助手</h1>
+    <h1>🐾 OPEN 貓貓助手</h1>
     <div class="wallpaper-btn-group">
       <button class="btn-compact btn-theme" onclick="changeWallpaperPreset()">🎨 預設風格</button>
       <label class="btn-compact btn-add" style="background:#00b894;" for="wpInput">🖼️ 換底紙</label>
       <input type="file" id="wpInput" accept="image/*" style="display:none;" onchange="uploadCustomWallpaper(event)">
+      <button class="btn-font-toggle" onclick="toggleFontTheme()">🔤 港/日</button>
+      <!-- 🌟 大細字切換掣 -->
+      <button class="btn-compact btn-theme" onclick="toggleFontSize()" style="background:#6c5ce7; color:white;">🔠 字體大細</button>
+      <!-- 🌟 1 鍵全開/全縮掣 -->
+      <button class="btn-compact btn-add" onclick="toggleAllFolds()" id="btnMasterFold" style="background:#e17055;">📂 一鍵全開</button>
     </div>
   </div>
-  <div class="section-title">🖼️ 貓貓專屬多媒體相簿</div>
-  <div class="album-controls">
-    <select id="albumSelect" class="album-select" onchange="switchAlbum()"><option value="default">📁 預設相簿</option></select>
-    <button class="btn-compact btn-add" onclick="createAlbum()">➕ 新建</button>
-    <button class="btn-compact btn-del" onclick="deleteCurrentAlbum()">🗑️ 刪除</button>
-    <label class="btn-compact btn-upload" for="mediaInput">📸 揼入相片/影片</label>
-    <input type="file" id="mediaInput" accept="image/*,video/*" multiple style="display:none;" onchange="uploadMedia(event)">
-    <button class="btn-compact btn-grid" onclick="toggleGrid()">📐 2格/4格</button>
+
+  <!-- ✝️ 1. 每日聖經金句隨機抽卡區 (暗掣叩門區) -->
+  <div class="section-title-btn" onclick="toggleFold('foldBible')">
+    <div>
+      <span>✝️ 每日聖經金句隨機抽卡區</span>
+      <span class="sub-tip">💡 叩門就給你們開門：點擊領受天父話語與平安祝福！</span>
+    </div>
+    <span class="fold-arrow" id="arrowBible">▼ 展開</span>
   </div>
-  <div class="media-grid" id="mediaGrid"></div>
-  <div class="section-title">🎵 專屬背景音樂 (MP3)</div>
-  <div class="music-box">
-    <label class="btn-compact btn-add" for="musicInput">➕ 選擇自訂 MP3</label>
-    <input type="file" id="musicInput" accept="audio/*" onchange="uploadMusic(event)">
-    <div id="musicName" style="margin-top: 6px; font-weight: bold; font-size: 13px;">（未選擇音樂）</div>
-    <audio id="bgPlayer" controls style="display: none;"></audio>
+  <div class="fold-content" id="foldBible">
+    <div class="foldable-card" style="padding: 15px; text-align: center; background: rgba(0,0,0,0.4) !important;">
+      <div id="bibleCardBox" style="min-height: 90px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.5); border-radius: 12px; padding: 14px; border: 2px dashed #ffeaa7;">
+        <p id="bibleText" style="margin: 0; font-size: 14px; font-weight: 900; color: #ffeaa7; line-height: 1.6; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">
+          ✨ 「在至高之處榮耀歸與神！在地上平安歸與他所喜悅的人。」 (路加福音 2:14)
+        </p>
+      </div>
+      <button class="btn-compact btn-add" onclick="drawBibleCardWithAnim()" style="margin-top: 12px; background: #00b894; font-size: 13px; padding: 10px 20px;">
+        ✨ 祈禱叩門 · 抽卡領受祝福
+      </button>
+    </div>
   </div>
-  <div class="mixer-box">
-    <div class="mixer-title">🎛️ 聲音 Mixer 混音主控台</div>
-    <div class="mixer-channel"><label>🎵 背景 MP3：</label><input type="range" id="volBgm" min="0" max="1" step="0.05" value="0.8" oninput="updateVolumes()"></div>
-    <div class="mixer-channel"><label>🐱 貓貓真聲：</label><input type="range" id="volCat" min="0" max="1" step="0.05" value="1.0" oninput="updateVolumes()"></div>
-    <div class="mixer-channel"><label>🎬 影片原聲：</label><input type="range" id="volVideo" min="0" max="1" step="0.05" value="0.9" oninput="updateVolumes()"></div>
+
+  <!-- 📻 2. 貓貓電台俱樂部 (預設開局直接展示！) -->
+  <div class="section-title-btn" onclick="toggleFold('foldRadio')">
+    <div>
+      <span>📻 貓貓電台俱樂部 (Radio Club)</span>
+      <span class="sub-tip">💡 即點即播好音樂與伴奏 Stream</span>
+    </div>
+    <span class="fold-arrow" id="arrowRadio">▲ 收起</span>
   </div>
-  <div class="section-title">🔊 30 種真貓語解密（即點即播）</div>
-  <div class="sound-grid" id="soundGrid"></div>
+  <!-- 🌟 預設 active：一開波即時展開 -->
+  <div class="fold-content active" id="foldRadio">
+    <div class="music-box" style="margin-top: 0;">
+      <div style="font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">🌟 皇牌精選電台 (即點即播)：</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; margin-bottom: 10px;">
+        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(9, 132, 227, 0.9);" onclick="confirmRadioPlay('JPOPSUKI 日本台', 'https://jpopsuki-proxy.heidiz-kung.workers.dev')">🎸 JPOPSUKI 日本台</button>
+        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(0, 184, 148, 0.9);" onclick="confirmRadioPlay('SMOOTHJAZZ 爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 SmoothJazz 爵士台</button>
+        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(108, 92, 231, 0.9);" onclick="confirmRadioPlay('🇬🇧 Britpop 與英式搖滾台', 'https://stream.radioparadise.com/rock-128')">🇬🇧 Britpop 英搖台</button>
+        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(214, 48, 49, 0.9);" onclick="confirmRadioPlay('🇺🇸 Heavy Metal 美式重金屬台', 'https://stream.rockantenne.de/heavy-metal/stream/mp3')">🇺🇸 Heavy Metal 重金屬</button>
+        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(225, 112, 85, 0.9);" onclick="confirmRadioPlay('📻 80s/90s Classic Hard Rock 經典台', 'https://stream.rockantenne.de/classic-perlen/stream/mp3')">📻 80/90s 硬搖滾</button>
+      </div>
+      <div style="border-top: 1px dashed rgba(255,255,255,0.25); padding-top: 8px; margin-top: 6px;">
+        <div style="font-size: 11px; color: #fab1a0; margin-bottom: 4px; font-weight:bold;">🔗 自訂雲端 Stream 試聽：</div>
+        <div style="display: flex; gap: 6px;">
+          <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex:1; padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.5); color: white; font-size: 12px;">
+          <button class="btn-compact btn-add" onclick="testStreamUrl()">▶️ 試聽</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎵 3. 專屬背景音樂歌單 (預設開局直接展示！) -->
+  <div class="section-title-btn" onclick="toggleFold('foldMusic')">
+    <div>
+      <span>🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
+      <span class="sub-tip">💡 支援無限首自動編號、多模式循環與背景播放</span>
+    </div>
+    <span class="fold-arrow" id="arrowMusic">▲ 收起</span>
+  </div>
+  <!-- 🌟 預設 active：一開波即時展開 -->
+  <div class="fold-content active" id="foldMusic">
+    <div class="music-box" style="margin-top: 0;">
+      <div class="playlist-controls">
+        <label class="btn-compact btn-add" for="musicInput">➕ 揼入 MP3</label>
+        <input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="uploadMusic(event)">
+        <button class="btn-compact mode-btn active" id="btnSeq" onclick="setPlayMode('sequence')">🔁 順序</button>
+        <button class="btn-compact mode-btn" id="btnLoop" onclick="setPlayMode('single-loop')">🔂 單曲</button>
+        <button class="btn-compact mode-btn" id="btnRand" onclick="setPlayMode('random')">🔀 隨機</button>
+      </div>
+      <div id="musicName" style="margin: 8px 0; font-size: 12px; font-weight: 900; color: #fff; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">🎵 播放中 (0/0) : 暫無音樂</div>
+      <div class="playlist-list" id="playlistDisplay"></div>
+      <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
+    </div>
+  </div>
+  <!-- 🖼️ 4. 貓貓專屬多媒體相簿 (暗掣區) -->
+  <div class="section-title-btn" onclick="toggleFold('foldAlbum')">
+    <div>
+      <span>🖼️ 貓貓專屬多媒體相簿</span>
+      <span class="sub-tip">💡 點擊展開：長按選單改名 | 支援 ◀ ▶ 調動排位 | 4號仔燈箱</span>
+    </div>
+    <span class="fold-arrow" id="arrowAlbum">▼ 展開</span>
+  </div>
+  <div class="fold-content" id="foldAlbum">
+    <div class="album-controls">
+      <div style="width: 100%;">
+        <select id="albumSelect" class="album-select" onchange="switchAlbum()"></select>
+      </div>
+      <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center; width: 100%;">
+        <button class="btn-compact btn-add" onclick="createAlbum()">➕ 新建</button>
+        <button class="btn-compact btn-move" onclick="moveAlbumOrder(-1)">◀ 移前</button>
+        <button class="btn-compact btn-move" onclick="moveAlbumOrder(1)">▶ 移後</button>
+        <button class="btn-compact btn-del" onclick="deleteCurrentAlbum()">🗑️ 刪除</button>
+        <label class="btn-compact btn-upload" for="mediaInput">📸 揼入相片</label>
+        <input type="file" id="mediaInput" accept="image/*,video/*" multiple style="display:none;" onchange="uploadMedia(event)">
+        <button class="btn-compact btn-grid" onclick="toggleGrid()">📐 2/4格</button>
+        <button class="btn-compact btn-slide" onclick="startSlideshow()">▶️ 幻燈片</button>
+      </div>
+    </div>
+    <div class="media-grid" id="mediaGrid"></div>
+  </div>
+
+  <!-- 🐱 5. 30 種真貓語解密 + DJ 鼓組 (暗掣區) -->
+  <div class="section-title-btn" onclick="toggleFold('foldCatSound')">
+    <div>
+      <span>🐱 30 種真貓語解密 + DJ 零延遲 Soundboard</span>
+      <span class="sub-tip">💡 點擊展開：即點即播，邊聽歌邊 Yoyo 狂連擊！</span>
+    </div>
+    <span class="fold-arrow" id="arrowCatSound">▼ 展開</span>
+  </div>
+  <div class="fold-content" id="foldCatSound">
+    <div class="sound-grid" id="soundGrid"></div>
+  </div>
+
+  <!-- 🎛️ 6. 聲音 MIXER 與介面主控台 (暗掣區) -->
+  <div class="section-title-btn" onclick="toggleFold('foldMixer')">
+    <div>
+      <span>🎛️ 聲音 MIXER 與介面主控台</span>
+      <span class="sub-tip">💡 點擊展開：即時調校不透明度與各頻道獨立音量</span>
+    </div>
+    <span class="fold-arrow" id="arrowMixer">▼ 展開</span>
+  </div>
+  <div class="fold-content" id="foldMixer">
+    <div class="mixer-box">
+      <div class="mixer-title" style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 10px; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">🎛️ 聲音 MIXER 與介面主控台</div>
+      <div class="mixer-channel">
+        <label>🎛️ 介面不透明度 (<span id="opacityValDisplay" style="color:#ffeaa7;">45%</span>)：</label>
+        <input type="range" id="volOpacity" min="0" max="1" step="0.05" value="0.45" oninput="updatePanelOpacity(this.value)">
+      </div>
+      <div class="mixer-channel"><label>🎵 背景 MP3：</label><input type="range" id="volBgm" min="0" max="1" step="0.05" value="0.8" oninput="updateVolumes()"></div>
+      <div class="mixer-channel"><label>🐱 貓貓真聲：</label><input type="range" id="volCat" min="0" max="1" step="0.05" value="1.0" oninput="updateVolumes()"></div>
+      <div class="mixer-channel"><label>🎬 影片原聲：</label><input type="range" id="volVideo" min="0" max="1" step="0.05" value="0.9" oninput="updateVolumes()"></div>
+    </div>
+  </div>
+
+  <!-- 💾 7. 貓貓助手 RPG 存檔管理 (暗掣區) -->
+  <div class="section-title-btn" onclick="toggleFold('foldRPG')">
+    <div>
+      <span>💾 貓貓助手 RPG 存檔管理 (全機數據 1 鍵 Save/Load)</span>
+      <span class="sub-tip">💡 點擊展開：匯出/匯入全機相簿、歌單與介面設定檔</span>
+    </div>
+    <span class="fold-arrow" id="arrowRPG">▼ 展開</span>
+  </div>
+  <div class="fold-content" id="foldRPG">
+    <div class="save-box" style="padding: 10px; border-radius: 12px; margin-bottom: 10px; display: flex; gap: 8px; background: rgba(0,0,0,0.4);">
+      <button class="btn-compact btn-rpg-save" onclick="exportFullRPGSave()" style="background: rgba(46, 204, 113, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px;">📤 匯出 RPG Save 檔</button>
+      <label class="btn-compact btn-rpg-load" for="rpgLoadInput" style="background: rgba(155, 89, 182, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px; text-align:center;">📥 讀取 RPG Save 檔</label>
+      <input type="file" id="rpgLoadInput" accept=".json" style="display:none;" onchange="importFullRPGSave(event)">
+    </div>
+  </div>
+
+  <!-- ⚠️ 終極溫馨提示 -->
+  <div class="notice-card">
+    <h4>⚠️ 終極溫馨提示</h4>
+    <p>
+      清快取或 Delete 快取資料會搞到啲相消失㗎！<br>
+      請大家善用上面嘅 <b>「RPG 存檔系統」</b> 定時 Save 檔，<br><br>
+      咁就可以永久保存晒啲靚靚相同歌單，唔怕遺失啦！✨
+    </p>
+  </div>
+
+  <!-- Toast 提示框與 4 號仔黃金燈箱 -->
   <div class="toast-box" id="toast"></div>
-  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-    <span class="close-btn">&times;</span>
+  
+  <div class="lightbox" id="lightbox">
+    <span class="close-btn" onclick="closeLightbox()">&times;</span>
     <div id="lightboxContent"></div>
+    <div class="lightbox-controls">
+      <button class="slide-btn" onclick="prevSlide()">◀</button>
+      <button class="slide-btn" id="playPauseBtn" onclick="toggleSlideshowPlay()">⏸️</button>
+      <button class="slide-btn" onclick="nextSlide()">▶</button>
+      <div class="speed-btn-group">
+        <button class="speed-btn" id="spd3" onclick="setSlideshowSpeed(3000)">3秒</button>
+        <button class="speed-btn active" id="spd6" onclick="setSlideshowSpeed(6000)">6秒</button>
+        <button class="speed-btn" id="spd10" onclick="setSlideshowSpeed(10000)">10秒</button>
+      </div>
+    </div>
     <p id="lightboxCaption"></p>
   </div>
 
+  <!-- ©️ 專屬版權招牌 -->
+  <div style="text-align: center; color: rgba(255,255,255,0.85); font-size: 10px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">
+    © 2026 Heidiz & Gemini P-Chan Production. All Rights Reserved.
+  </div>
+
   <script>
+    /* 🌟 全暗掣（Accordion Fold）與 1 鍵全開全縮邏輯 */
+    let isAllFolded = false;
+
+    function toggleFold(id) {
+      const content = document.getElementById(id);
+      const arrowId = "arrow" + id.replace("fold", "");
+      const arrow = document.getElementById(arrowId);
+      
+      if (content) {
+        const isActive = content.classList.contains('active');
+        if (isActive) {
+          content.classList.remove('active');
+          if (arrow) arrow.innerText = "▼ 展開";
+        } else {
+          content.classList.add('active');
+          if (arrow) arrow.innerText = "▲ 收起";
+        }
+      }
+    }
+    function toggleAllFolds() {
+      const allContents = document.querySelectorAll('.fold-content');
+      const allArrows = document.querySelectorAll('.fold-arrow');
+      const btn = document.getElementById('btnMasterFold');
+
+      isAllFolded = !isAllFolded;
+      allContents.forEach(content => {
+        if (isAllFolded) {
+          content.classList.add('active');
+        } else {
+          content.classList.remove('active');
+        }
+      });
+
+      allArrows.forEach(arrow => {
+        arrow.innerText = isAllFolded ? "▲ 收起" : "▼ 展開";
+      });
+
+      if (btn) {
+        btn.innerText = isAllFolded ? "📁 一鍵全縮" : "📂 一鍵全開";
+        btn.style.background = isAllFolded ? "#00b894" : "#e17055";
+      }
+      showToast(isAllFolded ? "📂 已一鍵展開所有功能區域！" : "📁 已一鍵收縮，還原極簡 Wallpaper！");
+    }
+
+    /* 🔠 大細字等級切換 (0: 小號舊版 14px, 1: 中號, 2: 特大號) */
+    let fontScaleLevel = 0;
+    function toggleFontSize() {
+      fontScaleLevel = (fontScaleLevel + 1) % 3;
+      const titles = document.querySelectorAll('.section-title-btn');
+      const subTips = document.querySelectorAll('.sub-tip');
+      const bibleText = document.getElementById('bibleText');
+
+      if (fontScaleLevel === 0) {
+        titles.forEach(t => t.style.fontSize = '14px');
+        subTips.forEach(s => s.style.fontSize = '11px');
+        if (bibleText) bibleText.style.fontSize = '14px';
+        showToast("🔠 字體已切換至：小號 (還原舊版精緻大細)");
+      } else if (fontScaleLevel === 1) {
+        titles.forEach(t => t.style.fontSize = '17px');
+        subTips.forEach(s => s.style.fontSize = '12.5px');
+        if (bibleText) bibleText.style.fontSize = '17px';
+        showToast("🔠 字體已切換至：中號清晰字體");
+      } else {
+        titles.forEach(t => t.style.fontSize = '20px');
+        subTips.forEach(s => s.style.fontSize = '14.5px');
+        if (bibleText) bibleText.style.fontSize = '20px';
+        showToast("🔠 字體已切換至：特大號車機高清晰字！");
+      }
+      if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontScale", val: fontScaleLevel });
+    }
+
+    /* ✝️ 每日聖經金句隨機抽卡庫 */
+    const bibleVerses = [
+      { text: "✨ 「在至高之處榮耀歸與神！在地上平安歸與他所喜悅的人。」 (路加福音 2:14)" },
+      { text: "✨ 「應當一無掛慮，只要凡事藉著禱告、祈求，和感謝，將你們所要的告訴神。」 (腓立比書 4:6)" },
+      { text: "✨ 「尋找，就尋見；叩門，就給你們開門。」 (馬太福音 7:7)" },
+      { text: "✨ 「耶和華是我的牧者，我必不致缺乏。」 (詩篇 23:1)" },
+      { text: "✨ 「喜樂的心乃是良藥；憂傷的靈使骨枯乾。」 (箴言 17:22)" },
+      { text: "✨ 「你的話是我腳前的燈，是我路上的光。」 (詩篇 119:105)" },
+      { text: "✨ 「神就是愛；住在愛裡面的，就住在神裡面，神也住在他裡面。」 (約翰一書 4:16)" }
+    ];
+
+    let isDrawingCard = false;
+    function drawBibleCardWithAnim() {
+      if (isDrawingCard) return;
+      isDrawingCard = true;
+      const cardBox = document.getElementById('bibleCardBox');
+      const textEl = document.getElementById('bibleText');
+      
+      if (cardBox && textEl) {
+        cardBox.classList.add('drawing-anim');
+        textEl.style.color = "#74b9ff";
+        textEl.innerText = "⏳ 🙏 正在誠心禱告，尋求天父話語與祝福...";
+        
+        setTimeout(() => {
+          const randIdx = Math.floor(Math.random() * bibleVerses.length);
+          cardBox.classList.remove('drawing-anim');
+          textEl.style.color = "#ffeaa7";
+          textEl.innerText = bibleVerses[randIdx].text;
+          isDrawingCard = false;
+          showToast("✨ 叩門成功！已領受天父話語祝福！");
+        }, 1200);
+      }
+    }
+
+    /* 🔒 IndexedDB 資料庫與基礎變數 */
     let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
-    const presetWallpapers = ["linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)", "linear-gradient(135deg, #f3a683 0%, #f7d794 100%)"];
-    const request = indexedDB.open("OpenMeowMasterDB", 3);
+    let albumMediaList = [], slideIndex = 0, slideTimer = null, isPlayingSlideshow = false, slideshowInterval = 6000;
+    let musicList = [], currentTrackIdx = 0, playMode = 'sequence', pressTimer = null;
+    let touchStartX = 0, touchEndX = 0;
+
+    const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
+    
+    const request = indexedDB.open("OpenMeowMasterDB", 5);
     request.onupgradeneeded = function(e) {
       db = e.target.result;
       if (!db.objectStoreNames.contains("media")) db.createObjectStore("media", { keyPath: "id", autoIncrement: true });
       if (!db.objectStoreNames.contains("albums")) db.createObjectStore("albums", { keyPath: "id" });
-      if (!db.objectStoreNames.contains("music")) db.createObjectStore("music", { keyPath: "id" });
+      if (db.objectStoreNames.contains("music")) db.deleteObjectStore("music");
+      db.createObjectStore("music", { keyPath: "id", autoIncrement: true });
       if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
     };
-    request.onsuccess = function(e) { db = e.target.result; loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); };
+    request.onsuccess = function(e) { 
+      db = e.target.result; 
+      loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); loadSavedOpacity(); loadSavedFontTheme(); initAlbumLongPress(); 
+    };
+    function toggleFontTheme() {
+      document.body.classList.toggle('jp-font');
+      const isJp = document.body.classList.contains('jp-font');
+      showToast(isJp ? "✨ 已切換至：日系可愛字體！" : "✨ 已切換至：經典港系粗體！");
+      if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontTheme", val: isJp ? "jp" : "hk" });
+    }
+
+    function loadSavedFontTheme() {
+      const req = db.transaction("settings", "readonly").objectStore("settings").get("fontTheme");
+      req.onsuccess = function() { if (req.result && req.result.val === "jp") document.body.classList.add('jp-font'); };
+    }
 
     const catSounds = [
       { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" }, { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },
@@ -138,11 +503,24 @@
     ];
 
     const soundGrid = document.getElementById('soundGrid');
-    catSounds.forEach((item) => {
-      const btn = document.createElement('div'); btn.className = 'sound-btn';
-      btn.innerHTML = `<span>${item.emoji}</span>${item.name}`;
-      btn.onclick = () => playRealCatSound(item); soundGrid.appendChild(btn);
-    });
+    if (soundGrid) {
+      catSounds.forEach((item) => {
+        const btn = document.createElement('div'); btn.className = 'sound-btn';
+        btn.innerHTML = `<span>${item.emoji}</span>${item.name}`;
+        btn.onclick = () => playRealCatSound(item); soundGrid.appendChild(btn);
+      });
+    }
+
+    function playRealCatSound(item) {
+      if (currentCatAudio) { currentCatAudio.pause(); currentCatAudio = null; }
+      currentCatAudio = new Audio('cat' + item.file.replace('cat', ''));
+      currentCatAudio.volume = document.getElementById('volCat').value;
+      currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(e => {
+        currentCatAudio = new Audio(item.file);
+        currentCatAudio.volume = document.getElementById('volCat').value;
+        currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(err => { showToast(`🐾 貓語：${item.desc}`); });
+      });
+    }
 
     function uploadCustomWallpaper(event) {
       const file = event.target.files[0];
@@ -164,24 +542,130 @@
       const req = db.transaction("settings", "readonly").objectStore("settings").get("wallpaper");
       req.onsuccess = function() { if (req.result) { if (req.result.type === "custom") { document.body.style.backgroundImage = `url(${req.result.val})`; } else { document.body.style.background = req.result.val; } } };
     }
+
+    function updatePanelOpacity(val) {
+      document.documentElement.style.setProperty('--panel-alpha', val);
+      const blurVal = (val == 0) ? '0px' : '14px';
+      document.querySelectorAll('.section-title-btn, .album-controls, .music-box, .mixer-box, .sound-btn, .foldable-card').forEach(el => {
+        el.style.backdropFilter = `blur(${blurVal})`;
+        el.style.webkitBackdropFilter = `blur(${blurVal})`;
+      });
+      document.getElementById('opacityValDisplay').innerText = Math.round(val * 100) + "%";
+      if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "panelOpacity", val: val });
+    }
+
+    function loadSavedOpacity() {
+      const req = db.transaction("settings", "readonly").objectStore("settings").get("panelOpacity");
+      req.onsuccess = function() { if (req.result) { const val = req.result.val; document.getElementById('volOpacity').value = val; updatePanelOpacity(val); } };
+    }
+
     function updateVolumes() {
       if (document.getElementById('bgPlayer')) document.getElementById('bgPlayer').volume = document.getElementById('volBgm').value;
       if (currentCatAudio) currentCatAudio.volume = document.getElementById('volCat').value;
       if (currentActiveVideo) currentActiveVideo.volume = document.getElementById('volVideo').value;
     }
-    function playRealCatSound(item) {
-      if (currentCatAudio) { currentCatAudio.pause(); }
-      currentCatAudio = new Audio(item.file); currentCatAudio.volume = document.getElementById('volCat').value;
-      currentCatAudio.play().catch(e => console.log(e)); showToast(`🐾 貓語：${item.desc}`);
+
+    function exportFullRPGSave() {
+      showToast("⏳ 正在打包全機 RPG 存檔，請稍候...");
+      const rpgData = { albums: [], media: [], music: [], settings: [] };
+      const tx = db.transaction(["albums", "media", "music", "settings"], "readonly");
+      tx.objectStore("albums").getAll().onsuccess = (e) => { rpgData.albums = e.target.result; };
+      tx.objectStore("media").getAll().onsuccess = (e) => { rpgData.media = e.target.result; };
+      tx.objectStore("music").getAll().onsuccess = (e) => { rpgData.music = e.target.result; };
+      tx.objectStore("settings").getAll().onsuccess = (e) => { rpgData.settings = e.target.result; };
+      tx.oncomplete = function() {
+        const jsonStr = JSON.stringify(rpgData);
+        const blob = new Blob([jsonStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const dateStr = new Date().toISOString().slice(0,10);
+        a.href = url; a.download = `Meow_RPG_Save_${dateStr}.json`; a.click();
+        URL.revokeObjectURL(url); showToast("💾 成功下載全機 RPG 存檔！");
+      };
     }
+    function importFullRPGSave(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (!confirm("⚠️ 讀取 RPG 存檔會覆蓋現有嘅相簿同歌單，確定要繼續？")) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const rpgData = JSON.parse(e.target.result);
+          const tx = db.transaction(["albums", "media", "music", "settings"], "readwrite");
+          tx.objectStore("albums").clear(); tx.objectStore("media").clear(); tx.objectStore("music").clear(); tx.objectStore("settings").clear();
+          if (rpgData.albums) rpgData.albums.forEach(item => tx.objectStore("albums").add(item));
+          if (rpgData.media) rpgData.media.forEach(item => tx.objectStore("media").add(item));
+          if (rpgData.music) rpgData.music.forEach(item => tx.objectStore("music").add(item));
+          if (rpgData.settings) rpgData.settings.forEach(item => tx.objectStore("settings").add(item));
+          tx.oncomplete = function() { showToast("🎉 全機 RPG 讀檔成功！即將刷新介面..."); setTimeout(() => { location.reload(); }, 1500); };
+        } catch (err) { alert("❌ 存檔格式錯誤，請確保揀選正確嘅 .json Save 檔！"); }
+      };
+      reader.readAsText(file); event.target.value = "";
+    }
+
     let toastTimer;
     function showToast(msg) {
       const toast = document.getElementById('toast'); toast.innerText = msg; toast.style.display = 'block';
       clearTimeout(toastTimer); toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
+  </script>
+  <script>
     function createAlbum() {
       const name = prompt("請輸入新相簿名稱：", "黑貓仔寫真");
-      if (name) { const id = "album_" + Date.now(); const tx = db.transaction("albums", "readwrite"); tx.objectStore("albums").add({ id: id, name: name }); tx.oncomplete = function() { loadAlbums(id); }; }
+      if (name) {
+        const id = "album_" + Date.now();
+        const tx = db.transaction("albums", "readwrite");
+        tx.objectStore("albums").add({ id: id, name: name, order: Date.now() });
+        tx.oncomplete = function() { loadAlbums(id); showToast("✨ 成功建立新相簿！"); };
+      }
+    }
+    function initAlbumLongPress() {
+      const select = document.getElementById('albumSelect');
+      if (!select) return;
+      select.addEventListener('touchstart', () => { pressTimer = setTimeout(() => { triggerRenameCurrentAlbum(); }, 800); });
+      select.addEventListener('touchend', () => { clearTimeout(pressTimer); });
+      select.addEventListener('touchmove', () => { clearTimeout(pressTimer); });
+      select.addEventListener('mousedown', () => { pressTimer = setTimeout(() => { triggerRenameCurrentAlbum(); }, 800); });
+      select.addEventListener('mouseup', () => { clearTimeout(pressTimer); });
+    }
+    function triggerRenameCurrentAlbum() {
+      if (currentAlbum === "default") { showToast("⚠️ 「預設相簿」名字係系統保護，唔可以改名呀！"); return; }
+      const tx = db.transaction("albums", "readonly");
+      tx.objectStore("albums").get(currentAlbum).onsuccess = function(e) {
+        const album = e.target.result;
+        if (album) {
+          const newName = prompt("✏️ 請輸入新嘅相簿名稱：", album.name);
+          if (newName && newName.trim() !== "") {
+            const txWrite = db.transaction("albums", "readwrite");
+            txWrite.objectStore("albums").put({ id: currentAlbum, name: newName.trim(), order: album.order || Date.now() });
+            txWrite.oncomplete = function() { showToast(`✨ 相簿已成功改名為：「${newName.trim()}」`); loadAlbums(currentAlbum); };
+          }
+        }
+      };
+    }
+    function moveAlbumOrder(direction) {
+      if (currentAlbum === "default") { showToast("⚠️ 「預設相簿」固定在最前，唔可以移動呀！"); return; }
+      const tx = db.transaction("albums", "readonly");
+      let albums = [];
+      tx.objectStore("albums").openCursor().onsuccess = function(e) {
+        const cursor = e.target.result;
+        if (cursor) { albums.push(cursor.value); cursor.continue(); } 
+        else {
+          albums.sort((a, b) => (a.order || 0) - (b.order || 0));
+          let idx = albums.findIndex(item => item.id === currentAlbum);
+          if (idx === -1) return;
+          let targetIdx = idx + direction;
+          if (targetIdx < 0 || targetIdx >= albums.length) { showToast("⚠️ 已經係盡頭啦，移動唔到囉！"); return; }
+          let tempOrder = albums[idx].order || idx;
+          albums[idx].order = albums[targetIdx].order || targetIdx;
+          albums[targetIdx].order = tempOrder;
+          if (albums[idx].order === albums[targetIdx].order) { albums[idx].order += direction; }
+          const txWrite = db.transaction("albums", "readwrite");
+          const store = txWrite.objectStore("albums");
+          store.put(albums[idx]); store.put(albums[targetIdx]);
+          txWrite.oncomplete = function() { showToast("✨ 相簿排位調動成功！"); loadAlbums(currentAlbum); };
+        }
+      };
     }
     function deleteCurrentAlbum() {
       if (currentAlbum === "default") { alert("⚠️ 「預設相簿」係系統保護相簿，唔可以刪除呀！"); return; }
@@ -200,11 +684,19 @@
       };
     }
     function loadAlbums(selectId) {
-      const select = document.getElementById('albumSelect'); select.innerHTML = '<option value="default">📁 預設相簿</option>';
+      const select = document.getElementById('albumSelect'); if(!select) return; select.innerHTML = '<option value="default">📁 預設相簿</option>';
+      let albumList = [];
       db.transaction("albums", "readonly").objectStore("albums").openCursor().onsuccess = function(e) {
         const cursor = e.target.result;
-        if (cursor) { const opt = document.createElement('option'); opt.value = cursor.value.id; opt.innerText = "📁 " + cursor.value.name; select.appendChild(opt); cursor.continue(); } 
-        else { if (selectId) select.value = selectId; currentAlbum = select.value; loadMedia(); }
+        if (cursor) { albumList.push(cursor.value); cursor.continue(); } 
+        else {
+          albumList.sort((a, b) => (a.order || 0) - (b.order || 0));
+          albumList.forEach(alb => {
+            const opt = document.createElement('option'); opt.value = alb.id; opt.innerText = "📁 " + alb.name; select.appendChild(opt);
+          });
+          if (selectId) select.value = selectId;
+          currentAlbum = select.value; loadMedia();
+        }
       };
     }
     function switchAlbum() { currentAlbum = document.getElementById('albumSelect').value; loadMedia(); }
@@ -223,50 +715,187 @@
       }
     }
     function loadMedia() {
-      const mediaGrid = document.getElementById('mediaGrid'); mediaGrid.innerHTML = "";
+      const mediaGrid = document.getElementById('mediaGrid'); if(!mediaGrid) return; mediaGrid.innerHTML = "";
+      albumMediaList = [];
       db.transaction("media", "readonly").objectStore("media").openCursor().onsuccess = function(e) {
         const cursor = e.target.result;
         if (cursor) {
           if (cursor.value.albumId === currentAlbum) {
+            albumMediaList.push(cursor.value);
             const card = document.createElement('div'); card.className = 'media-card';
+            const index = albumMediaList.length - 1;
             card.innerHTML = cursor.value.isVideo ? 
-              `<button class="delete-btn" onclick="deleteMedia(${cursor.key})">✕</button><video src="${cursor.value.src}" onclick="openLightboxMedia('${cursor.value.src}', '${cursor.value.caption}', true)"></video><p>🎬 ${cursor.value.caption}</p>` :
-              `<button class="delete-btn" onclick="deleteMedia(${cursor.key})">✕</button><img src="${cursor.value.src}" onclick="openLightboxMedia('${cursor.value.src}', '${cursor.value.caption}', false)"><p>📷 ${cursor.value.caption}</p>`;
+              `<button class="delete-btn" onclick="deleteMedia(${cursor.key})">✕</button><video src="${cursor.value.src}" onclick="openLightboxIndex(${index})"></video><p>🎬 ${cursor.value.caption}</p>` :
+              `<button class="delete-btn" onclick="deleteMedia(${cursor.key})">✕</button><img src="${cursor.value.src}" onclick="openLightboxIndex(${index})"><p>📷 ${cursor.value.caption}</p>`;
             mediaGrid.appendChild(card);
           } cursor.continue();
         }
       };
     }
     function deleteMedia(id) { if (confirm("確定要刪除呢個檔案？")) { const tx = db.transaction("media", "readwrite"); tx.objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
+  </script>
+  <script>
     function uploadMusic(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader(); reader.onload = function(e) {
-          const tx = db.transaction("music", "readwrite"); tx.objectStore("music").put({ id: "bgm", name: file.name, src: e.target.result });
-          tx.oncomplete = function() { loadSavedMusic(); };
-        }; reader.readAsDataURL(file);
+      const files = Array.from(event.target.files);
+      if (files.length > 0) {
+        let loadedCount = 0;
+        files.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const tx = db.transaction("music", "readwrite");
+            tx.objectStore("music").add({ name: file.name, src: e.target.result });
+            tx.oncomplete = function() {
+              loadedCount++;
+              if (loadedCount === files.length) { loadSavedMusic(); showToast(`🎵 成功加入 ${files.length} 首歌！`); event.target.value = ""; }
+            };
+          }; reader.readAsDataURL(file);
+        });
       }
     }
     function loadSavedMusic() {
-      const store = db.transaction("music", "readonly").objectStore("music").get("bgm");
-      store.onsuccess = function() {
-        if (store.result) {
-          document.getElementById('musicName').innerText = "🎵 播放中：" + store.result.name;
-          const player = document.getElementById('bgPlayer'); player.src = store.result.src; player.style.display = "block"; updateVolumes();
-        }
+      musicList = [];
+      const playlistDisplay = document.getElementById('playlistDisplay'); if(!playlistDisplay) return; playlistDisplay.innerHTML = "";
+      db.transaction("music", "readonly").objectStore("music").openCursor().onsuccess = function(e) {
+        const cursor = e.target.result;
+        if (cursor) { musicList.push({ id: cursor.key, name: cursor.value.name, src: cursor.value.src }); cursor.continue(); } 
+        else { renderPlaylist(); if (musicList.length > 0 && !document.getElementById('bgPlayer').src) { playTrack(0); } }
       };
     }
-    function openLightboxMedia(src, caption, isVideo) {
-      const content = document.getElementById('lightboxContent');
-      if (isVideo) {
-        content.innerHTML = `<video id="activeVideo" src="${src}" controls autoplay></video>`;
-        document.getElementById('lightboxCaption').innerText = "🎬 " + caption; document.getElementById('lightbox').style.display = 'flex';
-        setTimeout(() => { currentActiveVideo = document.getElementById('activeVideo'); if (currentActiveVideo) currentActiveVideo.volume = document.getElementById('volVideo').value; }, 100);
-      } else {
-        content.innerHTML = `<img src="${src}">`; document.getElementById('lightboxCaption').innerText = "📷 " + caption; document.getElementById('lightbox').style.display = 'flex'; currentActiveVideo = null;
+    function renderPlaylist() {
+      const display = document.getElementById('playlistDisplay'); if(!display) return; display.innerHTML = "";
+      if (musicList.length === 0) { display.innerHTML = "<div style='text-align:center; color:#dfe6e9; padding:6px; font-size:11px;'>（歌單暫時空空如也，快點擊上方按鈕加入 MP3）</div>"; document.getElementById('musicName').innerText = "（未選擇音樂）"; return; }
+      musicList.forEach((track, idx) => {
+        const div = document.createElement('div');
+        div.className = `track-item ${idx === currentTrackIdx ? 'active' : ''}`;
+        div.innerHTML = `<span>🎵 ${idx + 1}. ${track.name}</span><span class="track-del" onclick="deleteTrack(event, ${track.id})">✕</span>`;
+        div.onclick = () => playTrack(idx); display.appendChild(div);
+      });
+      document.getElementById('musicName').innerText = `🎵 播放中 (${currentTrackIdx + 1}/${musicList.length})：${musicList[currentTrackIdx].name}`;
+    }
+    function playTrack(idx) {
+      if (musicList.length === 0) return;
+      currentTrackIdx = idx;
+      const player = document.getElementById('bgPlayer');
+      player.src = musicList[currentTrackIdx].src;
+      player.play().then(() => { renderPlaylist(); updateVolumes(); }).catch(e => console.log(e));
+    }
+    function confirmRadioPlay(stationName, streamUrl) {
+      const ok = confirm(`🐾 P仔助手提示：\n\n我而家幫你連線播放《${stationName}》，準備好收聽未？`);
+      if (ok) {
+        const player = document.getElementById('bgPlayer');
+        player.src = streamUrl;
+        player.play().then(() => {
+          showToast(`📻 已成功連線：${stationName}`);
+          document.getElementById('musicName').innerText = `📻 直播中：${stationName}`;
+        }).catch(e => { showToast("❌ 電台連線失敗，請檢查網絡或 Link 是否有效！"); });
       }
     }
-    function closeLightbox() { if (currentActiveVideo) { currentActiveVideo.pause(); currentActiveVideo = null; } document.getElementById('lightbox').style.display = 'none'; document.getElementById('lightboxContent').innerHTML = ""; }
+    function testStreamUrl() {
+      const url = document.getElementById('streamUrlInput').value.trim();
+      if (!url) { showToast("⚠️ 請先貼上電台 Stream Link 呀！"); return; }
+      const player = document.getElementById('bgPlayer');
+      player.src = url;
+      player.play().then(() => {
+        showToast("📻 正在測試播放電台 Stream...");
+        document.getElementById('musicName').innerText = "📻 試聽電台中：" + url;
+      }).catch(e => { showToast("❌ 此 Link 無法直接播放或已被封鎖！"); });
+    }
+        function setPlayMode(mode) {
+      playMode = mode;
+      const btnSeq = document.getElementById('btnSeq');
+      const btnLoop = document.getElementById('btnLoop');
+      const btnRand = document.getElementById('btnRand');
+      if (btnSeq) btnSeq.classList.toggle('active', mode === 'sequence');
+      if (btnLoop) btnLoop.classList.toggle('active', mode === 'single-loop');
+      if (btnRand) btnRand.classList.toggle('active', mode === 'random');
+      const modeName = mode === 'sequence' ? '順序播放' : (mode === 'single-loop' ? '單曲循環' : '隨機播放');
+      showToast(`🎵 播放模式改為：${modeName}`);
+    }
+    function handleTrackEnded() {
+      if (musicList.length === 0) return;
+      if (playMode === 'single-loop') { playTrack(currentTrackIdx); } 
+      else if (playMode === 'random') { playTrack(Math.floor(Math.random() * musicList.length)); } 
+      else { playTrack((currentTrackIdx + 1) % musicList.length); }
+    }
+    function deleteTrack(e, id) {
+      e.stopPropagation();
+      if (confirm("確定要從歌單刪除呢首歌？")) {
+        const tx = db.transaction("music", "readwrite");
+        tx.objectStore("music").delete(id);
+        tx.oncomplete = function() { loadSavedMusic(); showToast("🗑️ 歌曲已成功刪除！"); };
+      }
+    }
+
+    /* 🌟 4 號仔 100% 成功燈箱 JS 邏輯 */
+    function openLightboxIndex(idx) {
+      if (albumMediaList.length === 0) return;
+      slideIndex = idx; showSlide(slideIndex);
+      const lightbox = document.getElementById('lightbox');
+      lightbox.style.display = 'flex';
+      
+      lightbox.ontouchstart = (e) => { touchStartX = e.changedTouches[0].screenX; };
+      lightbox.ontouchend = (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const threshold = 50;
+        if (touchEndX < touchStartX - threshold) nextSlide();
+        if (touchEndX > touchStartX + threshold) prevSlide();
+      };
+    }
+    function showSlide(idx) {
+      if (albumMediaList.length === 0) return;
+      if (idx >= albumMediaList.length) slideIndex = 0;
+      if (idx < 0) slideIndex = albumMediaList.length - 1;
+      const item = albumMediaList[slideIndex];
+      const content = document.getElementById('lightboxContent');
+      content.style.opacity = 0;
+      setTimeout(() => {
+        if (item.isVideo) {
+          content.innerHTML = `<video id="activeVideo" src="${item.src}" controls autoplay></video>`;
+          document.getElementById('lightboxCaption').innerText = `🎬 (${slideIndex + 1}/${albumMediaList.length}) ${item.caption}`;
+          setTimeout(() => { currentActiveVideo = document.getElementById('activeVideo'); if (currentActiveVideo) currentActiveVideo.volume = document.getElementById('volVideo').value; }, 100);
+        } else {
+          content.innerHTML = `<img src="${item.src}">`;
+          document.getElementById('lightboxCaption').innerText = `📷 (${slideIndex + 1}/${albumMediaList.length}) ${item.caption}`;
+          currentActiveVideo = null;
+        }
+        content.style.opacity = 1;
+      }, 150);
+    }
+    function startSlideshow() {
+      if (albumMediaList.length === 0) { showToast("⚠️ 相簿裡面未有檔案呀！請先揼入相片～"); return; }
+      openLightboxIndex(0); isPlayingSlideshow = true;
+      document.getElementById('playPauseBtn').innerText = "⏸️"; resetSlideTimer();
+    }
+    function setSlideshowSpeed(ms) {
+      slideshowInterval = ms;
+      document.getElementById('spd3').classList.remove('active');
+      document.getElementById('spd6').classList.remove('active');
+      document.getElementById('spd10').classList.remove('active');
+      if (ms === 3000) document.getElementById('spd3').classList.add('active');
+      if (ms === 6000) document.getElementById('spd6').classList.add('active');
+      if (ms === 10000) document.getElementById('spd10').classList.add('active');
+      showToast(`⏱️ 輪播速度已設定為 ${ms/1000} 秒！`);
+      if (isPlayingSlideshow) resetSlideTimer();
+    }
+    function resetSlideTimer() {
+      clearInterval(slideTimer);
+      if (isPlayingSlideshow) { slideTimer = setInterval(() => { nextSlide(); }, slideshowInterval); }
+    }
+    function toggleSlideshowPlay() {
+      isPlayingSlideshow = !isPlayingSlideshow;
+      document.getElementById('playPauseBtn').innerText = isPlayingSlideshow ? "⏸️" : "▶️";
+      if (isPlayingSlideshow) { resetSlideTimer(); } else { clearInterval(slideTimer); }
+    }
+    function nextSlide() { slideIndex++; showSlide(slideIndex); if (isPlayingSlideshow) resetSlideTimer(); }
+    function prevSlide() { slideIndex--; showSlide(slideIndex); if (isPlayingSlideshow) resetSlideTimer(); }
+    function closeLightbox() {
+      clearInterval(slideTimer); isPlayingSlideshow = false;
+      if (currentActiveVideo) { currentActiveVideo.pause(); currentActiveVideo = null; }
+      document.getElementById('lightboxContent').innerHTML = "";
+      document.getElementById('lightbox').style.display = 'none';
+    }
   </script>
 </body>
 </html>
+
+   

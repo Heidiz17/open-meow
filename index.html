@@ -101,7 +101,6 @@
     .mixer-channel label { font-size: 12px; font-weight: 900; color: #ffffff; white-space: nowrap; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9); }
     .mixer-channel input[type=range] { flex: 1; max-width: 180px; margin-left: auto; cursor: pointer; }
   </style>
-</head>
   <style>
     .sound-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; }
     .sound-btn { 
@@ -190,7 +189,7 @@
         </p>
       </div>
 
-      <!-- 核心抽卡按鈕 (主耶穌寶血紅 + 白字金星高對比) -->
+      <!-- 核心抽卡按鈕 -->
       <div style="display: flex; gap: 8px; margin-top: 12px;">
         <button class="btn-compact" onclick="drawBibleCardWithAnim()" style="flex: 1; background: linear-gradient(135deg, #d63031 0%, #e17055 100%); color: #ffffff; font-size: 13px; padding: 12px 15px; border-radius: 20px; border: 1.5px solid #ffeaa7; box-shadow: 0 4px 12px rgba(214, 48, 49, 0.6); font-weight: 900; text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.8);">
           ✨ 🙏 誠心所願 · 領受話語
@@ -209,11 +208,26 @@
           <option value="愛">愛</option>
           <option value="平安">平安</option>
           <option value="擔憂">擔憂</option>
+          <option value="救恩">救恩</option>
+          <option value="信仰">信仰</option>
+          <option value="寬恕">寬恕</option>
+          <option value="禱告">禱告</option>
+          <option value="病痛">病痛</option>
+          <option value="恐懼">恐懼</option>
+          <option value="婚姻">婚姻</option>
+          <option value="孩童">孩童</option>
+          <option value="希望">希望</option>
+          <option value="悲愁">悲愁</option>
+          <option value="復活">復活</option>
+          <option value="忿恨">忿恨</option>
+          <option value="公義">公義</option>
+          <option value="威嚴">威嚴</option>
+          <option value="警誡">警誡</option>
+          <option value="界線">界線</option>
         </select>
       </div>
     </div>
   </div>
-
   <!-- 📻 2. 貓貓電台俱樂部 -->
   <div class="section-title-btn" onclick="toggleFold('foldRadio')">
     <div>
@@ -241,6 +255,7 @@
       </div>
     </div>
   </div>
+
   <!-- 🎵 3. 專屬背景音樂歌單 -->
   <div class="section-title-btn" onclick="toggleFold('foldMusic')">
     <div>
@@ -263,7 +278,6 @@
       <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
     </div>
   </div>
-
   <!-- 🖼️ 4. 貓貓專屬多媒體相簿 -->
   <div class="section-title-btn" onclick="toggleFold('foldAlbum')">
     <div>
@@ -291,7 +305,7 @@
     <div class="media-grid" id="mediaGrid"></div>
   </div>
 
-  <!-- 🎧 5. 🎛️ 雙 Deck BPM 混音控制台 (10號仔靈魂專區) -->
+  <!-- 🎧 5. 🎛️ 雙 Deck BPM 混音控制台 -->
   <div class="section-title-btn" onclick="toggleFold('foldDeck')">
     <div>
       <span>🎧 🎛️ 雙 Deck BPM 混音控制台</span>
@@ -333,7 +347,7 @@
       </div>
     </div>
   </div>
-  <!-- 🥁 6. 24 宮格古早 DJ 鼓組 + 🐱 真貓語 Soundboard (10號仔大一統專區) -->
+  <!-- 🥁 6. 24 宮格古早 DJ 鼓組 + 🐱 真貓語 Soundboard -->
   <div class="section-title-btn" onclick="toggleFold('foldPadUnified')">
     <div>
       <span>🥁 24 宮格古早 DJ 鼓組 + 🐱 真貓語 Soundboard</span>
@@ -391,7 +405,6 @@
       <div class="mixer-channel"><label>🎬 影片原聲：</label><input type="range" id="volVideo" min="0" max="1" step="0.05" value="0.9" oninput="updateVolumes()"></div>
     </div>
   </div>
-
   <!-- 💾 8. 貓貓助手 RPG 存檔管理 -->
   <div class="section-title-btn" onclick="toggleFold('foldRPG')">
     <div>
@@ -439,7 +452,7 @@
     © 2026 Heidiz & Gemini P-Chan Production. All Rights Reserved.
   </div>
   <script>
-    /* 🔒 全局 Web Audio API UI 音效引擎 (10號仔強大音效) */
+    /* 🔒 全局 Web Audio API UI 音效引擎 */
     let audioCtx = null;
     let djMasterGain = null;
 
@@ -590,9 +603,7 @@
       }
     }
     loadVersesJSON();
-  </script>
-  <script>
-    /* 🥁 12 宮格古早 DJ SoundPad 多聲道獨立混音引擎 (10號仔完美復刻) */
+
     function playSynthSound(type) {
       try {
         const ctx = getAudioContext(); const now = ctx.currentTime;
@@ -670,7 +681,6 @@
       } catch(e) {}
     }
 
-    /* 🎛️ 雙 Deck BPM 控制與 Crossfader 換歌邏輯 (10號仔完美復刻) */
     let deckABpmVal = 124.0, deckBBpmVal = 120.0;
 
     function updateDeckPitch(deck, val) {
@@ -748,8 +758,7 @@
         currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(err => { showToast(`🐾 貓語：${item.desc}`); });
       });
     }
-  </script>
-  <script>
+
     function uploadCustomWallpaper(event) {
       const file = event.target.files[0];
       if (file) {
@@ -777,7 +786,7 @@
     }
     function loadSavedOpacity() { const req = db.transaction("settings", "readonly").objectStore("settings").get("panelOpacity"); req.onsuccess = function() { if (req.result) { const val = req.result.val; document.getElementById('volOpacity').value = val; updatePanelOpacity(val); } }; }
 
-    function updateVolumes() {
+        function updateVolumes() {
       if (document.getElementById('bgPlayer')) document.getElementById('bgPlayer').volume = document.getElementById('volBgm').value;
       if (currentCatAudio) currentCatAudio.volume = document.getElementById('volCat').value;
       if (currentActiveVideo) currentActiveVideo.volume = document.getElementById('volVideo').value;

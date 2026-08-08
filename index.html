@@ -232,7 +232,7 @@
   <div class="section-title-btn" onclick="toggleFold('foldRadio')">
     <div>
       <span>📻 貓貓電台俱樂部 (Radio Club)</span>
-      <span class="sub-tip">💡 即點即播好音樂與伴奏 Stream</span>
+      <span class="sub-tip">💡 即點即播好音樂與伴奏 Stream (已加插和平鋼琴與清新放鬆台)</span>
     </div>
     <span class="fold-arrow" id="arrowRadio">▲ 收起</span>
   </div>
@@ -240,13 +240,16 @@
     <div class="music-box" style="margin-top: 0;">
       <div style="font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">🌟 皇牌精選電台 (即點即播)：</div>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; margin-bottom: 10px;">
-        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(9, 132, 227, 0.9);" onclick="confirmRadioPlay('JPOPSUKI 日本台', 'https://jpopsuki-proxy.heidiz-kung.workers.dev')">🎸 JPOPSUKI 日本台</button>
-        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(0, 184, 148, 0.9);" onclick="confirmRadioPlay('SMOOTHJAZZ 爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 SmoothJazz 爵士台</button>
+        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(46, 204, 113, 0.9);" onclick="confirmRadioPlay('🎹 和平鋼琴台', 'https://peacefulpiano.stream.publicradio.org/peacefulpiano.aac')">🎹 和平鋼琴台</button>
+        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(52, 152, 219, 0.9);" onclick="confirmRadioPlay('🍃 清新放鬆台', 'https://relax.stream.publicradio.org/relax.aac')">🍃 清新放鬆台</button>
+        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(9, 132, 227, 0.9);" onclick="confirmRadioPlay('🎸 JPOPSUKI 日本台', 'https://jpopsuki-proxy.heidiz-kung.workers.dev')">🎸 JPOPSUKI 日本台</button>
+        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(0, 184, 148, 0.9);" onclick="confirmRadioPlay('🎷 SMOOTHJAZZ 爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 SmoothJazz 爵士台</button>
         <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(108, 92, 231, 0.9);" onclick="confirmRadioPlay('🇬🇧 Britpop 與英式搖滾台', 'https://stream.radioparadise.com/rock-128')">🇬🇧 Britpop 英搖台</button>
         <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(214, 48, 49, 0.9);" onclick="confirmRadioPlay('🇺🇸 Heavy Metal 美式重金屬台', 'https://stream.rockantenne.de/heavy-metal/stream/mp3')">🇺🇸 Heavy Metal 重金屬</button>
         <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(225, 112, 85, 0.9);" onclick="confirmRadioPlay('📻 80s/90s Classic Hard Rock 經典台', 'https://stream.rockantenne.de/classic-perlen/stream/mp3')">📻 80/90s 硬搖滾</button>
       </div>
-      <div style="border-top: 1px dashed rgba(255,255,255,0.25); padding-top: 8px; margin-top: 6px;">
+
+            <div style="border-top: 1px dashed rgba(255,255,255,0.25); padding-top: 8px; margin-top: 6px;">
         <div style="font-size: 11px; color: #fab1a0; margin-bottom: 4px; font-weight:bold;">🔗 自訂雲端 Stream 試聽：</div>
         <div style="display: flex; gap: 6px;">
           <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex:1; padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.5); color: white; font-size: 12px;">
@@ -255,6 +258,7 @@
       </div>
     </div>
   </div>
+
 
   <!-- 🎵 3. 專屬背景音樂歌單 -->
   <div class="section-title-btn" onclick="toggleFold('foldMusic')">

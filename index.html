@@ -72,7 +72,6 @@
       from { opacity: 0; transform: translateY(-5px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     .drawing-anim { animation: pulseGlow 0.8s infinite alternate; }
     @keyframes pulseGlow {
       from { opacity: 0.5; transform: scale(0.98); }
@@ -90,7 +89,7 @@
     .btn-theme { background: rgba(45, 52, 54, 0.9); color: #ffeaa7; border: 1px solid rgba(255,255,255,0.4); }
 
     .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
-    .media-card { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.3); text-align: center; position: relative; padding-bottom: 4px; border: 1px solid rgba(255,255,255,0.3); }
+    .media-card { background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.3); text-align: center; position: relative; padding-bottom: 4px; border: 1px solid rgba(255,255,255,0.3); }
     .media-card img, .media-card video { width: 100%; height: 130px; object-fit: cover; cursor: pointer; display: block; }
     .media-card p { margin: 4px 0 2px; font-weight: bold; font-size: 12px; color: #ffffff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 0 4px; }
     .delete-btn { position: absolute; top: 4px; right: 4px; background: rgba(214, 48, 49, 0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-weight: bold; cursor: pointer; z-index: 10; }
@@ -100,8 +99,36 @@
     .mixer-channel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
     .mixer-channel label { font-size: 12px; font-weight: 900; color: #ffffff; white-space: nowrap; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9); }
     .mixer-channel input[type=range] { flex: 1; max-width: 180px; margin-left: auto; cursor: pointer; }
-  </style>
-  <style>
+
+    /* 🎨 4 大主題帝王級彩色暗掣 CSS */
+    .cat-btn {
+      width: 100%; padding: 11px 13px; border-radius: 12px; margin-top: 8px;
+      font-size: 14px; font-weight: 900; border: 1.5px solid rgba(255,255,255,0.6);
+      display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.2s ease;
+    }
+    .cat-btn:active { transform: scale(0.98); }
+    
+    .bg-rock { background: linear-gradient(135deg, #d63031, #e17055); color: #ffffff; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
+    .bg-dance { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #2d3436; text-shadow: none; font-weight: 900; } /* 皇牌帝王金黃 */
+    .bg-jazz { background: linear-gradient(135deg, #0984e3, #74b9ff); color: #ffffff; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
+    .bg-relax { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: #ffffff; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
+
+    .radio-sub-box {
+      display: none; padding: 10px; background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border-radius: 0 0 12px 12px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.3);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .radio-sub-box.active { display: block; }
+
+    .radio-grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .radio-card-btn {
+      padding: 10px 6px; border-radius: 10px; font-size: 12px; font-weight: 900;
+      border: 1px solid rgba(255,255,255,0.4); text-align: center; cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.25); backdrop-filter: blur(4px);
+    }
+    .radio-card-btn:active { transform: scale(0.95); opacity: 0.9; }
+
     .sound-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; }
     .sound-btn { 
       background-color: rgba(var(--panel-rgb), var(--panel-alpha)) !important; 
@@ -114,7 +141,6 @@
     }
     .sound-btn:active { transform: scale(0.93); background: #ffeaa7 !important; color: #2d3436; }
     .sound-btn span { display: block; font-size: 22px; margin-bottom: 2px; }
-
     .dj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; }
     .dj-pad {
       background: rgba(0, 184, 148, 0.4);
@@ -133,7 +159,7 @@
 
     .deck-container { display: flex; gap: 8px; margin-bottom: 10px; }
     .deck-card { 
-      flex: 1; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.3); 
+      flex: 1; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255,255,255,0.3); 
       border-radius: 10px; padding: 8px; text-align: center; 
     }
     .deck-title { font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 4px; }
@@ -173,7 +199,7 @@
     </div>
   </div>
 
-  <!-- ✝️ 1. 每日聖經金句隨機抽卡區 (JSON 引擎 + 主主題暗掣) -->
+  <!-- ✝️ 1. 每日聖經金句隨機抽卡區 -->
   <div class="section-title-btn" onclick="toggleFold('foldBible')">
     <div>
       <span>✝️ 每日聖經金句隨機抽卡區</span>
@@ -182,24 +208,23 @@
     <span class="fold-arrow" id="arrowBible">▼ 展開</span>
   </div>
   <div class="fold-content" id="foldBible">
-    <div class="foldable-card" style="padding: 15px; text-align: center; background: rgba(0,0,0,0.4) !important;">
-      <div id="bibleCardBox" style="min-height: 90px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.5); border-radius: 12px; padding: 14px; border: 2px dashed #ffeaa7;">
+    <div class="foldable-card" style="padding: 15px; text-align: center; background: rgba(0,0,0,0.35) !important; border-radius: 12px;">
+      <div id="bibleCardBox" style="min-height: 90px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.4); border-radius: 12px; padding: 14px; border: 2px dashed #ffeaa7;">
         <p id="bibleText" style="margin: 0; font-size: 14px; font-weight: 900; color: #ffeaa7; line-height: 1.6; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">
           ✨ 「在至高之處榮耀歸與神！在地上平安歸與他所喜悅的人。」 (路加福音 2:14)
         </p>
       </div>
 
-      <!-- 核心抽卡按鈕 -->
       <div style="display: flex; gap: 8px; margin-top: 12px;">
-        <button class="btn-compact" onclick="drawBibleCardWithAnim()" style="flex: 1; background: linear-gradient(135deg, #d63031 0%, #e17055 100%); color: #ffffff; font-size: 13px; padding: 12px 15px; border-radius: 20px; border: 1.5px solid #ffeaa7; box-shadow: 0 4px 12px rgba(214, 48, 49, 0.6); font-weight: 900; text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.8);">
+        <button class="btn-compact" onclick="drawBibleCardWithAnim()" style="flex: 1; background: linear-gradient(135deg, #d63031 0%, #e17055 100%); color: #ffffff; font-size: 13px; padding: 12px 15px; border-radius: 20px; border: 1.5px solid #ffeaa7; box-shadow: 0 4px 12px rgba(214, 48, 49, 0.6); font-weight: 900;">
           ✨ 🙏 誠心所願 · 領受話語
         </button>
-        <button class="btn-compact btn-theme" onclick="toggleFold('foldBibleCategory')" style="padding: 10px 14px; font-size: 12px; background: rgba(45, 52, 54, 0.9); color: #ffeaa7; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3);">
+        <button class="btn-compact btn-theme" onclick="toggleFold('foldBibleCategory')" style="padding: 10px 14px; font-size: 12px; background: rgba(45, 52, 54, 0.9); color: #ffeaa7; border-radius: 20px;">
           🎛️ 主題暗掣
         </button>
       </div>
 
-      <div class="fold-content" id="foldBibleCategory" style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.6); border-radius: 10px; border: 1px solid rgba(255,234,167,0.3);">
+      <div class="fold-content" id="foldBibleCategory" style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 10px; border: 1px solid rgba(255,234,167,0.3);">
         <div style="font-size: 11px; color: #fab1a0; margin-bottom: 6px; font-weight: bold;">🎯 心靈對症下藥（選擇主題）：</div>
         <select id="bibleCategorySelect" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #ffeaa7; background: #2d3436; color: #ffeaa7; font-size: 12px; font-weight: bold;">
           <option value="ALL">任意主題</option>
@@ -228,37 +253,73 @@
       </div>
     </div>
   </div>
-  <!-- 📻 2. 貓貓電台俱樂部 -->
+      <!-- 📻 2. 貓貓電台俱樂部 (4 大主題帝王級彩掣區) -->
   <div class="section-title-btn" onclick="toggleFold('foldRadio')">
     <div>
       <span>📻 貓貓電台俱樂部 (Radio Club)</span>
-      <span class="sub-tip">💡 即點即播好音樂與伴奏 Stream (已加插和平鋼琴與清新放鬆台)</span>
+      <span class="sub-tip">💡 即點即播好音樂與伴奏 Stream (4 大主題彩掣區)</span>
     </div>
     <span class="fold-arrow" id="arrowRadio">▲ 收起</span>
   </div>
   <div class="fold-content active" id="foldRadio">
     <div class="music-box" style="margin-top: 0;">
-      <div style="font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">🌟 皇牌精選電台 (即點即播)：</div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; margin-bottom: 10px;">
-        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(46, 204, 113, 0.9);" onclick="confirmRadioPlay('🎹 和平鋼琴台', 'https://peacefulpiano.stream.publicradio.org/peacefulpiano.aac')">🎹 和平鋼琴台</button>
-        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(52, 152, 219, 0.9);" onclick="confirmRadioPlay('🍃 清新放鬆台', 'https://relax.stream.publicradio.org/relax.aac')">🍃 清新放鬆台</button>
-        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(9, 132, 227, 0.9);" onclick="confirmRadioPlay('🎸 JPOPSUKI 日本台', 'https://jpopsuki-proxy.heidiz-kung.workers.dev')">🎸 JPOPSUKI 日本台</button>
-        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(0, 184, 148, 0.9);" onclick="confirmRadioPlay('🎷 SMOOTHJAZZ 爵士台', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 SmoothJazz 爵士台</button>
-        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(108, 92, 231, 0.9);" onclick="confirmRadioPlay('🇬🇧 Britpop 與英式搖滾台', 'https://stream.radioparadise.com/rock-128')">🇬🇧 Britpop 英搖台</button>
-        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(214, 48, 49, 0.9);" onclick="confirmRadioPlay('🇺🇸 Heavy Metal 美式重金屬台', 'https://stream.rockantenne.de/heavy-metal/stream/mp3')">🇺🇸 Heavy Metal 重金屬</button>
-        <button class="btn-compact btn-theme" style="padding:10px 6px; font-size:12px; background: rgba(225, 112, 85, 0.9);" onclick="confirmRadioPlay('📻 80s/90s Classic Hard Rock 經典台', 'https://stream.rockantenne.de/classic-perlen/stream/mp3')">📻 80/90s 硬搖滾</button>
+      <div style="font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 6px; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">🌟 4 大主題皇牌電台 (點擊顏色暗掣展開)：</div>
+      
+      <!-- 1. 搖滾重金屬專區 (紅色主掣) -->
+      <div class="cat-btn bg-rock" onclick="toggleFold('foldRock')">
+        <span>🎸 搖滾重金屬專區 (4台)</span>
+        <span id="arrowRock">▼ 展開</span>
       </div>
-
-            <div style="border-top: 1px dashed rgba(255,255,255,0.25); padding-top: 8px; margin-top: 6px;">
-        <div style="font-size: 11px; color: #fab1a0; margin-bottom: 4px; font-weight:bold;">🔗 自訂雲端 Stream 試聽：</div>
-        <div style="display: flex; gap: 6px;">
-          <input type="text" id="streamUrlInput" placeholder="貼上電台 Stream Link 喺度試聽..." style="flex:1; padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.5); color: white; font-size: 12px;">
-          <button class="btn-compact btn-add" onclick="testStreamUrl()">▶️ 試聽</button>
+      <div class="radio-sub-box" id="foldRock">
+        <div class="radio-grid-2col">
+          <div class="radio-card-btn" style="background: rgba(225, 112, 85, 0.95); color: #ffffff;" onclick="confirmRadioPlay('JPOP SUKI Radio', 'https://jpopsuki-proxy.heidiz-kung.workers.dev')">🎸 JPOPSUKI 日本台</div>
+          <div class="radio-card-btn" style="background: rgba(108, 92, 231, 0.95); color: #ffffff;" onclick="confirmRadioPlay('Radio Paradise (Rock Mix)', 'https://stream.radioparadise.com/rock-128')">🇬🇧 Britpop 英搖台</div>
+          <div class="radio-card-btn" style="background: rgba(45, 52, 54, 0.95); color: #ffffff;" onclick="confirmRadioPlay('ROCK ANTENNE Heavy Metal', 'https://stream.rockantenne.de/heavy-metal/stream/mp3')">🇺🇸 Heavy Metal 重金屬</div>
+          <div class="radio-card-btn" style="background: rgba(211, 84, 0, 0.95); color: #ffffff;" onclick="confirmRadioPlay('ROCK ANTENNE Classic Perlen', 'https://stream.rockantenne.de/classic-perlen/stream/mp3')">📻 80/90s 硬搖滾</div>
         </div>
       </div>
+
+      <!-- 2. 電子舞曲與 Disco 皇牌區 (黃色帝王主掣) -->
+      <div class="cat-btn bg-dance" onclick="toggleFold('foldDance')">
+        <span>🎧 電子舞曲與 Disco 皇牌區 (3台)</span>
+        <span id="arrowDance">▼ 展開</span>
+      </div>
+      <div class="radio-sub-box" id="foldDance">
+        <div class="radio-grid-2col">
+          <div class="radio-card-btn" style="grid-column: span 2; background: #f1c40f; color: #000000; font-weight: 900; text-shadow: none !important;" onclick="confirmRadioPlay('Dance Wave! Digital Radio', 'https://dancewave.online/dance.mp3')">🔥 👑 Dance Wave 流行跳舞台 (10號首選)</div>
+          <div class="radio-card-btn" style="background: #fd79a8; color: #ffffff; text-shadow: 0px 1px 3px rgba(0,0,0,0.8);" onclick="confirmRadioPlay('laut.fm - Eurodance', 'https://stream.laut.fm/eurodance')">🕺 歐洲 90s Eurodance (9號)</div>
+          <div class="radio-card-btn" style="background: #00b894; color: #ffffff; text-shadow: 0px 1px 3px rgba(0,0,0,0.8);" onclick="confirmRadioPlay('SomaFM: Groove Salad', 'https://ice1.somafm.com/groovesalad-128-aac')">☕ Groove Salad Downtempo (12號)</div>
+        </div>
+      </div>
+
+      <!-- 3. 爵士與藍調專區 (藍色主掣) -->
+      <div class="cat-btn bg-jazz" onclick="toggleFold('foldJazz')">
+        <span>🎷 爵士與藍調專區 (2台)</span>
+        <span id="arrowJazz">▼ 展開</span>
+      </div>
+      <div class="radio-sub-box" id="foldJazz">
+        <div class="radio-grid-2col">
+          <div class="radio-card-btn" style="background: rgba(9, 132, 227, 0.95); color: #ffffff; text-shadow: 0px 1px 3px rgba(0,0,0,0.8);" onclick="confirmRadioPlay('SmoothJazz.com Global Radio', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 SmoothJazz 爵士台</div>
+          <div class="radio-card-btn" style="background: rgba(0, 168, 181, 0.95); color: #ffffff; text-shadow: 0px 1px 3px rgba(0,0,0,0.8);" onclick="confirmRadioPlay('Zeno.fm - Acid Jazz Radio', 'http://stream.zeno.fm/0r0xa792kwzuv')">🎷 Acid Jazz 爵士台</div>
+        </div>
+      </div>
+
+      <!-- 4. 輕柔心靈放鬆專區 (紫色主掣) -->
+      <div class="cat-btn bg-relax" onclick="toggleFold('foldRelax')">
+        <span>☕ 輕柔心靈放鬆專區 (4台)</span>
+        <span id="arrowRelax">▼ 展開</span>
+      </div>
+      <div class="radio-sub-box" id="foldRelax">
+        <div class="radio-grid-2col">
+          <div class="radio-card-btn" style="background: #ffffff; color: #000000; font-weight: 900; text-shadow: none !important;" onclick="confirmRadioPlay('Zeno.fm - Rain Song Radio', 'http://stream.zeno.fm/689zc32y4x8uv')">🌧️ Rain Song 抒情台</div>
+          <div class="radio-card-btn" style="background: #f1c40f; color: #000000; font-weight: 900; text-shadow: none !important;" onclick="confirmRadioPlay('Peaceful Piano (Minnesota Public Radio)', 'https://peacefulpiano.stream.publicradio.org/peacefulpiano.aac')">🎹 和平鋼琴台</div>
+          <div class="radio-card-btn" style="background: rgba(212, 175, 55, 0.95); color: #ffffff; text-shadow: 0px 1px 3px rgba(0,0,0,0.8);" onclick="confirmRadioPlay('Zeno.fm - Muji Soft Lounge', 'http://stream.zeno.fm/brv193g9468uv')">🍡 Muji Soft 柔和台</div>
+          <div class="radio-card-btn" style="background: #6c5ce7; color: #ffffff; font-weight: 900; text-shadow: none !important;" onclick="confirmRadioPlay('Radio Swiss Classic (SRG SSR)', 'https://stream.srg-ssr.ch/m/rsc_de/mp3_128')">🎻 Radio Swiss 純古典台</div>
+        </div>
+      </div>
+      
     </div>
   </div>
-
 
   <!-- 🎵 3. 專屬背景音樂歌單 -->
   <div class="section-title-btn" onclick="toggleFold('foldMusic')">
@@ -409,6 +470,7 @@
       <div class="mixer-channel"><label>🎬 影片原聲：</label><input type="range" id="volVideo" min="0" max="1" step="0.05" value="0.9" oninput="updateVolumes()"></div>
     </div>
   </div>
+
   <!-- 💾 8. 貓貓助手 RPG 存檔管理 -->
   <div class="section-title-btn" onclick="toggleFold('foldRPG')">
     <div>
@@ -418,7 +480,7 @@
     <span class="fold-arrow" id="arrowRPG">▼ 展開</span>
   </div>
   <div class="fold-content" id="foldRPG">
-    <div class="save-box" style="padding: 10px; border-radius: 12px; margin-bottom: 10px; display: flex; gap: 8px; background: rgba(0,0,0,0.4);">
+    <div class="save-box" style="padding: 10px; border-radius: 12px; margin-bottom: 10px; display: flex; gap: 8px; background: rgba(0,0,0,0.35);">
       <button class="btn-compact btn-rpg-save" onclick="exportFullRPGSave()" style="background: rgba(46, 204, 161, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px;">📤 匯出 RPG Save 檔</button>
       <label class="btn-compact btn-rpg-load" for="rpgLoadInput" style="background: rgba(155, 89, 182, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px; text-align:center;">📥 讀取 RPG Save 檔</label>
       <input type="file" id="rpgLoadInput" accept=".json" style="display:none;" onchange="importFullRPGSave(event)">
@@ -455,6 +517,7 @@
   <div style="text-align: center; color: rgba(255,255,255,0.85); font-size: 10px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">
     © 2026 Heidiz & Gemini P-Chan Production. All Rights Reserved.
   </div>
+
   <script>
     /* 🔒 全局 Web Audio API UI 音效引擎 */
     let audioCtx = null;
@@ -499,7 +562,6 @@
         }
       } catch(e) {}
     }
-
     let isAllFolded = false;
     function toggleFold(id) {
       const content = document.getElementById(id);
@@ -521,7 +583,7 @@
 
     function toggleAllFolds() {
       playUiSound('click');
-      const allContents = document.querySelectorAll('.fold-content');
+      const allContents = document.querySelectorAll('.fold-content, .radio-sub-box');
       const allArrows = document.querySelectorAll('.fold-arrow');
       const btn = document.getElementById('btnMasterFold');
       isAllFolded = !isAllFolded;
@@ -529,7 +591,7 @@
         if (isAllFolded) content.classList.add('active');
         else content.classList.remove('active');
       });
-      allArrows.forEach(arrow => { arrow.innerText = isAllFolded ? "▲ 收起" : "▼ 展開"; });
+      allArrows.forEach(arrow => { if (arrow) arrow.innerText = isAllFolded ? "▲ 收起" : "▼ 展開"; });
       if (btn) {
         btn.innerText = isAllFolded ? "📁 一鍵全縮" : "📂 一鍵全開";
         btn.style.background = isAllFolded ? "#00b894" : "#e17055";
@@ -727,7 +789,6 @@
       db = e.target.result; 
       loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); loadSavedOpacity(); loadSavedFontTheme(); initAlbumLongPress(); renderCatGrid();
     };
-
     function toggleFontTheme() {
       playUiSound('click'); document.body.classList.toggle('jp-font');
       const isJp = document.body.classList.contains('jp-font'); showToast(isJp ? "✨ 已切換至：日系可愛字體！" : "✨ 已切換至：經典港系粗體！");
@@ -739,7 +800,7 @@
       { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" }, { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },
       { name: "急促討食", emoji: "⚡", desc: "動作太慢，扣 50 分！", file: "cat3.mp3" }, { name: "裝可憐喵", emoji: "🥺", desc: "畀粒零食我食啦～", file: "cat4.mp3" },
       { name: "開心呼嚕", emoji: "🥰", desc: "摸得好舒服，想瞓覺。", file: "cat5.mp3" }, { name: "興奮鳥鳴", emoji: "🐥", desc: "見到窗外有飛鳥！", file: "cat6.mp3" },
-      { name: "告白短喵", emoji: "❤️", desc: "最信任你啦奴才。", file: "cat7.mp3" }, { name: "放鬆踏踏", emoji: "🐾", desc: "按摩中，請勿打擾。", file: "cat8.mp3" },
+      { name: "告白短喵", emoji: "❤️", desc: "最信任你啦奴才。", file: "cat7.mp3" }, { name: "放術踏踏", emoji: "🐾", desc: "按摩中，請勿打擾。", file: "cat8.mp3" },
       { name: "迎人高音", emoji: "🎉", desc: "好開心見到你返屋企！", file: "cat9.mp3" }, { name: "滾火低吼", emoji: "😡", desc: "唔好逼我，想咬人！", file: "cat10.mp3" },
       { name: "警告哈氣", emoji: "🐍", desc: "別過嚟！再過嚟我動手！", file: "cat11.mp3" }, { name: "踩尾尖叫", emoji: "🙀", desc: "踩到我尾巴啦！痛呀！", file: "cat12.mp3" }
     ];
@@ -790,7 +851,7 @@
     }
     function loadSavedOpacity() { const req = db.transaction("settings", "readonly").objectStore("settings").get("panelOpacity"); req.onsuccess = function() { if (req.result) { const val = req.result.val; document.getElementById('volOpacity').value = val; updatePanelOpacity(val); } }; }
 
-        function updateVolumes() {
+    function updateVolumes() {
       if (document.getElementById('bgPlayer')) document.getElementById('bgPlayer').volume = document.getElementById('volBgm').value;
       if (currentCatAudio) currentCatAudio.volume = document.getElementById('volCat').value;
       if (currentActiveVideo) currentActiveVideo.volume = document.getElementById('volVideo').value;
@@ -824,7 +885,6 @@
         } catch (err) { alert("❌ 存檔格式錯誤！"); }
       }; reader.readAsText(file); event.target.value = "";
     }
-
     let toastTimer;
     function showToast(msg) {
       const toast = document.getElementById('toast'); toast.innerHTML = msg; toast.style.display = 'block';
@@ -939,10 +999,9 @@
     }
     function playTrack(idx) { if (musicList.length === 0) return; currentTrackIdx = idx; const player = document.getElementById('bgPlayer'); player.src = musicList[currentTrackIdx].src; player.play().then(() => { renderPlaylist(); updateVolumes(); }).catch(e => console.log(e)); }
     function confirmRadioPlay(stationName, streamUrl) { playUiSound('click'); if (confirm(`🐾 準備播放《${stationName}》？`)) { const player = document.getElementById('bgPlayer'); player.src = streamUrl; player.play().then(() => { showToast(`📻 直播中：${stationName}`); document.getElementById('musicName').innerText = `📻 直播中：${stationName}`; }).catch(e => showToast("❌ 連線失敗！")); } }
-    function testStreamUrl() { playUiSound('click'); const url = document.getElementById('streamUrlInput').value.trim(); if (!url) { showToast("⚠️ 請貼上 Stream Link！"); return; } const player = document.getElementById('bgPlayer'); player.src = url; player.play().then(() => { showToast("📻 測試播放中..."); document.getElementById('musicName').innerText = "📻 試聽中：" + url; }).catch(e => showToast("❌ 無法播放此 Link！")); }
     function setPlayMode(mode) { playUiSound('click'); playMode = mode; document.getElementById('btnSeq').classList.toggle('active', mode === 'sequence'); document.getElementById('btnLoop').classList.toggle('active', mode === 'single-loop'); document.getElementById('btnRand').classList.toggle('active', mode === 'random'); showToast(`🎵 模式改為：${mode === 'sequence' ? '順序' : (mode === 'single-loop' ? '單曲' : '隨機')}`); }
     function handleTrackEnded() { if (musicList.length === 0) return; if (playMode === 'single-loop') playTrack(currentTrackIdx); else if (playMode === 'random') playTrack(Math.floor(Math.random() * musicList.length)); else playTrack((currentTrackIdx + 1) % musicList.length); }
-    function deleteTrack(e, id) { e.stopPropagation(); if (confirm("確定刪除呢首歌？")) { const tx = db.transaction("music", "readwrite"); tx.objectStore("music").delete(id); tx.oncomplete = function() { loadSavedMusic(); showToast("🗑️ 已刪除！"); }; } }
+    function deleteTrack(e, id) { e.stopPropagation(); if (confirm("確定刪除呢首歌？")) { const tx = db.transaction("music", "readwrite").objectStore("music").delete(id); tx.oncomplete = function() { loadSavedMusic(); showToast("🗑️ 已刪除！"); }; } }
 
     function openLightboxIndex(idx) {
       if (albumMediaList.length === 0) return; slideIndex = idx; showSlide(slideIndex);

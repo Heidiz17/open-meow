@@ -35,13 +35,21 @@
       text-shadow: 0px 0px 4px rgba(44, 24, 16, 0.9), 0px 1px 2px rgba(0, 0, 0, 0.6);
     }
 
-    .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+    .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
     
     h1 { 
-      font-size: 26px; font-weight: 900; font-style: italic; margin: 0; letter-spacing: 1.5px; 
+      font-size: 24px; font-weight: 900; font-style: italic; margin: 0; letter-spacing: 1.5px; 
       color: #ffffff; 
       text-shadow: 0px 0px 6px rgba(44, 24, 16, 0.95), 2px 2px 4px rgba(0, 0, 0, 0.7);
       transform: skewX(-6deg); 
+    }
+
+    .header-fold-title {
+      font-size: 14px; font-weight: 900; color: #ffeaa7;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; padding: 4px 2px;
+      text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.9);
+      transition: font-size 0.2s ease;
     }
 
     .wallpaper-btn-group { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
@@ -65,6 +73,39 @@
     }
     .fold-arrow { font-size: 12px; color: #74b9ff; white-space: nowrap; font-weight: 900; padding-left: 6px; }
     
+    /* 🎨 6 色標題切換樣式 */
+    .title-bible { color: #ffeaa7 !important; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.8); }
+    .title-radio { color: #ff7675 !important; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.8); }
+    .title-music { color: #55efc4 !important; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.8); }
+    .title-album { color: #a29bfe !important; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.8); }
+    .title-mixer { color: #00b894 !important; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.8); }
+
+    body.theme-white .section-title-btn span:first-child,
+    body.theme-white .header-fold-title span:first-child {
+      color: #ffffff !important;
+      text-shadow: 0 2px 6px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,0.9);
+    }
+    body.theme-gold .section-title-btn span:first-child,
+    body.theme-gold .header-fold-title span:first-child {
+      color: #f1c40f !important;
+      text-shadow: 0 2px 6px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,0.9);
+    }
+    body.theme-red .section-title-btn span:first-child,
+    body.theme-red .header-fold-title span:first-child {
+      color: #ff0033 !important;
+      text-shadow: 0 0 6px #ffffff, 0 0 12px #ffffff, 0 0 18px #ffffff;
+    }
+    body.theme-blue .section-title-btn span:first-child,
+    body.theme-blue .header-fold-title span:first-child {
+      color: #0055ff !important;
+      text-shadow: 0 0 6px #ffffff, 0 0 12px #ffffff, 0 0 18px #ffffff;
+    }
+    body.theme-black .section-title-btn span:first-child,
+    body.theme-black .header-fold-title span:first-child {
+      color: #000000 !important;
+      text-shadow: 0 0 6px #ffffff, 0 0 12px #ffffff;
+    }
+
     .fold-content { display: none; margin-bottom: 12px; animation: fadeIn 0.3s ease-in-out; }
     .fold-content.active { display: block; }
 
@@ -89,6 +130,7 @@
     .btn-theme { background: rgba(45, 52, 54, 0.9); color: #ffeaa7; border: 1px solid rgba(255,255,255,0.4); }
 
     .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
+    .media-grid.four-cols { grid-template-columns: repeat(4, 1fr); }
     .media-card { background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.3); text-align: center; position: relative; padding-bottom: 4px; border: 1px solid rgba(255,255,255,0.3); }
     .media-card img, .media-card video { width: 100%; height: 130px; object-fit: cover; cursor: pointer; display: block; }
     .media-card p { margin: 4px 0 2px; font-weight: bold; font-size: 12px; color: #ffffff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 0 4px; }
@@ -99,7 +141,6 @@
     .mixer-channel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
     .mixer-channel label { font-size: 12px; font-weight: 900; color: #ffffff; white-space: nowrap; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9); }
     .mixer-channel input[type=range] { flex: 1; max-width: 180px; margin-left: auto; cursor: pointer; }
-
     /* 🎨 4 大主題帝王級彩色暗掣 CSS */
     .cat-btn {
       width: 100%; padding: 11px 13px; border-radius: 12px; margin-top: 8px;
@@ -110,7 +151,7 @@
     .cat-btn:active { transform: scale(0.98); }
     
     .bg-rock { background: linear-gradient(135deg, #d63031, #e17055); color: #ffffff; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
-    .bg-dance { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #2d3436; text-shadow: none; font-weight: 900; } /* 皇牌帝王金黃 */
+    .bg-dance { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #2d3436; text-shadow: none; font-weight: 900; }
     .bg-jazz { background: linear-gradient(135deg, #0984e3, #74b9ff); color: #ffffff; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
     .bg-relax { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: #ffffff; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
 
@@ -187,14 +228,23 @@
   </style>
 </head>
 <body>
-  <div class="header-box">
-    <h1>🐾 OPEN 貓貓助手</h1>
-    <div class="wallpaper-btn-group">
+  <!-- 🌟 最高主控制台（預設閂櫃桶） -->
+  <div class="section-title-btn" style="margin-top: 0; margin-bottom: 6px;" onclick="toggleFold('foldHeader')">
+    <div class="header-fold-title" style="width: 100%;">
+      <span>🐾 OPEN 貓貓助手 (主控制台)</span>
+      <span class="fold-arrow" id="arrowHeader">▼ 展開</span>
+    </div>
+  </div>
+
+  <div class="fold-content" id="foldHeader" style="margin-bottom: 8px;">
+    <div class="wallpaper-btn-group" style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);">
       <button class="btn-compact btn-theme" onclick="changeWallpaperPreset()">🎨 預設風格</button>
       <label class="btn-compact btn-add" style="background:#00b894;" for="wpInput">🖼️ 換底紙</label>
       <input type="file" id="wpInput" accept="image/*" style="display:none;" onchange="uploadCustomWallpaper(event)">
       <button class="btn-font-toggle" onclick="toggleFontTheme()">🔤 港/日</button>
       <button class="btn-compact btn-theme" onclick="toggleFontSize()" style="background:#6c5ce7; color:white;">🔠 字體大細</button>
+      <!-- 🌟 6 色標題切換按鈕 -->
+      <button class="btn-compact" onclick="toggleTitleColor()" style="background:#fd79a8; color:white;">🎨 標題顏色</button>
       <button class="btn-compact btn-add" onclick="toggleAllFolds()" id="btnMasterFold" style="background:#e17055;">📂 一鍵全開</button>
     </div>
   </div>
@@ -202,7 +252,7 @@
   <!-- ✝️ 1. 每日聖經金句隨機抽卡區 -->
   <div class="section-title-btn" onclick="toggleFold('foldBible')">
     <div>
-      <span>✝️ 每日聖經金句隨機抽卡區</span>
+      <span class="title-bible">✝️ 每日聖經金句隨機抽卡區</span>
       <span class="sub-tip">💡 叩門就給你們開門：點擊領受天父話語與平安祝福！</span>
     </div>
     <span class="fold-arrow" id="arrowBible">▼ 展開</span>
@@ -253,19 +303,20 @@
       </div>
     </div>
   </div>
-              <!-- 📻 2. 貓貓電台俱樂部 (5 大主題帝王級彩掣區) -->
+
+  <!-- 📻 2. 貓貓電台俱樂部 (5 大主題帝王級彩掣區) -->
   <div class="section-title-btn" onclick="toggleFold('foldRadio')">
     <div>
-      <span>📻 貓貓電台俱樂部 (Radio Club)</span>
+      <span class="title-radio">📻 貓貓電台俱樂部 (Radio Club)</span>
       <span class="sub-tip">💡 即點即播好音樂與伴奏 Stream (5 大主題彩掣區)</span>
     </div>
-    <span class="fold-arrow" id="arrowRadio">▲ 收起</span>
+    <span class="fold-arrow" id="arrowRadio">▼ 展開</span>
   </div>
-  <div class="fold-content active" id="foldRadio">
+  <div class="fold-content" id="foldRadio">
     <div class="music-box" style="margin-top: 0;">
       <div style="font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 6px; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">🌟 5 大主題皇牌電台 (點擊顏色暗掣展開)：</div>
       
-      <!-- 1. 搖滾與日系動漫專區 (紅色主掣) -->
+      <!-- 1. 搖滾與日系動漫專區 -->
       <div class="cat-btn bg-rock" onclick="toggleFold('foldRock')">
         <span>🎸 搖滾與日系動漫專區 (6台)</span>
         <span id="arrowRock">▼ 展開</span>
@@ -281,7 +332,7 @@
         </div>
       </div>
 
-      <!-- 2. 電子舞曲與 Disco 皇牌區 (黃色帝王主掣) -->
+      <!-- 2. 電子舞曲與 Disco 皇牌區 -->
       <div class="cat-btn bg-dance" onclick="toggleFold('foldDance')">
         <span>🎧 電子舞曲與 Disco 皇牌區 (4台)</span>
         <span id="arrowDance">▼ 展開</span>
@@ -295,7 +346,7 @@
         </div>
       </div>
 
-      <!-- 3. 爵士與藍調專區 (藍色主掣) -->
+      <!-- 3. 爵士與藍調專區 -->
       <div class="cat-btn bg-jazz" onclick="toggleFold('foldJazz')">
         <span>🎷 爵士與藍調專區 (2台)</span>
         <span id="arrowJazz">▼ 展開</span>
@@ -307,7 +358,7 @@
         </div>
       </div>
 
-      <!-- 4. 輕柔心靈放鬆專區 (紫色主掣) -->
+      <!-- 4. 輕柔心靈放鬆專區 -->
       <div class="cat-btn bg-relax" onclick="toggleFold('foldRelax')">
         <span>☕ 輕柔心靈放鬆專區 (5台)</span>
         <span id="arrowRelax">▼ 展開</span>
@@ -322,7 +373,7 @@
         </div>
       </div>
 
-      <!-- 5. 🇭🇰 香港頻道 vs 🌿 大自然聲音專區 (雙壁區) -->
+      <!-- 5. 香港頻道 vs 大自然聲音專區 -->
       <div style="display: flex; gap: 8px; margin-top: 8px;">
         <div class="cat-btn" style="flex: 1; margin-top: 0; background: linear-gradient(135deg, #00b894, #00cec9); color: #ffffff;" onclick="toggleFold('foldHK')">
           <span>🇭🇰 香港頻道 (1台)</span>
@@ -334,14 +385,12 @@
         </div>
       </div>
 
-      <!-- 5A. 香港頻道內容 -->
       <div class="radio-sub-box" id="foldHK">
         <div class="radio-grid-2col">
           <div class="radio-card-btn" style="grid-column: span 2; background: #e17055; color: #ffffff; font-weight: 900;" onclick="confirmRadioPlay('RTHK Radio 2', 'https://media-hub-2345.stream-hub-th.workers.dev/?url=https://stm.rthk.hk/radio2')">📻 RTHK 2 (香港電台第二台)</div>
         </div>
       </div>
 
-      <!-- 5B. 大自然聲音專區預留框架 -->
       <div class="radio-sub-box" id="foldNature">
         <div class="radio-grid-2col">
           <div class="radio-card-btn" style="background: #20bf6b; color: #ffffff;" onclick="showToast('🌿 預留：雨夜聽雨檔期中')">🌧️ Rain Song 雨夜</div>
@@ -353,16 +402,15 @@
 
     </div>
   </div>
-
   <!-- 🎵 3. 專屬背景音樂歌單 -->
   <div class="section-title-btn" onclick="toggleFold('foldMusic')">
     <div>
-      <span>🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
+      <span class="title-music">🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
       <span class="sub-tip">💡 支援無限首自動編號、多模式循環與背景播放</span>
     </div>
-    <span class="fold-arrow" id="arrowMusic">▲ 收起</span>
+    <span class="fold-arrow" id="arrowMusic">▼ 展開</span>
   </div>
-  <div class="fold-content active" id="foldMusic">
+  <div class="fold-content" id="foldMusic">
     <div class="music-box" style="margin-top: 0;">
       <div class="playlist-controls">
         <label class="btn-compact btn-add" for="musicInput">➕ 揼入 MP3</label>
@@ -376,10 +424,11 @@
       <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
     </div>
   </div>
+
   <!-- 🖼️ 4. 貓貓專屬多媒體相簿 -->
   <div class="section-title-btn" onclick="toggleFold('foldAlbum')">
     <div>
-      <span>🖼️ 貓貓專屬多媒體相簿</span>
+      <span class="title-album">🖼️ 貓貓專屬多媒體相簿</span>
       <span class="sub-tip">💡 點擊展開：長按選單改名 | 支援 ◀ ▶ 調動排位 | 4號仔燈箱</span>
     </div>
     <span class="fold-arrow" id="arrowAlbum">▼ 展開</span>
@@ -402,11 +451,10 @@
     </div>
     <div class="media-grid" id="mediaGrid"></div>
   </div>
-
   <!-- 🎧 5. 🎛️ 雙 Deck BPM 混音控制台 -->
   <div class="section-title-btn" onclick="toggleFold('foldDeck')">
     <div>
-      <span>🎧 🎛️ 雙 Deck BPM 混音控制台</span>
+      <span class="title-mixer">🎧 🎛️ 雙 Deck BPM 混音控制台</span>
       <span class="sub-tip">💡 點擊展開：Deck A / B 獨立 Play/Pause、BPM 變速推桿與 Auto Crossfade！</span>
     </div>
     <span class="fold-arrow" id="arrowDeck">▼ 展開</span>
@@ -445,10 +493,11 @@
       </div>
     </div>
   </div>
+
   <!-- 🥁 6. 24 宮格古早 DJ 鼓組 + 🐱 真貓語 Soundboard -->
   <div class="section-title-btn" onclick="toggleFold('foldPadUnified')">
     <div>
-      <span>🥁 24 宮格古早 DJ 鼓組 + 🐱 真貓語 Soundboard</span>
+      <span class="title-mixer">🥁 24 宮格古早 DJ 鼓組 + 🐱 真貓語 Soundboard</span>
       <span class="sub-tip">💡 上層 12 格古早 DJ 多聲道狂打 + 下層 12 格精選貓語 Soundboard！</span>
     </div>
     <span class="fold-arrow" id="arrowPadUnified">▼ 展開</span>
@@ -486,7 +535,7 @@
   <!-- 🎛️ 7. 聲音 MIXER 與介面主控台 -->
   <div class="section-title-btn" onclick="toggleFold('foldMixer')">
     <div>
-      <span>🎛️ 聲音 MIXER 與介面主控台</span>
+      <span class="title-mixer">🎛️ 聲音 MIXER 與介面主控台</span>
       <span class="sub-tip">💡 點擊展開：即時調校不透明度與各頻道獨立音量</span>
     </div>
     <span class="fold-arrow" id="arrowMixer">▼ 展開</span>
@@ -550,8 +599,18 @@
   <div style="text-align: center; color: rgba(255,255,255,0.85); font-size: 10px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">
     © 2026 Heidiz & Gemini P-Chan Production. All Rights Reserved.
   </div>
-
   <script>
+        /* 🌟 自動讀取用戶上一次選取嘅標題顏色（如果未揀過就預設純白 theme-white） */
+    let savedThemeIdx = localStorage.getItem("meowTitleThemeIdx");
+    let titleThemeIdx = savedThemeIdx !== null ? parseInt(savedThemeIdx) : 1;
+
+    /* 頁面載入時，自動套用上一次嘅主題 Class */
+    const themeClasses = ['', 'theme-white', 'theme-gold', 'theme-red', 'theme-blue', 'theme-black'];
+    if (document.body && themeClasses[titleThemeIdx]) {
+      document.body.classList.add(themeClasses[titleThemeIdx]);
+    }
+
+
     /* 🔒 全局 Web Audio API UI 音效引擎 */
     let audioCtx = null;
     let djMasterGain = null;
@@ -595,6 +654,29 @@
         }
       } catch(e) {}
     }
+
+    /* 🎨 標題顏色 6 色切換 + 自動記憶 */
+    function toggleTitleColor() {
+      playUiSound('click');
+      titleThemeIdx = (titleThemeIdx + 1) % 6;
+      document.body.classList.remove('theme-white', 'theme-gold', 'theme-red', 'theme-blue', 'theme-black');
+      
+      const themeClasses = ['', 'theme-white', 'theme-gold', 'theme-red', 'theme-blue', 'theme-black'];
+      if (themeClasses[titleThemeIdx]) {
+        document.body.classList.add(themeClasses[titleThemeIdx]);
+      }
+
+      /* 💾 將最新顏色存入手機記憶 */
+      localStorage.setItem("meowTitleThemeIdx", titleThemeIdx);
+
+      if (titleThemeIdx === 1) showToast("🎨 標題顏色：高雅純白");
+      else if (titleThemeIdx === 2) showToast("🎨 標題顏色：聖光金黃");
+      else if (titleThemeIdx === 3) showToast("🎨 標題顏色：極致鮮紅");
+      else if (titleThemeIdx === 4) showToast("🎨 標題顏色：皇家寶藍");
+      else if (titleThemeIdx === 5) showToast("🎨 標題顏色：酷炫純黑");
+      else showToast("🎨 標題顏色：霓虹彩色");
+    }
+
     let isAllFolded = false;
     function toggleFold(id) {
       const content = document.getElementById(id);
@@ -636,7 +718,8 @@
     function toggleFontSize() {
       playUiSound('click');
       fontScaleLevel = (fontScaleLevel + 1) % 3;
-      const titles = document.querySelectorAll('.section-title-btn');
+      /* 🌟 包含 .header-fold-title，令最頂「主控制台」跟住放大！ */
+      const titles = document.querySelectorAll('.section-title-btn, .header-fold-title');
       const subTips = document.querySelectorAll('.sub-tip');
       const bibleText = document.getElementById('bibleText');
 
@@ -652,7 +735,6 @@
       }
       if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontScale", val: fontScaleLevel });
     }
-
     /* ✝️ 每日聖經金句隨機抽卡區 - verses.json 自動讀取引擎 */
     let bibleData = null;
     let isDrawingCard = false;
@@ -803,8 +885,7 @@
       const targetVal = currentVal > 0.5 ? 0 : 1; const step = (targetVal - currentVal) / 30; let count = 0;
       const timer = setInterval(() => { currentVal += step; slider.value = currentVal; updateCrossfader(currentVal); count++; if (count >= 30) { clearInterval(timer); showToast("🔄 Auto Crossfade 換歌完成！"); } }, 100);
     }
-
-    let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
+        let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
     let albumMediaList = [], slideIndex = 0, slideTimer = null, isPlayingSlideshow = false, slideshowInterval = 6000;
     let musicList = [], currentTrackIdx = 0, playMode = 'sequence', pressTimer = null, touchStartX = 0, touchEndX = 0;
     const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
@@ -822,6 +903,7 @@
       db = e.target.result; 
       loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); loadSavedOpacity(); loadSavedFontTheme(); initAlbumLongPress(); renderCatGrid();
     };
+
     function toggleFontTheme() {
       playUiSound('click'); document.body.classList.toggle('jp-font');
       const isJp = document.body.classList.contains('jp-font'); showToast(isJp ? "✨ 已切換至：日系可愛字體！" : "✨ 已切換至：經典港系粗體！");
@@ -1001,8 +1083,7 @@
         }
       };
     }
-    function deleteMedia(id) { if (confirm("確定要刪除？")) { const tx = db.transaction("media", "readwrite"); tx.objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
-
+    function deleteMedia(id) { if (confirm("確定要刪除？")) { const tx = db.transaction("media", "readwrite").objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
     function uploadMusic(event) {
       const files = Array.from(event.target.files);
       if (files.length > 0) {

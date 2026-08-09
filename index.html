@@ -138,9 +138,12 @@
 
     .music-box, .mixer-box, .album-controls, .dj-box { background-color: rgba(var(--panel-rgb), var(--panel-alpha)) !important; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.35); border-radius: 12px; padding: 12px; }
     
-    .mixer-channel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
-    .mixer-channel label { font-size: 12px; font-weight: 900; color: #ffffff; white-space: nowrap; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9); }
-    .mixer-channel input[type=range] { flex: 1; max-width: 180px; margin-left: auto; cursor: pointer; }
+    /* 🎛️ 右側能量條對齊 Slider 樣式 */
+    .mixer-channel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
+    .mixer-channel label { font-size: 12px; font-weight: 900; color: #ffffff; white-space: nowrap; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9); flex: 1; }
+    .mixer-channel input[type=range] { width: 120px; cursor: pointer; }
+    .meter-bar { width: 45px; height: 10px; background: #2d3436; border-radius: 5px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.4); }
+    .meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #00b894, #fdcb6e, #d63031); transition: width 0.1s ease; }
     /* 🎨 4 大主題帝王級彩色暗掣 CSS */
     .cat-btn {
       width: 100%; padding: 11px 13px; border-radius: 12px; margin-top: 8px;
@@ -248,7 +251,6 @@
       <button class="btn-compact btn-add" onclick="toggleAllFolds()" id="btnMasterFold" style="background:#e17055;">📂 一鍵全開</button>
     </div>
   </div>
-
   <!-- ✝️ 1. 每日聖經金句隨機抽卡區 -->
   <div class="section-title-btn" onclick="toggleFold('foldBible')">
     <div>
@@ -331,7 +333,6 @@
           <div class="radio-card-btn" style="background: rgba(211, 84, 0, 0.95); color: #ffffff;" onclick="confirmRadioPlay('ROCK ANTENNE Classic Perlen', 'https://stream.rockantenne.de/classic-perlen/stream/mp3')">📻 80/90s 硬搖滾</div>
         </div>
       </div>
-
       <!-- 2. 電子舞曲與 Disco 皇牌區 -->
       <div class="cat-btn bg-dance" onclick="toggleFold('foldDance')">
         <span>🎧 電子舞曲與 Disco 皇牌區 (4台)</span>
@@ -391,13 +392,62 @@
         </div>
       </div>
 
+      <!-- 🌿 大自然聲音區 (按鈕喺上，Mixer 喺下) -->
       <div class="radio-sub-box" id="foldNature">
-        <div class="radio-grid-2col">
-          <div class="radio-card-btn" style="background: #20bf6b; color: #ffffff;" onclick="showToast('🌿 預留：雨夜聽雨檔期中')">🌧️ Rain Song 雨夜</div>
-          <div class="radio-card-btn" style="background: #0fb9b1; color: #ffffff;" onclick="showToast('🌿 預留：深海浪濤檔期中')">🌊 深海浪濤</div>
-          <div class="radio-card-btn" style="background: #26de81; color: #ffffff;" onclick="showToast('🌿 預留：晨曦森林檔期中')">🌲 晨曦森林</div>
-          <div class="radio-card-btn" style="background: #45aaf2; color: #ffffff;" onclick="showToast('🌿 預留：風吹風鈴檔期中')">🎐 風吹風鈴</div>
+        
+        <!-- 1. 上面：4 大大自然聲音開關按鈕 -->
+        <div class="radio-grid-2col" style="margin-bottom: 10px;">
+          <div class="radio-card-btn" id="btn-nature-wave" style="background: #20bf6b; color: #ffffff;" onclick="toggleNatureSound('wave')">🌊 海浪聲 (關)</div>
+          <div class="radio-card-btn" id="btn-nature-windbell" style="background: #45aaf2; color: #ffffff;" onclick="toggleNatureSound('windbell')">🎐 風吹風鈴 (關)</div>
+          <div class="radio-card-btn" id="btn-nature-rain" style="background: #3867d6; color: #ffffff;" onclick="toggleNatureSound('rain')">🌧️ 雨夜聽雨 (關)</div>
+          <div class="radio-card-btn" id="btn-nature-forest" style="background: #26de81; color: #ffffff;" onclick="toggleNatureSound('forest')">🌲 晨曦森林 (關)</div>
         </div>
+
+        <!-- 2. 下面：大自然即時 Mixer 控制台 (帶彩虹能量條) -->
+        <div style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; border: 1px solid rgba(255,234,167,0.3);">
+          <div style="font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 4px;">
+            🎛️ 大自然即時混音控制台 (帶彩虹能量條)
+          </div>
+          
+          <div class="mixer-channel">
+            <label>🎛️ 大自然總音量：</label>
+            <input type="range" id="volNatureMaster" min="0" max="1" step="0.05" value="1.0" oninput="updateNatureVolumes()">
+            <div class="meter-bar"><div class="meter-fill" id="meterNatureMaster" style="width: 100%;"></div></div>
+          </div>
+          <div class="mixer-channel">
+            <label>🌊 海浪聲音量：</label>
+            <input type="range" id="volWave" min="0" max="1" step="0.05" value="0.7" oninput="updateNatureVolumes()">
+            <div class="meter-bar"><div class="meter-fill" id="meterWave" style="width: 70%;"></div></div>
+          </div>
+          <div class="mixer-channel">
+            <label>🎐 風鈴聲音量：</label>
+            <input type="range" id="volWindbell" min="0" max="1" step="0.05" value="0.5" oninput="updateNatureVolumes()">
+            <div class="meter-bar"><div class="meter-fill" id="meterWindbell" style="width: 50%;"></div></div>
+          </div>
+          <div class="mixer-channel">
+            <label>🌧️ 落雨聲音量：</label>
+            <input type="range" id="volRain" min="0" max="1" step="0.05" value="0.8" oninput="updateNatureVolumes()">
+            <div class="meter-bar"><div class="meter-fill" id="meterRain" style="width: 80%;"></div></div>
+          </div>
+          <div class="mixer-channel">
+            <label>🌲 森林聲音量：</label>
+            <input type="range" id="volForest" min="0" max="1" step="0.05" value="0.6" oninput="updateNatureVolumes()">
+            <div class="meter-bar"><div class="meter-fill" id="meterForest" style="width: 60%;"></div></div>
+          </div>
+        </div>
+
+        <!-- 🔊 音訊標籤 -->
+        <audio id="sound-wave" src="wave.mp3" loop></audio>
+        <audio id="sound-windbell" src="windbell.mp3" loop></audio>
+        <audio id="sound-rain" src="rain.mp3" loop></audio>
+        <audio id="sound-forest" src="forest.mp3" loop></audio>
+      </div>
+
+        <!-- 載入根目錄 MP3 檔 (帶 loop 無限循環) -->
+        <audio id="sound-wave" src="wave.mp3" loop></audio>
+        <audio id="sound-windbell" src="windbell.mp3" loop></audio>
+        <audio id="sound-rain" src="rain.mp3" loop></audio>
+        <audio id="sound-forest" src="forest.mp3" loop></audio>
       </div>
 
     </div>
@@ -451,6 +501,7 @@
     </div>
     <div class="media-grid" id="mediaGrid"></div>
   </div>
+
   <!-- 🎧 5. 🎛️ 雙 Deck BPM 混音控制台 -->
   <div class="section-title-btn" onclick="toggleFold('foldDeck')">
     <div>
@@ -487,13 +538,13 @@
       <div class="mixer-channel">
         <label>🎚️ Crossfader 換歌藍條：</label>
         <input type="range" id="crossfader" min="0" max="1" step="0.02" value="0" oninput="updateCrossfader(this.value)">
+        <div class="meter-bar"><div class="meter-fill" id="meterCrossfader"></div></div>
       </div>
       <div style="text-align:center; margin-top:6px;">
         <button class="btn-compact btn-slide" onclick="autoCrossfade()" style="width:100%;">🔄 3秒 Auto Crossfade 平滑過歌</button>
       </div>
     </div>
   </div>
-
   <!-- 🥁 6. 24 宮格古早 DJ 鼓組 + 🐱 真貓語 Soundboard -->
   <div class="section-title-btn" onclick="toggleFold('foldPadUnified')">
     <div>
@@ -532,27 +583,67 @@
     </div>
   </div>
 
-  <!-- 🎛️ 7. 聲音 MIXER 與介面主控台 -->
+  <!-- 🎛️ 7. 聲音 MIXER 與介面主控台 (完整雙層獨立 Mixer + 右側能量條) -->
   <div class="section-title-btn" onclick="toggleFold('foldMixer')">
     <div>
       <span class="title-mixer">🎛️ 聲音 MIXER 與介面主控台</span>
-      <span class="sub-tip">💡 點擊展開：即時調校不透明度與各頻道獨立音量</span>
+      <span class="sub-tip">💡 點擊展開：獨立調校大自然四音軌、主音量與能量條動態視效</span>
     </div>
     <span class="fold-arrow" id="arrowMixer">▼ 展開</span>
   </div>
   <div class="fold-content" id="foldMixer">
     <div class="mixer-box">
-      <div class="mixer-title" style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 10px;">🎛️ 聲音 MIXER 與介面主控台</div>
+      <!-- 上層：全局主控台 -->
+      <div class="mixer-title" style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 10px; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 4px;">
+        👑 上層：全站 Master 音量與介面主控
+      </div>
       <div class="mixer-channel">
         <label>🎛️ 介面不透明度 (<span id="opacityValDisplay" style="color:#ffeaa7;">45%</span>)：</label>
         <input type="range" id="volOpacity" min="0" max="1" step="0.05" value="0.45" oninput="updatePanelOpacity(this.value)">
+        <div class="meter-bar"><div class="meter-fill" id="meterOpacity"></div></div>
       </div>
-      <div class="mixer-channel"><label>🎵 背景 MP3：</label><input type="range" id="volBgm" min="0" max="1" step="0.05" value="0.8" oninput="updateVolumes()"></div>
-      <div class="mixer-channel"><label>🐱 貓貓真聲：</label><input type="range" id="volCat" min="0" max="1" step="0.05" value="1.0" oninput="updateVolumes()"></div>
-      <div class="mixer-channel"><label>🎬 影片原聲：</label><input type="range" id="volVideo" min="0" max="1" step="0.05" value="0.9" oninput="updateVolumes()"></div>
+      <div class="mixer-channel">
+        <label>🎵 背景 MP3：</label>
+        <input type="range" id="volBgm" min="0" max="1" step="0.05" value="0.8" oninput="updateVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterBgm"></div></div>
+      </div>
+      <div class="mixer-channel">
+        <label>🐱 貓貓真聲：</label>
+        <input type="range" id="volCat" min="0" max="1" step="0.05" value="1.0" oninput="updateVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterCat"></div></div>
+      </div>
+      <div class="mixer-channel">
+        <label>🎬 影片原聲：</label>
+        <input type="range" id="volVideo" min="0" max="1" step="0.05" value="0.9" oninput="updateVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterVideo"></div></div>
+      </div>
+
+      <!-- 下層：四路獨立大自然音量 Mixer -->
+      <div class="mixer-title" style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin: 14px 0 10px; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 4px;">
+        🌿 下層：四路大自然環境音專用 Mixer
+      </div>
+      <div class="mixer-channel">
+        <label>🌊 海浪聲音量：</label>
+        <input type="range" id="volWave" min="0" max="1" step="0.05" value="0.7" oninput="updateNatureVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterWave"></div></div>
+      </div>
+      <div class="mixer-channel">
+        <label>🎐 風鈴聲音量：</label>
+        <input type="range" id="volWindbell" min="0" max="1" step="0.05" value="0.5" oninput="updateNatureVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterWindbell"></div></div>
+      </div>
+      <div class="mixer-channel">
+        <label>🌧️ 落雨聲音量：</label>
+        <input type="range" id="volRain" min="0" max="1" step="0.05" value="0.8" oninput="updateNatureVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterRain"></div></div>
+      </div>
+      <div class="mixer-channel">
+        <label>🌲 森林聲音量：</label>
+        <input type="range" id="volForest" min="0" max="1" step="0.05" value="0.6" oninput="updateNatureVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterForest"></div></div>
+      </div>
     </div>
   </div>
-
   <!-- 💾 8. 貓貓助手 RPG 存檔管理 -->
   <div class="section-title-btn" onclick="toggleFold('foldRPG')">
     <div>
@@ -600,7 +691,7 @@
     © 2026 Heidiz & Gemini P-Chan Production. All Rights Reserved.
   </div>
   <script>
-        /* 🌟 自動讀取用戶上一次選取嘅標題顏色（如果未揀過就預設純白 theme-white） */
+    /* 🌟 自動讀取用戶上一次選取嘅標題顏色（如果未揀過就預設純白 theme-white） */
     let savedThemeIdx = localStorage.getItem("meowTitleThemeIdx");
     let titleThemeIdx = savedThemeIdx !== null ? parseInt(savedThemeIdx) : 1;
 
@@ -609,7 +700,6 @@
     if (document.body && themeClasses[titleThemeIdx]) {
       document.body.classList.add(themeClasses[titleThemeIdx]);
     }
-
 
     /* 🔒 全局 Web Audio API UI 音效引擎 */
     let audioCtx = null;
@@ -625,7 +715,6 @@
       if (audioCtx.state === 'suspended') { audioCtx.resume(); }
       return audioCtx;
     }
-
     function playUiSound(type) {
       try {
         const ctx = getAudioContext();
@@ -718,7 +807,6 @@
     function toggleFontSize() {
       playUiSound('click');
       fontScaleLevel = (fontScaleLevel + 1) % 3;
-      /* 🌟 包含 .header-fold-title，令最頂「主控制台」跟住放大！ */
       const titles = document.querySelectorAll('.section-title-btn, .header-fold-title');
       const subTips = document.querySelectorAll('.sub-tip');
       const bibleText = document.getElementById('bibleText');
@@ -735,7 +823,7 @@
       }
       if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontScale", val: fontScaleLevel });
     }
-    /* ✝️ 每日聖經金句隨機抽卡區 - verses.json 自動讀取引擎 */
+
     let bibleData = null;
     let isDrawingCard = false;
 
@@ -784,7 +872,6 @@
       }
     }
     loadVersesJSON();
-
     function playSynthSound(type) {
       try {
         const ctx = getAudioContext(); const now = ctx.currentTime;
@@ -879,13 +966,17 @@
 
     function playDeck(deck) { playUiSound('click'); const bgPlayer = document.getElementById('bgPlayer'); if (bgPlayer) bgPlayer.play(); showToast("▶️ 開始播放 Deck " + deck); }
     function pauseDeck(deck) { playUiSound('click'); const bgPlayer = document.getElementById('bgPlayer'); if (bgPlayer) bgPlayer.pause(); showToast("⏸️ 暫停 Deck " + deck); }
-    function updateCrossfader(val) { const bgPlayer = document.getElementById('bgPlayer'); if (bgPlayer) bgPlayer.volume = document.getElementById('volBgm').value * (1 - val * 0.5); }
+    function updateCrossfader(val) { 
+      const bgPlayer = document.getElementById('bgPlayer'); 
+      if (bgPlayer) bgPlayer.volume = document.getElementById('volBgm').value * (1 - val * 0.5); 
+      document.getElementById('meterCrossfader').style.width = (val * 100) + "%";
+    }
     function autoCrossfade() {
       playUiSound('click'); const slider = document.getElementById('crossfader'); let currentVal = parseFloat(slider.value);
       const targetVal = currentVal > 0.5 ? 0 : 1; const step = (targetVal - currentVal) / 30; let count = 0;
       const timer = setInterval(() => { currentVal += step; slider.value = currentVal; updateCrossfader(currentVal); count++; if (count >= 30) { clearInterval(timer); showToast("🔄 Auto Crossfade 換歌完成！"); } }, 100);
     }
-        let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
+    let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
     let albumMediaList = [], slideIndex = 0, slideTimer = null, isPlayingSlideshow = false, slideshowInterval = 6000;
     let musicList = [], currentTrackIdx = 0, playMode = 'sequence', pressTimer = null, touchStartX = 0, touchEndX = 0;
     const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
@@ -902,6 +993,7 @@
     request.onsuccess = function(e) { 
       db = e.target.result; 
       loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); loadSavedOpacity(); loadSavedFontTheme(); initAlbumLongPress(); renderCatGrid();
+      updateVolumes(); updateNatureVolumes();
     };
 
     function toggleFontTheme() {
@@ -939,6 +1031,42 @@
       });
     }
 
+    /* 🌿 大自然音效獨佔播放邏輯 + 按鈕發光與字樣動態切換 */
+    function toggleNatureSound(type) {
+      playUiSound('click');
+      const audio = document.getElementById('sound-' + type);
+      const btn = document.getElementById('btn-nature-' + type);
+      const names = { wave: '🌊 海浪聲', windbell: '🎐 風吹風鈴', rain: '🌧️ 雨夜聽雨', forest: '🌲 晨曦森林' };
+
+      if (audio.paused) {
+        updateNatureVolumes();
+        audio.play().then(() => {
+          btn.innerText = names[type] + ' (開)';
+          btn.style.boxShadow = "0 0 12px #ffeaa7";
+          btn.style.border = "1.5px solid #ffeaa7";
+          showToast("🌿 開始播放：" + names[type]);
+        }).catch(e => showToast("❌ 音效載入失敗，請檢查 MP3 檔案！"));
+      } else {
+        audio.pause();
+        btn.innerText = names[type] + ' (關)';
+        btn.style.boxShadow = "none";
+        btn.style.border = "1px solid rgba(255,255,255,0.4)";
+        showToast("⏸️ 暫停：" + names[type]);
+      }
+    }
+
+    /* 🌿 下層四路大自然音量連動 + 右側能量條同步拍齊 */
+    function updateNatureVolumes() {
+      ['wave', 'windbell', 'rain', 'forest'].forEach(type => {
+        const audio = document.getElementById('sound-' + type);
+        const volInput = document.getElementById('vol' + type.charAt(0).toUpperCase() + type.slice(1));
+        const meter = document.getElementById('meter' + type.charAt(0).toUpperCase() + type.slice(1));
+        if (volInput && audio) {
+          audio.volume = volInput.value;
+          if (meter) meter.style.width = (volInput.value * 100) + "%";
+        }
+      });
+    }
     function uploadCustomWallpaper(event) {
       const file = event.target.files[0];
       if (file) {
@@ -962,14 +1090,43 @@
         el.style.backdropFilter = `blur(${blurVal})`; el.style.webkitBackdropFilter = `blur(${blurVal})`;
       });
       document.getElementById('opacityValDisplay').innerText = Math.round(val * 100) + "%";
+      document.getElementById('meterOpacity').style.width = (val * 100) + "%";
       if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "panelOpacity", val: val });
     }
     function loadSavedOpacity() { const req = db.transaction("settings", "readonly").objectStore("settings").get("panelOpacity"); req.onsuccess = function() { if (req.result) { const val = req.result.val; document.getElementById('volOpacity').value = val; updatePanelOpacity(val); } }; }
+    
+    /* 🌿 下層四路大自然音量連動 + Master 總音量 + 右側能量條同步拍齊 */
+    function updateNatureVolumes() {
+      const masterVol = document.getElementById('volNatureMaster') ? document.getElementById('volNatureMaster').value : 1.0;
+      if (document.getElementById('meterNatureMaster')) {
+        document.getElementById('meterNatureMaster').style.width = (masterVol * 100) + "%";
+      }
 
+      ['wave', 'windbell', 'rain', 'forest'].forEach(type => {
+        const audio = document.getElementById('sound-' + type);
+        const volInput = document.getElementById('vol' + type.charAt(0).toUpperCase() + type.slice(1));
+        const meter = document.getElementById('meter' + type.charAt(0).toUpperCase() + type.slice(1));
+        if (volInput && audio) {
+          // 計算最終音量：個人音量 * 大自然 Master 總音量
+          audio.volume = volInput.value * masterVol;
+          if (meter) meter.style.width = (volInput.value * 100) + "%";
+        }
+      });
+    }
+
+    /* 🎛️ 上層主控音量連動 + 右側能量條動態更新 */
     function updateVolumes() {
-      if (document.getElementById('bgPlayer')) document.getElementById('bgPlayer').volume = document.getElementById('volBgm').value;
-      if (currentCatAudio) currentCatAudio.volume = document.getElementById('volCat').value;
-      if (currentActiveVideo) currentActiveVideo.volume = document.getElementById('volVideo').value;
+      const bgmVol = document.getElementById('volBgm').value;
+      const catVol = document.getElementById('volCat').value;
+      const videoVol = document.getElementById('volVideo').value;
+
+      if (document.getElementById('bgPlayer')) document.getElementById('bgPlayer').volume = bgmVol;
+      if (currentCatAudio) currentCatAudio.volume = catVol;
+      if (currentActiveVideo) currentActiveVideo.volume = videoVol;
+
+      if (document.getElementById('meterBgm')) document.getElementById('meterBgm').style.width = (bgmVol * 100) + "%";
+      if (document.getElementById('meterCat')) document.getElementById('meterCat').style.width = (catVol * 100) + "%";
+      if (document.getElementById('meterVideo')) document.getElementById('meterVideo').style.width = (videoVol * 100) + "%";
     }
 
     function exportFullRPGSave() {
@@ -1005,7 +1162,6 @@
       const toast = document.getElementById('toast'); toast.innerHTML = msg; toast.style.display = 'block';
       clearTimeout(toastTimer); toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
-
     function createAlbum() {
       playUiSound('click'); const name = prompt("請輸入新相簿名稱：", "黑貓仔寫真");
       if (name) { const id = "album_" + Date.now(); const tx = db.transaction("albums", "readwrite"); tx.objectStore("albums").add({ id: id, name: name, order: Date.now() }); tx.oncomplete = function() { loadAlbums(id); showToast("✨ 成功建立新相簿！"); }; }

@@ -392,7 +392,7 @@
         </div>
       </div>
 
-      <!-- 🌿 大自然聲音區 (按鈕喺上，Mixer 喺下) -->
+          <!-- 🌿 大自然聲音區 (按鈕喺上，Mixer 喺下，帶全站 Master Volume) -->
       <div class="radio-sub-box" id="foldNature">
         
         <!-- 1. 上面：4 大大自然聲音開關按鈕 -->
@@ -403,16 +403,16 @@
           <div class="radio-card-btn" id="btn-nature-forest" style="background: #26de81; color: #ffffff;" onclick="toggleNatureSound('forest')">🌲 晨曦森林 (關)</div>
         </div>
 
-        <!-- 2. 下面：大自然即時 Mixer 控制台 (帶彩虹能量條) -->
+        <!-- 2. 下面：即時混音控制台 (帶彩虹能量條) -->
         <div style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; border: 1px solid rgba(255,234,167,0.3);">
           <div style="font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 4px;">
-            🎛️ 大自然即時混音控制台 (帶彩虹能量條)
+            🎛️ 即時混音控制台 (帶彩虹能量條)
           </div>
           
           <div class="mixer-channel">
-            <label>🎛️ 大自然總音量：</label>
-            <input type="range" id="volNatureMaster" min="0" max="1" step="0.05" value="1.0" oninput="updateNatureVolumes()">
-            <div class="meter-bar"><div class="meter-fill" id="meterNatureMaster" style="width: 100%;"></div></div>
+            <label>👑 全站 Master 音量：</label>
+            <input type="range" id="volMaster" min="0" max="1" step="0.05" value="1.0" oninput="updateGlobalMasterVolume()">
+            <div class="meter-bar"><div class="meter-fill" id="meterMaster" style="width: 100%;"></div></div>
           </div>
           <div class="mixer-channel">
             <label>🌊 海浪聲音量：</label>
@@ -441,17 +441,10 @@
         <audio id="sound-windbell" src="windbell.mp3" loop></audio>
         <audio id="sound-rain" src="rain.mp3" loop></audio>
         <audio id="sound-forest" src="forest.mp3" loop></audio>
-      </div>
-
-        <!-- 載入根目錄 MP3 檔 (帶 loop 無限循環) -->
-        <audio id="sound-wave" src="wave.mp3" loop></audio>
-        <audio id="sound-windbell" src="windbell.mp3" loop></audio>
-        <audio id="sound-rain" src="rain.mp3" loop></audio>
-        <audio id="sound-forest" src="forest.mp3" loop></audio>
-      </div>
-
-    </div>
-  </div>
+        </div>
+</div>
+</div>
+      
   <!-- 🎵 3. 專屬背景音樂歌單 -->
   <div class="section-title-btn" onclick="toggleFold('foldMusic')">
     <div>
@@ -1055,18 +1048,41 @@
       }
     }
 
-    /* 🌿 下層四路大自然音量連動 + 右側能量條同步拍齊 */
+    /* 👑 全站 Master 總音量連動：一拉控制全站所有 Sound Source (電台/MP3/大自然) */
+    function updateGlobalMasterVolume() {
+      const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
+      if (document.getElementById('meterMaster')) {
+        document.getElementById('meterMaster').style.width = (globalMaster * 100) + "%";
+      }
+
+      // 1. 同步更新背景播放器 (電台 / MP3)
+      const bgPlayer = document.getElementById('bgPlayer');
+      const bgmVolInput = document.getElementById('volBgm');
+      if (bgPlayer) {
+        const baseBgm = bgmVolInput ? bgmVolInput.value : 0.8;
+        bgPlayer.volume = baseBgm * globalMaster;
+      }
+
+      // 2. 同步更新四路大自然音效
+      updateNatureVolumes();
+    }
+
+    /* 🌿 四路大自然個人音量連動 (連動全站 Master) */
     function updateNatureVolumes() {
+      const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
+
       ['wave', 'windbell', 'rain', 'forest'].forEach(type => {
         const audio = document.getElementById('sound-' + type);
         const volInput = document.getElementById('vol' + type.charAt(0).toUpperCase() + type.slice(1));
         const meter = document.getElementById('meter' + type.charAt(0).toUpperCase() + type.slice(1));
         if (volInput && audio) {
-          audio.volume = volInput.value;
+          // 最終音量 = 個人 Slider * 全站 Master
+          audio.volume = volInput.value * globalMaster;
           if (meter) meter.style.width = (volInput.value * 100) + "%";
         }
       });
     }
+
     function uploadCustomWallpaper(event) {
       const file = event.target.files[0];
       if (file) {

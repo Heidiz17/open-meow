@@ -8,6 +8,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#f7d794">
+  <!-- 📱 連結 manifest.json 強制 Android Chrome 隱藏網址 Bar -->
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
@@ -72,14 +74,7 @@
       text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);
     }
     .fold-arrow { font-size: 12px; color: #74b9ff; white-space: nowrap; font-weight: 900; padding-left: 6px; }
-    
-    /* 🎨 6 色標題切換樣式 */
-    .title-bible { color: #ffeaa7 !important; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.8); }
-    .title-radio { color: #ff7675 !important; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.8); }
-    .title-music { color: #55efc4 !important; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.8); }
-    .title-album { color: #a29bfe !important; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.8); }
-    .title-mixer { color: #00b894 !important; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.8); }
-
+    /* 🎨 1. 主標題 6 色切換樣式 (黃色字改返經典立體黑影) */
     body.theme-white .section-title-btn span:first-child,
     body.theme-white .header-fold-title span:first-child {
       color: #ffffff !important;
@@ -105,6 +100,14 @@
       color: #000000 !important;
       text-shadow: 0 0 6px #ffffff, 0 0 12px #ffffff;
     }
+
+    /* 🎨 2. 副標題 (.sub-tip) 6 色獨立樣式 (含最新黃色 + 完美 Contrast) */
+    body.sub-orange .section-title-btn span.sub-tip { color: #fab1a0 !important; text-shadow: 0 2px 4px rgba(0,0,0,0.95) !important; }
+    body.sub-gold .section-title-btn span.sub-tip   { color: #f1c40f !important; text-shadow: 0 2px 4px rgba(0,0,0,0.95) !important; }
+    body.sub-green .section-title-btn span.sub-tip  { color: #55efc4 !important; text-shadow: 0 2px 4px rgba(0,0,0,0.95) !important; }
+    body.sub-red .section-title-btn span.sub-tip    { color: #ff0033 !important; text-shadow: 0 0 6px #ffffff, 0 0 10px #ffffff !important; }
+    body.sub-blue .section-title-btn span.sub-tip   { color: #0055ff !important; text-shadow: 0 0 6px #ffffff, 0 0 10px #ffffff !important; }
+    body.sub-white .section-title-btn span.sub-tip  { color: #ffffff !important; text-shadow: 0 2px 4px rgba(0,0,0,0.95) !important; }
 
     .fold-content { display: none; margin-bottom: 12px; animation: fadeIn 0.3s ease-in-out; }
     .fold-content.active { display: block; }
@@ -135,7 +138,6 @@
     .media-card img, .media-card video { width: 100%; height: 130px; object-fit: cover; cursor: pointer; display: block; }
     .media-card p { margin: 4px 0 2px; font-weight: bold; font-size: 12px; color: #ffffff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 0 4px; }
     .delete-btn { position: absolute; top: 4px; right: 4px; background: rgba(214, 48, 49, 0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-weight: bold; cursor: pointer; z-index: 10; }
-
     .music-box, .mixer-box, .album-controls, .dj-box { background-color: rgba(var(--panel-rgb), var(--panel-alpha)) !important; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.35); border-radius: 12px; padding: 12px; }
     
     /* 🎛️ 右側能量條對齊 Slider 樣式 */
@@ -144,7 +146,8 @@
     .mixer-channel input[type=range] { width: 120px; cursor: pointer; }
     .meter-bar { width: 45px; height: 10px; background: #2d3436; border-radius: 5px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.4); }
     .meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #00b894, #fdcb6e, #d63031); transition: width 0.1s ease; }
-    /* 🎨 4 大主題帝王級彩色暗掣 CSS */
+
+    /* 🎨 4 大主題彩掣 CSS */
     .cat-btn {
       width: 100%; padding: 11px 13px; border-radius: 12px; margin-top: 8px;
       font-size: 14px; font-weight: 900; border: 1.5px solid rgba(255,255,255,0.6);
@@ -231,7 +234,7 @@
   </style>
 </head>
 <body>
-  <!-- 🌟 最高主控制台（預設閂櫃桶） -->
+  <!-- 🌟 最高主控制台（預設閂櫃桶，帶獨立主標色與副標色按鈕） -->
   <div class="section-title-btn" style="margin-top: 0; margin-bottom: 6px;" onclick="toggleFold('foldHeader')">
     <div class="header-fold-title" style="width: 100%;">
       <span>🐾 OPEN 貓貓助手 (主控制台)</span>
@@ -246,11 +249,13 @@
       <input type="file" id="wpInput" accept="image/*" style="display:none;" onchange="uploadCustomWallpaper(event)">
       <button class="btn-font-toggle" onclick="toggleFontTheme()">🔤 港/日</button>
       <button class="btn-compact btn-theme" onclick="toggleFontSize()" style="background:#6c5ce7; color:white;">🔠 字體大細</button>
-      <!-- 🌟 6 色標題切換按鈕 -->
-      <button class="btn-compact" onclick="toggleTitleColor()" style="background:#fd79a8; color:white;">🎨 標題顏色</button>
+      <!-- 🌟 主標題（主標色）與 副標題（副標色）獨立切換按鈕 -->
+      <button class="btn-compact" onclick="toggleTitleColor()" style="background:#fd79a8; color:white;">🎨 主標色</button>
+      <button class="btn-compact" onclick="toggleSubTitleColor()" style="background:#e84393; color:white;">🎨 副標色</button>
       <button class="btn-compact btn-add" onclick="toggleAllFolds()" id="btnMasterFold" style="background:#e17055;">📂 一鍵全開</button>
     </div>
   </div>
+
   <!-- ✝️ 1. 每日聖經金句隨機抽卡區 -->
   <div class="section-title-btn" onclick="toggleFold('foldBible')">
     <div>
@@ -305,12 +310,11 @@
       </div>
     </div>
   </div>
-
   <!-- 📻 2. 貓貓電台俱樂部 (5 大主題帝王級彩掣區) -->
   <div class="section-title-btn" onclick="toggleFold('foldRadio')">
     <div>
       <span class="title-radio">📻 貓貓電台俱樂部 (Radio Club)</span>
-      <span class="sub-tip">💡 即點即播好音樂與伴奏 Stream (5 大主題彩掣區)</span>
+    <span class="sub-tip">💡 點擊即播：環球電台 × 🌿 大自然音效<br>🎛️ Mixer 即時雙重 Remix 合奏！</span>
     </div>
     <span class="fold-arrow" id="arrowRadio">▼ 展開</span>
   </div>
@@ -333,6 +337,7 @@
           <div class="radio-card-btn" style="background: rgba(211, 84, 0, 0.95); color: #ffffff;" onclick="confirmRadioPlay('ROCK ANTENNE Classic Perlen', 'https://stream.rockantenne.de/classic-perlen/stream/mp3')">📻 80/90s 硬搖滾</div>
         </div>
       </div>
+
       <!-- 2. 電子舞曲與 Disco 皇牌區 -->
       <div class="cat-btn bg-dance" onclick="toggleFold('foldDance')">
         <span>🎧 電子舞曲與 Disco 皇牌區 (4台)</span>
@@ -392,10 +397,8 @@
         </div>
       </div>
 
-          <!-- 🌿 大自然聲音區 (按鈕喺上，Mixer 喺下，帶全站 Master Volume) -->
+      <!-- 🌿 大自然聲音區 (帶全站 Master Volume 混音器) -->
       <div class="radio-sub-box" id="foldNature">
-        
-        <!-- 1. 上面：4 大大自然聲音開關按鈕 -->
         <div class="radio-grid-2col" style="margin-bottom: 10px;">
           <div class="radio-card-btn" id="btn-nature-wave" style="background: #20bf6b; color: #ffffff;" onclick="toggleNatureSound('wave')">🌊 海浪聲 (關)</div>
           <div class="radio-card-btn" id="btn-nature-windbell" style="background: #45aaf2; color: #ffffff;" onclick="toggleNatureSound('windbell')">🎐 風吹風鈴 (關)</div>
@@ -403,7 +406,6 @@
           <div class="radio-card-btn" id="btn-nature-forest" style="background: #26de81; color: #ffffff;" onclick="toggleNatureSound('forest')">🌲 晨曦森林 (關)</div>
         </div>
 
-        <!-- 2. 下面：即時混音控制台 (帶彩虹能量條) -->
         <div style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; border: 1px solid rgba(255,234,167,0.3);">
           <div style="font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 4px;">
             🎛️ 即時混音控制台 (帶彩虹能量條)
@@ -436,15 +438,13 @@
           </div>
         </div>
 
-        <!-- 🔊 音訊標籤 -->
         <audio id="sound-wave" src="wave.mp3" loop></audio>
         <audio id="sound-windbell" src="windbell.mp3" loop></audio>
         <audio id="sound-rain" src="rain.mp3" loop></audio>
         <audio id="sound-forest" src="forest.mp3" loop></audio>
-        </div>
-</div>
-</div>
-      
+      </div>
+    </div>
+  </div>
   <!-- 🎵 3. 專屬背景音樂歌單 -->
   <div class="section-title-btn" onclick="toggleFold('foldMusic')">
     <div>
@@ -472,7 +472,7 @@
   <div class="section-title-btn" onclick="toggleFold('foldAlbum')">
     <div>
       <span class="title-album">🖼️ 貓貓專屬多媒體相簿</span>
-      <span class="sub-tip">💡 點擊展開：長按選單改名 | 支援 ◀ ▶ 調動排位 | 4號仔燈箱</span>
+      <span class="sub-tip">💡 長按相簿選單改名 ‧ ◀ ▶ 自由調動排位<br>🎬 幻燈片同步播放電台‧MP3‧  大自然音效‧ <br>🎛 即時 BGM REMIX ！⚡</span>
     </div>
     <span class="fold-arrow" id="arrowAlbum">▼ 展開</span>
   </div>
@@ -637,6 +637,7 @@
       </div>
     </div>
   </div>
+
   <!-- 💾 8. 貓貓助手 RPG 存檔管理 -->
   <div class="section-title-btn" onclick="toggleFold('foldRPG')">
     <div>
@@ -684,15 +685,18 @@
     © 2026 Heidiz & Gemini P-Chan Production. All Rights Reserved.
   </div>
   <script>
-    /* 🌟 自動讀取用戶上一次選取嘅標題顏色（如果未揀過就預設純白 theme-white） */
+    /* 🌟 頁面載入時：自動讀取主標色與副標色 (LocalStorage 記憶) */
     let savedThemeIdx = localStorage.getItem("meowTitleThemeIdx");
     let titleThemeIdx = savedThemeIdx !== null ? parseInt(savedThemeIdx) : 1;
+    
+    let savedSubIdx = localStorage.getItem("meowSubThemeIdx");
+    let subThemeIdx = savedSubIdx !== null ? parseInt(savedSubIdx) : 0;
 
-    /* 頁面載入時，自動套用上一次嘅主題 Class */
     const themeClasses = ['', 'theme-white', 'theme-gold', 'theme-red', 'theme-blue', 'theme-black'];
-    if (document.body && themeClasses[titleThemeIdx]) {
-      document.body.classList.add(themeClasses[titleThemeIdx]);
-    }
+    const subThemeClasses = ['sub-orange', 'sub-green', 'sub-red', 'sub-blue', 'sub-white'];
+
+    if (document.body && themeClasses[titleThemeIdx]) document.body.classList.add(themeClasses[titleThemeIdx]);
+    if (document.body && subThemeClasses[subThemeIdx]) document.body.classList.add(subThemeClasses[subThemeIdx]);
 
     /* 🔒 全局 Web Audio API UI 音效引擎 */
     let audioCtx = null;
@@ -737,26 +741,44 @@
       } catch(e) {}
     }
 
-    /* 🎨 標題顏色 6 色切換 + 自動記憶 */
+    /* 🎨 1. 主標色 (主標題) 獨立切換按鈕 */
     function toggleTitleColor() {
       playUiSound('click');
       titleThemeIdx = (titleThemeIdx + 1) % 6;
       document.body.classList.remove('theme-white', 'theme-gold', 'theme-red', 'theme-blue', 'theme-black');
       
-      const themeClasses = ['', 'theme-white', 'theme-gold', 'theme-red', 'theme-blue', 'theme-black'];
       if (themeClasses[titleThemeIdx]) {
         document.body.classList.add(themeClasses[titleThemeIdx]);
       }
-
-      /* 💾 將最新顏色存入手機記憶 */
       localStorage.setItem("meowTitleThemeIdx", titleThemeIdx);
 
-      if (titleThemeIdx === 1) showToast("🎨 標題顏色：高雅純白");
-      else if (titleThemeIdx === 2) showToast("🎨 標題顏色：聖光金黃");
-      else if (titleThemeIdx === 3) showToast("🎨 標題顏色：極致鮮紅");
-      else if (titleThemeIdx === 4) showToast("🎨 標題顏色：皇家寶藍");
-      else if (titleThemeIdx === 5) showToast("🎨 標題顏色：酷炫純黑");
-      else showToast("🎨 標題顏色：霓虹彩色");
+      if (titleThemeIdx === 1) showToast("🎨 主標色：高雅純白");
+      else if (titleThemeIdx === 2) showToast("🎨 主標色：聖光金黃");
+      else if (titleThemeIdx === 3) showToast("🎨 主標色：極致鮮紅");
+      else if (titleThemeIdx === 4) showToast("🎨 主標色：皇家寶藍");
+      else if (titleThemeIdx === 5) showToast("🎨 主標色：酷炫純黑");
+      else showToast("🎨 主標色：霓虹彩色");
+    }
+
+    /* 🎨 2. 虎標色 (副標題) 獨立切換按鈕 (加入黃色 6 色輪替) */
+    function toggleSubTitleColor() {
+      playUiSound('click');
+      const subThemeClasses = ['sub-orange', 'sub-gold', 'sub-green', 'sub-red', 'sub-blue', 'sub-white'];
+      subThemeIdx = (subThemeIdx + 1) % subThemeClasses.length;
+      
+      document.body.classList.remove('sub-orange', 'sub-gold', 'sub-green', 'sub-red', 'sub-blue', 'sub-white');
+      
+      if (subThemeClasses[subThemeIdx]) {
+        document.body.classList.add(subThemeClasses[subThemeIdx]);
+      }
+      localStorage.setItem("meowSubThemeIdx", subThemeIdx);
+
+      if (subThemeIdx === 0) showToast("🎨 副標色：對比粉橙");
+      else if (subThemeIdx === 1) showToast("🎨 副標色：聖光金黃");
+      else if (subThemeIdx === 2) showToast("🎨 副標色：主題翠綠");
+      else if (subThemeIdx === 3) showToast("🎨 副標色：極致鮮紅");
+      else if (subThemeIdx === 4) showToast("🎨 副標色：皇家寶藍");
+      else showToast("🎨 副標色：純白黑影");
     }
 
     let isAllFolded = false;
@@ -795,7 +817,6 @@
       }
       showToast(isAllFolded ? "📂 已一鍵展開所有區域！" : "📁 已一鍵收縮還原！");
     }
-
     let fontScaleLevel = 0;
     function toggleFontSize() {
       playUiSound('click');
@@ -865,6 +886,7 @@
       }
     }
     loadVersesJSON();
+
     function playSynthSound(type) {
       try {
         const ctx = getAudioContext(); const now = ctx.currentTime;
@@ -941,7 +963,6 @@
         }
       } catch(e) {}
     }
-
     let deckABpmVal = 124.0, deckBBpmVal = 120.0;
 
     function updateDeckPitch(deck, val) {
@@ -1024,7 +1045,6 @@
       });
     }
 
-    /* 🌿 大自然音效獨佔播放邏輯 + 按鈕發光與字樣動態切換 */
     function toggleNatureSound(type) {
       playUiSound('click');
       const audio = document.getElementById('sound-' + type);
@@ -1048,26 +1068,20 @@
       }
     }
 
-    /* 👑 全站 Master 總音量連動：一拉控制全站所有 Sound Source (電台/MP3/大自然) */
     function updateGlobalMasterVolume() {
       const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
       if (document.getElementById('meterMaster')) {
         document.getElementById('meterMaster').style.width = (globalMaster * 100) + "%";
       }
 
-      // 1. 同步更新背景播放器 (電台 / MP3)
       const bgPlayer = document.getElementById('bgPlayer');
       const bgmVolInput = document.getElementById('volBgm');
       if (bgPlayer) {
         const baseBgm = bgmVolInput ? bgmVolInput.value : 0.8;
         bgPlayer.volume = baseBgm * globalMaster;
       }
-
-      // 2. 同步更新四路大自然音效
       updateNatureVolumes();
     }
-
-    /* 🌿 四路大自然個人音量連動 (連動全站 Master) */
     function updateNatureVolumes() {
       const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
 
@@ -1076,7 +1090,6 @@
         const volInput = document.getElementById('vol' + type.charAt(0).toUpperCase() + type.slice(1));
         const meter = document.getElementById('meter' + type.charAt(0).toUpperCase() + type.slice(1));
         if (volInput && audio) {
-          // 最終音量 = 個人 Slider * 全站 Master
           audio.volume = volInput.value * globalMaster;
           if (meter) meter.style.width = (volInput.value * 100) + "%";
         }
@@ -1110,27 +1123,7 @@
       if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "panelOpacity", val: val });
     }
     function loadSavedOpacity() { const req = db.transaction("settings", "readonly").objectStore("settings").get("panelOpacity"); req.onsuccess = function() { if (req.result) { const val = req.result.val; document.getElementById('volOpacity').value = val; updatePanelOpacity(val); } }; }
-    
-    /* 🌿 下層四路大自然音量連動 + Master 總音量 + 右側能量條同步拍齊 */
-    function updateNatureVolumes() {
-      const masterVol = document.getElementById('volNatureMaster') ? document.getElementById('volNatureMaster').value : 1.0;
-      if (document.getElementById('meterNatureMaster')) {
-        document.getElementById('meterNatureMaster').style.width = (masterVol * 100) + "%";
-      }
 
-      ['wave', 'windbell', 'rain', 'forest'].forEach(type => {
-        const audio = document.getElementById('sound-' + type);
-        const volInput = document.getElementById('vol' + type.charAt(0).toUpperCase() + type.slice(1));
-        const meter = document.getElementById('meter' + type.charAt(0).toUpperCase() + type.slice(1));
-        if (volInput && audio) {
-          // 計算最終音量：個人音量 * 大自然 Master 總音量
-          audio.volume = volInput.value * masterVol;
-          if (meter) meter.style.width = (volInput.value * 100) + "%";
-        }
-      });
-    }
-
-    /* 🎛️ 上層主控音量連動 + 右側能量條動態更新 */
     function updateVolumes() {
       const bgmVol = document.getElementById('volBgm').value;
       const catVol = document.getElementById('volCat').value;

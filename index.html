@@ -359,24 +359,24 @@
   <div class="fold-content" id="foldPadUnified">
     <div class="dj-box">
       <div style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 4px;">
-        🥁 12 大粒古早 DJ / 鼓組 / 琶音 SoundPad (多點觸控狂打)：
+        🥁 12 大粒古早 DJ / 鼓組 / 琶音 SoundPad (支援兩點/三點 Multi-Touch 狂打)：
       </div>
       <div class="dj-grid">
-        <div class="dj-pad appraisal" pointerdown="playSynthSound('yeah')" onclick="playSynthSound('yeah')"><span>🔥</span>Yeah!</div>
-        <div class="dj-pad appraisal" pointerdown="playSynthSound('go')" onclick="playSynthSound('go')"><span>🚀</span>Let's Go</div>
-        <div class="dj-pad appraisal" pointerdown="playSynthSound('check')" onclick="playSynthSound('check')"><span>🗣️</span>Check It</div>
+        <div class="dj-pad appraisal" onpointerdown="playSynthSound('yeah', event)"><span>🔥</span>Yeah!</div>
+        <div class="dj-pad appraisal" onpointerdown="playSynthSound('go', event)"><span>🚀</span>Let's Go</div>
+        <div class="dj-pad appraisal" onpointerdown="playSynthSound('check', event)"><span>🗣️</span>Check It</div>
 
-        <div class="dj-pad" pointerdown="playSynthSound('crash')" onclick="playSynthSound('crash')"><span>✨</span>Crash</div>
-        <div class="dj-pad" pointerdown="playSynthSound('snare')" onclick="playSynthSound('snare')"><span>🪘</span>Snare</div>
-        <div class="dj-pad" pointerdown="playSynthSound('kick')" onclick="playSynthSound('kick')"><span>🥁</span>Kick</div>
+        <div class="dj-pad" onpointerdown="playSynthSound('crash', event)"><span>✨</span>Crash</div>
+        <div class="dj-pad" onpointerdown="playSynthSound('snare', event)"><span>🪘</span>Snare</div>
+        <div class="dj-pad" onpointerdown="playSynthSound('kick', event)"><span>🥁</span>Kick</div>
 
-        <div class="dj-pad" pointerdown="playSynthSound('hihat')" onclick="playSynthSound('hihat')"><span>💥</span>Hi-Hat</div>
-        <div class="dj-pad" pointerdown="playSynthSound('tom')" onclick="playSynthSound('tom')"><span>🥁</span>Tom</div>
-        <div class="dj-pad" pointerdown="playSynthSound('clap')" onclick="playSynthSound('clap')"><span>👏</span>Clap</div>
+        <div class="dj-pad" onpointerdown="playSynthSound('hihat', event)"><span>💥</span>Hi-Hat</div>
+        <div class="dj-pad" onpointerdown="playSynthSound('tom', event)"><span>🥁</span>Tom</div>
+        <div class="dj-pad" onpointerdown="playSynthSound('clap', event)"><span>👏</span>Clap</div>
 
-        <div class="dj-pad arp" pointerdown="playSynthSound('laser')" onclick="playSynthSound('laser')"><span>🔫</span>Laser</div>
-        <div class="dj-pad arp" pointerdown="playSynthSound('stutter')" onclick="playSynthSound('stutter')"><span>⚡</span>Stutter</div>
-        <div class="dj-pad arp" pointerdown="playSynthSound('arpUp')" onclick="playSynthSound('arpUp')"><span>🎹</span>Arp Up</div>
+        <div class="dj-pad arp" onpointerdown="playSynthSound('laser', event)"><span>🔫</span>Laser</div>
+        <div class="dj-pad arp" onpointerdown="playSynthSound('stutter', event)"><span>⚡</span>Stutter</div>
+        <div class="dj-pad arp" onpointerdown="playSynthSound('arpUp', event)"><span>🎹</span>Arp Up</div>
       </div>
 
       <div style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin: 14px 0 8px; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 4px;">
@@ -385,6 +385,7 @@
       <div class="sound-grid" id="soundGrid"></div>
     </div>
   </div>
+
   <!-- Chapter 8: 雙層獨立 MIXER 主控台 -->
   <div class="section-title-btn" onclick="toggleFold('foldMixer')">
     <div>

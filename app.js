@@ -560,11 +560,145 @@ function autoCrossfade(durationMs = 3430) {
   }, intervalTime);
 }
 
-/* 🥁 古早 DJ SoundPad 多點觸控 (Multi-Touch) 相容觸發 */
-function playSynthSound(type) {
+/* --------------------------------------------------------------------------
+   🥁 [Web Audio API Multi-Touch Synth Engine] - 12 古早多點打擊引擎
+   -------------------------------------------------------------------------- */
+function playSynthSound(type, event) {
+  if (event) {
+    event.preventDefault(); // 防止手機長按或雙擊縮放
+  }
   playUiSound('click');
-  showToast(`🥁 DJ 音效：${type.toUpperCase()}`);
+  
+  try {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    
+    // 獨立音量控制，確保多點打擊（兩點/三點疊音）時唔會破音
+    const padGain = ctx.createGain();
+    padGain.gain.setValueAtTime(0.6, now);
+    padGain.connect(djMasterGain || ctx.destination);
+
+    if (type === 'yeah' || type === 'go' || type === 'check') {
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth';
+      const startFreq = type === 'yeah' ? 400 : (type === 'go' ? 600 : 300);
+      osc.frequency.setValueAtTime(startFreq, now);
+      osc.frequency.exponentialRampToValueAtTime(startFreq * 1.5, now + 0.15);
+      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+      osc.connect(padGain);
+      osc.start(now);
+      osc.stop(now + 0.2);
+
+    } else if (type === 'kick') {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(130, now);
+      osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.15);
+      padGain.gain.setValueAtTime(0.9, now);
+      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+      osc.connect(padGain);
+      osc.start(now);
+      osc.stop(now + 0.15);
+
+    } else if (type === 'snare') {
+      const osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(180, now);
+      padGain.gain.setValueAtTime(0.7, now);
+      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+      osc.connect(padGain);
+      osc.start(now);
+      osc.stop(now + 0.1);
+
+    } else if (type === 'hihat') {
+      const osc = ctx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(8000, now);
+      padGain.gain.setValueAtTime(0.3, now);
+      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+      osc.connect(padGain);
+      osc.start(now);
+      osc.stop(now + 0.05);
+
+    } else if (type === 'crash') {
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(5000, now);
+      osc.frequency.exponentialRampToValueAtTime(1000, now + 0.4);
+      padGain.gain.setValueAtTime(0.5, now);
+      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+      osc.connect(padGain);
+      osc.start(now);
+      osc.stop(now + 0.4);
+
+    } else if (type === 'tom') {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(60, now + 0.2);
+      padGain.gain.setValueAtTime(0.8, now);
+      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+      osc.connect(padGain);
+      osc.start(now);
+      osc.stop(now + 0.2);
+
+    } else if (type === 'clap') {
+      const osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1000, now);
+      padGain.gain.setValueAtTime(0.6, now);
+      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+      osc.connect(padGain);
+      osc.start(now);
+      osc.stop(now + 0.08);
+
+    } else if (type === 'laser') {
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(1500, now);
+      osc.frequency.exponentialRampToValueAtTime(100, now + 0.18);
+      padGain.gain.setValueAtTime(0.5, now);
+      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+      osc.connect(padGain);
+      osc.start(now);
+      osc.stop(now + 0.18);
+
+    } else if (type === 'stutter') {
+      for (let i = 0; i < 3; i++) {
+        const osc = ctx.createOscillator();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(800, now + (i * 0.04));
+        const subGain = ctx.createGain();
+        subGain.gain.setValueAtTime(0.4, now + (i * 0.04));
+        subGain.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.04) + 0.03);
+        osc.connect(subGain);
+        subGain.connect(djMasterGain || ctx.destination);
+        osc.start(now + (i * 0.04));
+        osc.stop(now + (i * 0.04) + 0.03);
+      }
+
+    } else if (type === 'arpUp') {
+      const freqs = [523.25, 659.25, 783.99, 1046.50];
+      freqs.forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, now + (i * 0.05));
+        const subGain = ctx.createGain();
+        subGain.gain.setValueAtTime(0.3, now + (i * 0.05));
+        subGain.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.05) + 0.1);
+        osc.connect(subGain);
+        subGain.connect(djMasterGain || ctx.destination);
+        osc.start(now + (i * 0.05));
+        osc.stop(now + (i * 0.05) + 0.1);
+      });
+    }
+  } catch(e) {
+    console.log("Audio Synth Error: ", e);
+  }
+
+  showToast(`🥁 12 古早打擊：${type.toUpperCase()}`);
 }
+
 /* --------------------------------------------------------------------------
    10.[Album & Lightbox Wallpaper]- 多媒體相簿、幻燈片與背景壁紙
    -------------------------------------------------------------------------- */

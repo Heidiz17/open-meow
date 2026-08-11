@@ -1,0 +1,300 @@
+/* ==========================================
+   📚 第一葉 style.css - 目錄 1.1 至 2.3
+   ========================================== */
+
+/* ------------------------------------------
+   [1.1] 隱形底層與 PWA 設定 (已於 HTML 連結)
+   [2.1] 全局變數 (:root)
+   ------------------------------------------ */
+:root {
+  --panel-rgb: 9, 132, 227;
+  --panel-alpha: 0.45;
+}
+
+/* ------------------------------------------
+   [2.2] 基本排版與字體設定 (*, body)
+   ------------------------------------------ */
+* { 
+  box-sizing: border-box; 
+  font-family: 'Arial Black', Impact, system-ui, -apple-system, sans-serif; 
+  -webkit-tap-highlight-color: transparent; 
+}
+
+body.jp-font, body.jp-font * {
+  font-family: 'Zen Maru Gothic', 'Comic Sans MS', cursive, sans-serif !important;
+  font-style: normal !important;
+}
+
+body { 
+  background-size: cover !important; 
+  background-position: center !important; 
+  background-repeat: no-repeat !important; 
+  background-attachment: fixed !important;
+  color: #ffffff; 
+  margin: 0; 
+  padding: 12px; 
+  padding-bottom: 90px; 
+  transition: background 0.3s ease; 
+  user-select: none;
+  text-shadow: 0px 0px 4px rgba(44, 24, 16, 0.9), 0px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* ------------------------------------------
+   [2.3] 標題與摺疊頭樣式 (Header & Folds)
+   ------------------------------------------ */
+.header-box { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 8px; 
+  flex-wrap: wrap; 
+  gap: 8px; 
+}
+
+h1 { 
+  font-size: 24px; 
+  font-weight: 900; 
+  font-style: italic; 
+  margin: 0; 
+  letter-spacing: 1.5px; 
+  color: #ffffff; 
+  text-shadow: 0px 0px 6px rgba(44, 24, 16, 0.95), 2px 2px 4px rgba(0, 0, 0, 0.7);
+  transform: skewX(-6deg); 
+}
+
+.header-fold-title {
+  font-size: 14px; 
+  font-weight: 900; 
+  color: #ffeaa7;
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  cursor: pointer; 
+  padding: 4px 2px;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.9);
+  transition: font-size 0.2s ease;
+}
+
+.wallpaper-btn-group { 
+  display: flex; 
+  gap: 4px; 
+  flex-wrap: wrap; 
+  align-items: center; 
+}
+
+/* ==========================================
+   📚 第一葉 style.css - 目錄 2.4
+   ========================================== */
+
+/* ------------------------------------------
+   [2.4] 主標題與副標題 6 色切換器
+   ------------------------------------------ */
+.section-title-btn { 
+  font-size: 14px; 
+  color: #ffeaa7; 
+  font-style: italic; 
+  border-left: 5px solid #0984e3; 
+  padding: 10px 12px; 
+  margin: 10px 0 4px; 
+  font-weight: 900; 
+  border-radius: 0 12px 12px 0; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  width: 100%; 
+  cursor: pointer; 
+  user-select: none; 
+  transition: all 0.2s ease;
+  background-color: rgba(var(--panel-rgb), var(--panel-alpha)) !important;
+  backdrop-filter: blur(14px); 
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  text-shadow: 0px 0px 4px rgba(44, 24, 16, 0.9);
+}
+.section-title-btn:active { transform: scale(0.98); }
+
+.section-title-btn span.sub-tip { 
+  font-size: 11px; 
+  color: #fab1a0; 
+  font-weight: bold; 
+  display: block; 
+  margin-top: 3px; 
+  text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);
+}
+.fold-arrow { font-size: 12px; color: #74b9ff; white-space: nowrap; font-weight: 900; padding-left: 6px; }
+
+/* 🎨 [2.4a] 主標題 6 色切換 */
+body.theme-white .section-title-btn span:first-child,
+body.theme-white .header-fold-title span:first-child { color: #ffffff !important; text-shadow: 0 2px 6px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,0.9); }
+
+body.theme-gold .section-title-btn span:first-child,
+body.theme-gold .header-fold-title span:first-child { color: #f1c40f !important; text-shadow: 0 2px 6px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,0.9); }
+
+body.theme-red .section-title-btn span:first-child,
+body.theme-red .header-fold-title span:first-child { color: #ff0033 !important; text-shadow: 0 0 6px #ffffff, 0 0 12px #ffffff, 0 0 18px #ffffff; }
+
+body.theme-blue .section-title-btn span:first-child,
+body.theme-blue .header-fold-title span:first-child { color: #0055ff !important; text-shadow: 0 0 6px #ffffff, 0 0 12px #ffffff, 0 0 18px #ffffff; }
+
+body.theme-black .section-title-btn span:first-child,
+body.theme-black .header-fold-title span:first-child { color: #000000 !important; text-shadow: 0 0 6px #ffffff, 0 0 12px #ffffff; }
+
+/* 🎨 [2.4b] 副標題 6 色切換 */
+body.sub-orange .section-title-btn span.sub-tip { color: #fab1a0 !important; text-shadow: 0 2px 4px rgba(0,0,0,0.95) !important; }
+body.sub-gold .section-title-btn span.sub-tip   { color: #f1c40f !important; text-shadow: 0 2px 4px rgba(0,0,0,0.95) !important; }
+body.sub-green .section-title-btn span.sub-tip  { color: #55efc4 !important; text-shadow: 0 2px 4px rgba(0,0,0,0.95) !important; }
+body.sub-red .section-title-btn span.sub-tip    { color: #ff0033 !important; text-shadow: 0 0 6px #ffffff, 0 0 10px #ffffff !important; }
+body.sub-blue .section-title-btn span.sub-tip   { color: #0055ff !important; text-shadow: 0 0 6px #ffffff, 0 0 10px #ffffff !important; }
+body.sub-white .section-title-btn span.sub-tip  { color: #ffffff !important; text-shadow: 0 2px 4px rgba(0,0,0,0.95) !important; }
+
+/* ==========================================
+   📚 第一葉 style.css - 目錄 2.5, 2.6, 2.8
+   ========================================== */
+
+/* ------------------------------------------
+   [2.5] 共通按鈕樣式 (.btn-compact)
+   ------------------------------------------ */
+.fold-content { display: none; margin-bottom: 12px; animation: fadeIn 0.3s ease-in-out; }
+.fold-content.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.drawing-anim { animation: pulseGlow 0.8s infinite alternate; }
+@keyframes pulseGlow {
+  from { opacity: 0.5; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1.01); }
+}
+
+.btn-compact { padding: 8px 10px; border-radius: 8px; font-size: 12px; font-weight: 900; font-style: italic; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 2px; white-space: nowrap; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: all 0.1s ease; text-transform: uppercase; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+.btn-compact:active { transform: translateY(2px) skewX(-6deg); }
+.btn-add { background: rgba(9, 132, 227, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); }
+.btn-del { background: rgba(214, 48, 49, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); }
+.btn-move { background: rgba(225, 112, 85, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); }
+.btn-upload { background: rgba(211, 84, 0, 0.9); color: white; flex: 1; border: 1px solid rgba(255,255,255,0.4); }
+.btn-grid { background: rgba(108, 92, 231, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); }
+.btn-slide { background: rgba(0, 184, 148, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); }
+.btn-theme { background: rgba(45, 52, 54, 0.9); color: #ffeaa7; border: 1px solid rgba(255,255,255,0.4); }
+
+/* ------------------------------------------
+   [2.6] 多媒體相簿網格 (.media-grid)
+   ------------------------------------------ */
+.media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
+.media-grid.four-cols { grid-template-columns: repeat(4, 1fr); }
+.media-card { background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.3); text-align: center; position: relative; padding-bottom: 4px; border: 1px solid rgba(255,255,255,0.3); }
+.media-card img, .media-card video { width: 100%; height: 130px; object-fit: cover; cursor: pointer; display: block; }
+.media-card p { margin: 4px 0 2px; font-weight: bold; font-size: 12px; color: #ffffff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 0 4px; }
+.delete-btn { position: absolute; top: 4px; right: 4px; background: rgba(214, 48, 49, 0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-weight: bold; cursor: pointer; z-index: 10; }
+.music-box, .mixer-box, .album-controls, .dj-box { background-color: rgba(var(--panel-rgb), var(--panel-alpha)) !important; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.35); border-radius: 12px; padding: 12px; }
+
+/* ------------------------------------------
+   [2.8] 4 大主題電台彩掣 (.cat-btn)
+   ------------------------------------------ */
+.cat-btn {
+  width: 100%; padding: 11px 13px; border-radius: 12px; margin-top: 8px;
+  font-size: 14px; font-weight: 900; border: 1.5px solid rgba(255,255,255,0.6);
+  display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.2s ease;
+}
+.cat-btn:active { transform: scale(0.98); }
+
+.bg-rock { background: linear-gradient(135deg, #d63031, #e17055); color: #ffffff; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
+.bg-dance { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #2d3436; text-shadow: none; font-weight: 900; }
+.bg-jazz { background: linear-gradient(135deg, #0984e3, #74b9ff); color: #ffffff; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
+.bg-relax { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: #ffffff; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
+
+/* ==========================================
+   📚 第一葉 style.css - 目錄 2.7, 2.9, 2.10, 2.11
+   ========================================== */
+
+/* ------------------------------------------
+   [2.7] 混音器與彩虹能量條 (.mixer-channel)
+   ------------------------------------------ */
+.radio-sub-box {
+  display: none; padding: 10px; background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-radius: 0 0 12px 12px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.3);
+  animation: fadeIn 0.3s ease-in-out;
+}
+.radio-sub-box.active { display: block; }
+
+.radio-grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.radio-card-btn {
+  padding: 10px 6px; border-radius: 10px; font-size: 12px; font-weight: 900;
+  border: 1px solid rgba(255,255,255,0.4); text-align: center; cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.25); backdrop-filter: blur(4px);
+}
+.radio-card-btn:active { transform: scale(0.95); opacity: 0.9; }
+
+.mixer-channel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
+.mixer-channel label { font-size: 12px; font-weight: 900; color: #ffffff; white-space: nowrap; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9); flex: 1; }
+.mixer-channel input[type=range] { width: 120px; cursor: pointer; }
+.meter-bar { width: 45px; height: 10px; background: #2d3436; border-radius: 5px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.4); }
+.meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #00b894, #fdcb6e, #d63031); transition: width 0.1s ease; }
+
+/* ------------------------------------------
+   [2.9] 音效與 DJ 宮格 (.dj-pad, .sound-btn)
+   ------------------------------------------ */
+.sound-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; }
+.sound-btn { 
+  background-color: rgba(var(--panel-rgb), var(--panel-alpha)) !important; 
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); 
+  border: 1.5px solid rgba(255, 234, 167, 0.8); 
+  border-radius: 12px; padding: 10px 4px; text-align: center; cursor: pointer; 
+  font-size: 12px; font-weight: bold; color: #ffeaa7; 
+  box-shadow: 0 3px 6px rgba(0,0,0,0.25); transition: all 0.1s; 
+  text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9); 
+}
+.sound-btn:active { transform: scale(0.93); background: #ffeaa7 !important; color: #2d3436; }
+.sound-btn span { display: block; font-size: 22px; margin-bottom: 2px; }
+
+.dj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; }
+.dj-pad {
+  background: rgba(0, 184, 148, 0.4);
+  border: 1.5px solid rgba(85, 239, 196, 0.8);
+  border-radius: 12px; padding: 10px 4px; text-align: center; cursor: pointer;
+  font-size: 12px; font-weight: 900; color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3); transition: all 0.08s ease;
+  text-shadow: 0px 0px 3px rgba(0,0,0,0.9);
+}
+.dj-pad:active { transform: scale(0.92); background: #55efc4 !important; color: #2d3436; }
+.dj-pad span { display: block; font-size: 22px; margin-bottom: 2px; }
+.dj-pad.arp { background: rgba(108, 92, 231, 0.4); border-color: rgba(162, 155, 254, 0.8); }
+.dj-pad.arp:active { background: #a29bfe !important; }
+.dj-pad.appraisal { background: rgba(225, 112, 85, 0.4); border-color: rgba(250, 177, 160, 0.8); }
+.dj-pad.appraisal:active { background: #fab1a0 !important; }
+
+.deck-container { display: flex; gap: 8px; margin-bottom: 10px; }
+.deck-card { 
+  flex: 1; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255,255,255,0.3); 
+  border-radius: 10px; padding: 8px; text-align: center; 
+}
+.deck-title { font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 4px; }
+.bpm-display { font-size: 16px; font-weight: 900; color: #00cec9; margin: 4px 0; text-shadow: 0 0 5px rgba(0,206,201,0.8); }
+.pitch-slider { width: 100%; margin: 6px 0; cursor: pointer; }
+
+/* ------------------------------------------
+   [2.10] 提示卡片與 Toast 彈窗
+   ------------------------------------------ */
+.notice-card { 
+  border: 2px dashed #ff7675; background: rgba(214, 48, 49, 0.35); 
+  border-radius: 12px; padding: 12px; margin-top: 15px; text-align: center; 
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+.notice-card h4 { color: #ff7675; margin: 0 0 6px 0; font-size: 14px; text-shadow: 0px 0px 3px rgba(0,0,0,0.9); }
+.notice-card p { color: #ffffff; margin: 0; font-size: 12px; font-weight: bold; line-height: 1.5; text-shadow: 0px 0px 3px rgba(0,0,0,0.9); }
+
+.toast-box { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 900; display: none; z-index: 2000; text-align: center; max-width: 90%; border: 1px solid #ffeaa7; line-height: 1.4; }
+
+/* ------------------------------------------
+   [2.11] Lightbox 睇大圖與幻燈片視窗
+   ------------------------------------------ */
+.lightbox { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; padding: 15px; }
+#lightboxContent img, #lightboxContent video { max-width: 90vw; max-height: 75vh; width: auto; height: auto; object-fit: contain; border-radius: 12px; }
+.lightbox-controls { display: flex; gap: 10px; align-items: center; margin-top: 8px; z-index: 3100; flex-wrap: wrap; justify-content: center; }
+.slide-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; width: 38px; height: 38px; font-size: 16px; font-weight: bold; cursor: pointer; }
+.speed-btn-group { display: flex; gap: 4px; background: rgba(255,255,255,0.15); padding: 3px 6px; border-radius: 20px; }
+.speed-btn { background: transparent; color: #dfe6e9; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; }
+.speed-btn.active { background: #00b894; color: white; }
+.close-btn { position: absolute; top: 15px; right: 20px; color: white; font-size: 38px; cursor: pointer; font-weight: bold; z-index: 3100; }

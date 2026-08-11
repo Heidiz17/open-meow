@@ -457,110 +457,142 @@ function setPlayMode(mode) { playUiSound('click'); playMode = mode; document.get
 function handleTrackEnded() { if (musicList.length === 0) return; if (playMode === 'single-loop') playTrack(currentTrackIdx); else if (playMode === 'random') playTrack(Math.floor(Math.random() * musicList.length)); else playTrack((currentTrackIdx + 1) % musicList.length); }
 function deleteTrack(e, id) { e.stopPropagation(); if (confirm("確定刪除呢首歌？")) { const tx = db.transaction("music", "readwrite").objectStore("music").delete(id); tx.oncomplete = function() { loadSavedMusic(); showToast("🗑️ 已刪除！"); }; } }
 /* --------------------------------------------------------------------------
-   9. [Deck BPM Mixer System] - 雙 Deck Pitch 調速、SYNC 對拍與 Crossfade
+   9. [Deck BPM Mixer System] - 雙 Deck 獨立音軌、Pitch 變速、SYNC 與 🎧 Cue 預聽
    -------------------------------------------------------------------------- */
-function playSynthSound(type) {
-  try {
-    const ctx = getAudioContext(); const now = ctx.currentTime;
-    const padGain = ctx.createGain(); padGain.connect(djMasterGain);
-
-    if (type === 'kick') {
-      const osc = ctx.createOscillator(); osc.connect(padGain);
-      osc.frequency.setValueAtTime(130, now); osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.15);
-      padGain.gain.setValueAtTime(1, now); padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-      osc.start(now); osc.stop(now + 0.15);
-    } else if (type === 'snare') {
-      const osc = ctx.createOscillator(); osc.type = 'triangle'; osc.connect(padGain);
-      osc.frequency.setValueAtTime(250, now); osc.frequency.exponentialRampToValueAtTime(80, now + 0.1);
-      padGain.gain.setValueAtTime(0.8, now); padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-      osc.start(now); osc.stop(now + 0.1);
-    } else if (type === 'hihat') {
-      const bufferSize = ctx.sampleRate * 0.05; const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0); for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-      const noise = ctx.createBufferSource(); noise.buffer = buffer;
-      const filter = ctx.createBiquadFilter(); filter.type = 'highpass'; filter.frequency.value = 7000;
-      noise.connect(filter); filter.connect(padGain); padGain.gain.setValueAtTime(0.5, now);
-      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05); noise.start(now);
-    } else if (type === 'crash') {
-      const bufferSize = ctx.sampleRate * 0.4; const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0); for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-      const noise = ctx.createBufferSource(); noise.buffer = buffer;
-      const filter = ctx.createBiquadFilter(); filter.type = 'highpass'; filter.frequency.value = 4000;
-      noise.connect(filter); filter.connect(padGain); padGain.gain.setValueAtTime(0.7, now);
-      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.4); noise.start(now);
-    } else if (type === 'tom') {
-      const osc = ctx.createOscillator(); osc.connect(padGain);
-      osc.frequency.setValueAtTime(180, now); osc.frequency.exponentialRampToValueAtTime(60, now + 0.18);
-      padGain.gain.setValueAtTime(0.8, now); padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
-      osc.start(now); osc.stop(now + 0.18);
-    } else if (type === 'clap') {
-      const osc = ctx.createOscillator(); osc.type = 'square'; osc.connect(padGain);
-      osc.frequency.setValueAtTime(800, now); padGain.gain.setValueAtTime(0.5, now);
-      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08); osc.start(now); osc.stop(now + 0.08);
-    } else if (type === 'arpUp') {
-      const notes = [261.63, 329.63, 392.00, 523.25];
-      notes.forEach((freq, i) => {
-        const osc = ctx.createOscillator(); const noteGain = ctx.createGain();
-        osc.type = 'square'; osc.frequency.value = freq; osc.connect(noteGain); noteGain.connect(djMasterGain);
-        noteGain.gain.setValueAtTime(0.2, now + i*0.06); noteGain.gain.exponentialRampToValueAtTime(0.01, now + (i+1)*0.06);
-        osc.start(now + i*0.06); osc.stop(now + (i+1)*0.06);
-      });
-    } else if (type === 'stutter') {
-      for (let i = 0; i < 6; i++) {
-        const osc = ctx.createOscillator(); const noteGain = ctx.createGain();
-        osc.type = 'sawtooth'; osc.frequency.value = 440; osc.connect(noteGain); noteGain.connect(djMasterGain);
-        noteGain.gain.setValueAtTime(0.25, now + i*0.05); noteGain.gain.exponentialRampToValueAtTime(0.01, now + i*0.05 + 0.03);
-        osc.start(now + i*0.05); osc.stop(now + i*0.05 + 0.03);
-      }
-    } else if (type === 'laser') {
-      const osc = ctx.createOscillator(); osc.type = 'sawtooth'; osc.connect(padGain);
-      osc.frequency.setValueAtTime(1200, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
-      padGain.gain.setValueAtTime(0.4, now); padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-      osc.start(now); osc.stop(now + 0.2);
-    } else if (type === 'check') {
-      const osc = ctx.createOscillator(); osc.type = 'sawtooth'; osc.connect(padGain);
-      osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.12);
-      padGain.gain.setValueAtTime(0.3, now); padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-      osc.start(now); osc.stop(now + 0.12);
-    } else if (type === 'go') {
-      const osc = ctx.createOscillator(); osc.type = 'sine'; osc.connect(padGain);
-      osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
-      padGain.gain.setValueAtTime(0.3, now); padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-      osc.start(now); osc.stop(now + 0.15);
-    } else {
-      const osc = ctx.createOscillator(); osc.type = 'sine'; osc.connect(padGain);
-      osc.frequency.setValueAtTime(523.25, now); osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.15);
-      padGain.gain.setValueAtTime(0.3, now); padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-      osc.start(now); osc.stop(now + 0.15);
-    }
-  } catch(e) {}
-}
-
 let deckABpmVal = 124.0, deckBBpmVal = 120.0;
-function updateDeckPitch(deck, val) {
-  playUiSound('click'); const bgPlayer = document.getElementById('bgPlayer');
-  if (bgPlayer) bgPlayer.playbackRate = val;
-  if (deck === 'A') { deckABpmVal = (124.0 * val).toFixed(1); document.getElementById('deckABpm').innerText = deckABpmVal + " BPM"; } 
-  else { deckBBpmVal = (120.0 * val).toFixed(1); document.getElementById('deckBBpm').innerText = deckBBpmVal + " BPM"; }
+let isCueMode = false;
+
+/* 🔴🔵 雙 Deck 獨立 MP3 音檔載入 */
+function loadDeckTrack(deck, event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const fileUrl = URL.createObjectURL(file);
+  const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
+  const label = document.getElementById(deck === 'A' ? 'deckAName' : 'deckBName');
+  
+  if (player) {
+    player.src = fileUrl;
+    if (label) label.innerText = "🎵 " + file.name;
+    showToast(`✅ Deck ${deck} 已載入：${file.name}`);
+    updateCrossfader(document.getElementById('crossfader') ? document.getElementById('crossfader').value : 0.5);
+  }
 }
 
+/* 🎛️ 雙 Deck BPM Pitch 獨立調速 */
+function updateDeckPitch(deck, val) {
+  playUiSound('click');
+  const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
+  if (player) player.playbackRate = val;
+  
+  if (deck === 'A') {
+    deckABpmVal = (124.0 * val).toFixed(1);
+    const bpmDisp = document.getElementById('deckABpm');
+    if (bpmDisp) bpmDisp.innerText = deckABpmVal + " BPM";
+  } else {
+    deckBBpmVal = (120.0 * val).toFixed(1);
+    const bpmDisp = document.getElementById('deckBBpm');
+    if (bpmDisp) bpmDisp.innerText = deckBBpmVal + " BPM";
+  }
+}
+
+/* ⚡ SYNC 對拍：將 Deck B 速度一鍵鎖定至 Deck A */
 function syncBpmBtoA() {
-  playUiSound('click'); const targetRate = deckABpmVal / 120.0;
-  document.getElementById('deckBPitch').value = targetRate; updateDeckPitch('B', targetRate);
+  playUiSound('click');
+  const targetRate = (deckABpmVal / 120.0).toFixed(2);
+  const sliderB = document.getElementById('deckBPitch');
+  if (sliderB) sliderB.value = targetRate;
+  updateDeckPitch('B', targetRate);
   showToast("⚡ 已將 Deck B 速度自動鎖定至 Deck A (" + deckABpmVal + " BPM)！");
 }
 
-function playDeck(deck) { playUiSound('click'); const bgPlayer = document.getElementById('bgPlayer'); if (bgPlayer) bgPlayer.play(); showToast("▶️ 開始播放 Deck " + deck); }
-function pauseDeck(deck) { playUiSound('click'); const bgPlayer = document.getElementById('bgPlayer'); if (bgPlayer) bgPlayer.pause(); showToast("⏸️ 暫停 Deck " + deck); }
-function updateCrossfader(val) { 
-  const bgPlayer = document.getElementById('bgPlayer'); 
-  if (bgPlayer) bgPlayer.volume = document.getElementById('volBgm').value * (1 - val * 0.5); 
-  if (document.getElementById('meterCrossfader')) document.getElementById('meterCrossfader').style.width = (val * 100) + "%";
+/* ▶️ ⏸️ 雙 Deck 獨立播放控制 */
+function playDeck(deck) {
+  playUiSound('click');
+  const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
+  if (player && player.src) {
+    player.play().then(() => {
+      showToast("▶️ 開始播放 Deck " + deck);
+    }).catch(e => showToast("❌ 請先載入歌曲到 Deck " + deck));
+  } else {
+    showToast("⚠️ Deck " + deck + " 尚未載入歌曲！");
+  }
 }
+
+function pauseDeck(deck) {
+  playUiSound('click');
+  const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
+  if (player) {
+    player.pause();
+    showToast("⏸️ 暫停 Deck " + deck);
+  }
+}
+
+/* 🎧 Cue Mode 預聽切換 (Stereo Split 左右分離) */
+function toggleCueMode() {
+  playUiSound('click');
+  isCueMode = !isCueMode;
+  const btn = document.getElementById('btnCueToggle');
+  const panel = document.getElementById('cuePanel');
+  
+  if (btn) {
+    btn.innerText = isCueMode ? "🎧 Cue Mode (開啟中)" : "🎧 預聽模式 (關閉)";
+    btn.style.background = isCueMode ? "#e84393" : "rgba(45, 52, 54, 0.9)";
+  }
+  if (panel) panel.style.display = isCueMode ? "block" : "none";
+  
+  updateCrossfader(document.getElementById('crossfader') ? document.getElementById('crossfader').value : 0.5);
+  showToast(isCueMode ? "🎧 預聽模式：Deck A 走左耳大喇叭 ‧ Deck B 走右耳耳機！" : "📻 還原標準雙聲道混音模式");
+}
+
+/* 🎚️ Crossfader 雙軌立體聲混音 (含 Cue 獨立耳機音量算式) */
+function updateCrossfader(val) {
+  const playerA = document.getElementById('deckAPlayer');
+  const playerB = document.getElementById('deckBPlayer');
+  const masterVol = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
+  const bgmVol = document.getElementById('volBgm') ? document.getElementById('volBgm').value : 0.8;
+  const cueVol = document.getElementById('volCue') ? document.getElementById('volCue').value : 1.0;
+  
+  const baseVolume = masterVol * bgmVol;
+
+  if (isCueMode) {
+    // 🎧 預聽模式：Deck A (大喇叭) 受 Crossfader 控制，Deck B 獨立送往右耳耳機 (受 Cue 音量控制)
+    if (playerA) playerA.volume = baseVolume * (1 - val);
+    if (playerB) playerB.volume = baseVolume * cueVol; // 耳機獨立音量，不受 Crossfader 影響！
+  } else {
+    // 📻 標準混音模式
+    const volA = Math.cos(val * Math.PI / 2);
+    const volB = Math.sin(val * Math.PI / 2);
+    if (playerA) playerA.volume = baseVolume * volA;
+    if (playerB) playerB.volume = baseVolume * volB;
+  }
+
+  if (document.getElementById('meterCrossfader')) {
+    document.getElementById('meterCrossfader').style.width = (val * 100) + "%";
+  }
+}
+
+/* 🔄 平滑 3 秒 Auto Crossfade 自動過歌 */
 function autoCrossfade() {
-  playUiSound('click'); const slider = document.getElementById('crossfader'); let currentVal = parseFloat(slider.value);
-  const targetVal = currentVal > 0.5 ? 0 : 1; const step = (targetVal - currentVal) / 30; let count = 0;
-  const timer = setInterval(() => { currentVal += step; slider.value = currentVal; updateCrossfader(currentVal); count++; if (count >= 30) { clearInterval(timer); showToast("🔄 Auto Crossfade 換歌完成！"); } }, 100);
+  playUiSound('click');
+  const slider = document.getElementById('crossfader');
+  if (!slider) return;
+  
+  let currentVal = parseFloat(slider.value);
+  const targetVal = currentVal > 0.5 ? 0 : 1;
+  const step = (targetVal - currentVal) / 30;
+  let count = 0;
+  
+  const timer = setInterval(() => {
+    currentVal += step;
+    slider.value = currentVal;
+    updateCrossfader(currentVal);
+    count++;
+    if (count >= 30) {
+      clearInterval(timer);
+      showToast("🔄 Auto Crossfade 換歌完成！");
+    }
+  }, 100);
 }
 
 /* --------------------------------------------------------------------------

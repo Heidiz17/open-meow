@@ -300,42 +300,66 @@
   <div class="section-title-btn" onclick="toggleFold('foldDeck')">
     <div>
       <span class="title-mixer">🎧 🎛️ 雙 Deck BPM 混音控制台</span>
-      <span class="sub-tip">💡 點擊展開：Deck A / B 獨立 Play/Pause、BPM 變速推桿與 Auto Crossfade！</span>
+      <span class="sub-tip">💡 雙軌獨立載入 MP3 ‧ 🎧 獨立 Cue 耳機預聽 ‧ ⚡ SYNC 對拍與 Crossfade！</span>
     </div>
     <span class="fold-arrow" id="arrowDeck">▼ 展開</span>
   </div>
   <div class="fold-content" id="foldDeck">
     <div class="dj-box">
       <div class="deck-container">
+        <!-- 🔴 DECK A 卡牌 -->
         <div class="deck-card">
           <div class="deck-title">🔴 DECK A</div>
+          <div id="deckAName" style="font-size:11px; color:#fab1a0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px;">(未載入歌曲)</div>
           <div class="bpm-display" id="deckABpm">124.0 BPM</div>
           <input type="range" class="pitch-slider" id="deckAPitch" min="0.9" max="1.1" step="0.01" value="1.0" oninput="updateDeckPitch('A', this.value)">
-          <div style="display:flex; gap:4px; justify-content:center; margin-top:4px;">
-            <button class="btn-compact btn-add" onclick="playDeck('A')">▶️ Play A</button>
-            <button class="btn-compact btn-del" onclick="pauseDeck('A')">⏸️ Pause</button>
+          <div style="display:flex; gap:4px; justify-content:center; margin-top:6px; flex-wrap:wrap;">
+            <label class="btn-compact btn-add" for="deckAInput" style="font-size:11px; padding:6px 8px;">📂 載入 A</label>
+            <input type="file" id="deckAInput" accept="audio/*" style="display:none;" onchange="loadDeckTrack('A', event)">
+            <button class="btn-compact btn-add" onclick="playDeck('A')">▶️ Play</button>
+            <button class="btn-compact btn-del" onclick="pauseDeck('A')">⏸️</button>
           </div>
+          <audio id="deckAPlayer" loop></audio>
         </div>
+
+        <!-- 🔵 DECK B 卡牌 -->
         <div class="deck-card">
           <div class="deck-title">🔵 DECK B</div>
+          <div id="deckBName" style="font-size:11px; color:#74b9ff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px;">(未載入歌曲)</div>
           <div class="bpm-display" id="deckBBpm">120.0 BPM</div>
           <input type="range" class="pitch-slider" id="deckBPitch" min="0.9" max="1.1" step="0.01" value="1.0" oninput="updateDeckPitch('B', this.value)">
-          <div style="display:flex; gap:4px; justify-content:center; margin-top:4px;">
-            <button class="btn-compact btn-add" onclick="playDeck('B')">▶️ Play B</button>
-            <button class="btn-compact btn-del" onclick="pauseDeck('B')">⏸️ Pause</button>
+          <div style="display:flex; gap:4px; justify-content:center; margin-top:6px; flex-wrap:wrap;">
+            <label class="btn-compact btn-add" for="deckBInput" style="background:#0984e3; font-size:11px; padding:6px 8px;">📂 載入 B</label>
+            <input type="file" id="deckBInput" accept="audio/*" style="display:none;" onchange="loadDeckTrack('B', event)">
+            <button class="btn-compact btn-add" onclick="playDeck('B')">▶️ Play</button>
+            <button class="btn-compact btn-del" onclick="pauseDeck('B')">⏸️</button>
           </div>
+          <audio id="deckBPlayer" loop></audio>
         </div>
       </div>
-      <div style="text-align:center; margin-bottom:8px;">
-        <button class="btn-compact btn-grid" onclick="syncBpmBtoA()" style="width:100%; padding:8px;">⚡ SYNC 自動對拍 (B 鎖定 A 歌 BPM)</button>
+
+      <!-- 🎧 獨立 Cue 預聽模式與按鈕區 -->
+      <div style="display:flex; gap:6px; margin-bottom:8px;">
+        <button class="btn-compact btn-grid" onclick="syncBpmBtoA()" style="flex:1; padding:8px;">⚡ SYNC 自動對拍 (B 鎖定 A)</button>
+        <button class="btn-compact" id="btnCueToggle" onclick="toggleCueMode()" style="background:rgba(45, 52, 54, 0.9); color:#ffeaa7; padding:8px; border:1px solid #ffeaa7;">🎧 預聽模式 (關閉)</button>
       </div>
+
+      <!-- 🎧 獨立耳機音量控制板 (開啟 Cue Mode 時自動展開) -->
+      <div id="cuePanel" style="display:none; background:rgba(0,0,0,0.4); border-radius:10px; padding:8px; margin-bottom:8px; border:1px dashed #fd79a8;">
+        <div class="mixer-channel" style="margin-bottom:0;">
+          <label style="color:#fd79a8;">🎧 右耳耳機 Cue 音量：</label>
+          <input type="range" id="volCue" min="0" max="2" step="0.05" value="1.0" oninput="updateCrossfader(document.getElementById('crossfader').value)">
+        </div>
+      </div>
+
       <div class="mixer-channel">
-        <label>🎚️ Crossfader 換歌藍條：</label>
-        <input type="range" id="crossfader" min="0" max="1" step="0.02" value="0" oninput="updateCrossfader(this.value)">
-        <div class="meter-bar"><div class="meter-fill" id="meterCrossfader"></div></div>
+        <label>🎚️ Crossfader (A ◀ 淡入/淡出 ▶ B)：</label>
+        <input type="range" id="crossfader" min="0" max="1" step="0.02" value="0.5" oninput="updateCrossfader(this.value)">
+        <div class="meter-bar"><div class="meter-fill" id="meterCrossfader" style="width:50%;"></div></div>
       </div>
+
       <div style="text-align:center; margin-top:6px;">
-        <button class="btn-compact btn-slide" onclick="autoCrossfade()" style="width:100%;">🔄 3秒 Auto Crossfade 平滑過歌</button>
+        <button class="btn-compact btn-slide" onclick="autoCrossfade()" style="width:100%;">🔄 3秒 Auto Crossfade 平滑雙軌過歌</button>
       </div>
     </div>
   </div>

@@ -77,10 +77,22 @@ h1 {
 
 .wallpaper-btn-group { 
   display: flex; 
-  gap: 4px; 
+  gap: 3px; 
   flex-wrap: wrap; 
   align-items: center; 
+  justify-content: space-between;
+  width: 100%;
 }
+
+.wallpaper-btn-group .btn-compact,
+.wallpaper-btn-group .btn-font-toggle {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 6px 5px !important;
+  font-size: 11px !important;
+  text-align: center;
+}
+
 
 /* ==========================================
    📚 第一葉 style.css - 目錄 2.4

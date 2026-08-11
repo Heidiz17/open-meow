@@ -34,7 +34,7 @@
   <div class="fold-content" id="foldHeader" style="margin-bottom: 8px;">
     <div class="wallpaper-btn-group" style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);">
       <button class="btn-compact btn-theme" onclick="changeWallpaperPreset()">🎨 預設風格</button>
-      <label class="btn-compact btn-add" style="background:#00b894;" for="wpInput">🖼️ 換底紙</label>
+      <label class="btn-compact btn-add" style="background:#00b894;" for="wpInput">🖼️ 換壁紙</label>
       <input type="file" id="wpInput" accept="image/*" style="display:none;" onchange="uploadCustomWallpaper(event)">
       <button class="btn-font-toggle" onclick="toggleFontTheme()">🔤 港/日</button>
       <button class="btn-compact btn-theme" onclick="toggleFontSize()" style="background:#6c5ce7; color:white;">🔠 字體大細</button>
@@ -103,11 +103,18 @@
        ========================================== -->
 
   <!-- [3.3] Chapter 3: 貓貓電台俱樂部 (#foldRadio) -->
-  <div class="section-title-btn" onclick="toggleFold('foldRadio')">
-    <div>
+  <div class="section-title-btn">
+    <div onclick="toggleFold('foldRadio')" style="flex: 1; cursor: pointer;">
       <span class="title-radio">📻 貓貓電台俱樂部 (Radio Club)</span>
       <span class="sub-tip">💡 點擊即播：環球電台 × 🌿 大自然音效<br>🎛️ Mixer 即時雙重 Remix 合奏！</span>
     </div>
+    <div style="display: flex; align-items: center; gap: 6px;">
+      <!-- 🔥 新增：電台最頂快捷 Play/Pause 按鈕 -->
+      <button class="btn-compact" id="btnQuickRadioToggle" onclick="toggleQuickRadio(event)" style="background: #e17055; color: white; padding: 4px 8px; font-size: 11px; border-radius: 6px;">⏸️ 暫停</button>
+      <span class="fold-arrow" id="arrowRadio" onclick="toggleFold('foldRadio')">▼ 展開</span>
+    </div>
+  </div>
+
     <span class="fold-arrow" id="arrowRadio">▼ 展開</span>
   </div>
   <div class="fold-content" id="foldRadio">

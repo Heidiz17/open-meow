@@ -1,10 +1,23 @@
-/* ==========================================
-   📚 第三頁 app.js - 目錄 Part 4 (9/12)
-   ========================================== */
+/* ==========================================================================
+   🐾 OPEN 貓貓助手 - 全局 JavaScript 邏輯主體 (app.js)
+   ==========================================================================
+   📋 系統功能章節目錄 (Table of Contents):
+   --------------------------------------------------------------------------
+   1. [UI Theme & LocalStorage]  - 主/副標題顏色記憶、字體切換與櫃桶開合
+   2. [Web Audio API Synthesizer]- UI 點擊音效、古早 DJ 鼓組 Synths
+   3. [Radio & Quick Control]    - 環球電台播放、頂部快捷 Play/Pause 暫停
+   4. [Verses Generator Engine]  - 每日聖經金句隨機抽卡與動畫
+   5. [Global & Nature Mixer]   - 全站 Master 總音量、四路大自然環境音 Mixer
+   6. [IndexedDB & RPG Save]     - 本地資料庫初始化、全機數據 1 鍵 Save/Load
+   7. [Cat Soundboard]          - 真貓語 Soundboard 即時連動
+   8. [Jukebox & Playlist]       - MP3 歌單上傳、順序/單曲/隨機播放模式
+   9. [Deck BPM Mixer System]    - 雙 Deck Pitch 調速、SYNC 對拍與 Crossfade
+   10.[Album & Lightbox Wallpaper]- 多媒體相簿、幻燈片與一鍵設為背景壁紙
+   ========================================================================== */
 
-/* ------------------------------------------
-   [4.1] UI 主題色與 LocalStorage 記憶載入
-   ------------------------------------------ */
+/* --------------------------------------------------------------------------
+   1. [UI Theme & LocalStorage] - 主/副標題顏色記憶、字體切換與櫃桶開合
+   -------------------------------------------------------------------------- */
 let savedThemeIdx = localStorage.getItem("meowTitleThemeIdx");
 let titleThemeIdx = savedThemeIdx !== null ? parseInt(savedThemeIdx) : 1;
 
@@ -16,52 +29,6 @@ const subThemeClasses = ['sub-orange', 'sub-green', 'sub-red', 'sub-blue', 'sub-
 
 if (document.body && themeClasses[titleThemeIdx]) document.body.classList.add(themeClasses[titleThemeIdx]);
 if (document.body && subThemeClasses[subThemeIdx]) document.body.classList.add(subThemeClasses[subThemeIdx]);
-
-/* ------------------------------------------
-   [4.2] 全局 Web Audio API UI 音效引擎
-   ------------------------------------------ */
-let audioCtx = null;
-let djMasterGain = null;
-
-function getAudioContext() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    djMasterGain = audioCtx.createGain();
-    djMasterGain.gain.value = 0.8;
-    djMasterGain.connect(audioCtx.destination);
-  }
-  if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-  return audioCtx;
-}
-
-function playUiSound(type) {
-  try {
-    const ctx = getAudioContext();
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    if (type === 'foldOpen') {
-      osc.type = 'sine'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
-      gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-      osc.start(now); osc.stop(now + 0.08);
-    } else if (type === 'foldClose') {
-      osc.type = 'sine'; osc.frequency.setValueAtTime(500, now); osc.frequency.exponentialRampToValueAtTime(250, now + 0.08);
-      gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-      osc.start(now); osc.stop(now + 0.08);
-    } else if (type === 'chime') {
-      osc.type = 'triangle'; osc.frequency.setValueAtTime(880, now); osc.frequency.setValueAtTime(1320, now + 0.1);
-      gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-      osc.start(now); osc.stop(now + 0.6);
-    } else if (type === 'click') {
-      osc.type = 'sine'; osc.frequency.setValueAtTime(400, now);
-      gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
-      osc.start(now); osc.stop(now + 0.04);
-    }
-  } catch(e) {}
-}
 
 /* 🎨 主標題獨立換色 */
 function toggleTitleColor() {
@@ -122,7 +89,7 @@ function toggleAllFolds() {
   showToast(isAllFolded ? "📂 已一鍵展開所有區域！" : "📁 已一鍵收縮還原！");
 }
 
-/* 🔠 字體切換 */
+/* 🔠 字體大細與港日系字體切換 */
 let fontScaleLevel = 0;
 function toggleFontSize() {
   playUiSound('click');
@@ -144,7 +111,104 @@ function toggleFontSize() {
   if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontScale", val: fontScaleLevel });
 }
 
-/* ✝️ 聖經金句抽卡邏輯 */
+function toggleFontTheme() {
+  playUiSound('click'); document.body.classList.toggle('jp-font');
+  const isJp = document.body.classList.contains('jp-font'); showToast(isJp ? "✨ 已切換至：日系可愛字體！" : "✨ 已切換至：經典港系粗體！");
+  if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontTheme", val: isJp ? "jp" : "hk" });
+}
+function loadSavedFontTheme() { const req = db.transaction("settings", "readonly").objectStore("settings").get("fontTheme"); req.onsuccess = function() { if (req.result && req.result.val === "jp") document.body.classList.add('jp-font'); }; }
+
+/* --------------------------------------------------------------------------
+   2. [Web Audio API Synthesizer] - UI 點擊音效、古早 DJ 鼓組 Synths
+   -------------------------------------------------------------------------- */
+let audioCtx = null;
+let djMasterGain = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    djMasterGain = audioCtx.createGain();
+    djMasterGain.gain.value = 0.8;
+    djMasterGain.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+  return audioCtx;
+}
+
+function playUiSound(type) {
+  try {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    if (type === 'foldOpen') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+      gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+      osc.start(now); osc.stop(now + 0.08);
+    } else if (type === 'foldClose') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(500, now); osc.frequency.exponentialRampToValueAtTime(250, now + 0.08);
+      gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+      osc.start(now); osc.stop(now + 0.08);
+    } else if (type === 'chime') {
+      osc.type = 'triangle'; osc.frequency.setValueAtTime(880, now); osc.frequency.setValueAtTime(1320, now + 0.1);
+      gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+      osc.start(now); osc.stop(now + 0.6);
+    } else if (type === 'click') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(400, now);
+      gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+      osc.start(now); osc.stop(now + 0.04);
+    }
+  } catch(e) {}
+}
+/* --------------------------------------------------------------------------
+   3. [Radio & Quick Control] - 環球電台播放、頂部快捷 Play/Pause 暫停
+   -------------------------------------------------------------------------- */
+function confirmRadioPlay(stationName, streamUrl) { 
+  playUiSound('click'); 
+  if (confirm(`🐾 準備播放《${stationName}》？`)) { 
+    const player = document.getElementById('bgPlayer'); 
+    player.src = streamUrl; 
+    player.play().then(() => { 
+      showToast(`📻 直播中：${stationName}`); 
+      const musicName = document.getElementById('musicName');
+      if (musicName) musicName.innerText = `📻 直播中：${stationName}`; 
+      const btn = document.getElementById('btnQuickRadioToggle');
+      if (btn) btn.innerText = "⏸️ 暫停";
+    }).catch(e => showToast("❌ 連線失敗！")); 
+  } 
+}
+
+/* 📻 頂部電台俱樂部一鍵 Play/Pause 極速開關 (應急聽電話專用) */
+function toggleQuickRadio(e) {
+  if (e) e.stopPropagation(); // 防止觸發櫃桶開合
+  playUiSound('click');
+  
+  const bgPlayer = document.getElementById('bgPlayer');
+  const btn = document.getElementById('btnQuickRadioToggle');
+  
+  if (!bgPlayer || !bgPlayer.src) {
+    showToast("📻 暫未選取電台或音樂！");
+    return;
+  }
+  
+  if (bgPlayer.paused) {
+    bgPlayer.play().then(() => {
+      if (btn) btn.innerText = "⏸️ 暫停";
+      showToast("▶️ 繼續播放電台/音樂");
+    }).catch(err => showToast("❌ 播放失敗"));
+  } else {
+    bgPlayer.pause();
+    if (btn) btn.innerText = "▶️ 播放";
+    showToast("⏸️ 已即時暫停播放");
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. [Verses Generator Engine] - 每日聖經金句隨機抽卡與動畫
+   -------------------------------------------------------------------------- */
 let bibleData = null, isDrawingCard = false;
 async function loadVersesJSON() {
   try {
@@ -191,13 +255,210 @@ function drawBibleCardWithAnim() {
   }
 }
 loadVersesJSON();
-/* ==========================================
-   📚 第三頁 app.js - 目錄 Part 4 (10/12)
-   ========================================== */
 
-/* ------------------------------------------
-   [4.3] 古早 DJ 合成器與雙 Deck BPM 邏輯
-   ------------------------------------------ */
+/* --------------------------------------------------------------------------
+   5. [Global & Nature Mixer] - 全站 Master 總音量、四路大自然環境音 Mixer
+   -------------------------------------------------------------------------- */
+/* 🌿 大自然音效 Play/Pause 按鈕開關 */
+function toggleNatureSound(type) {
+  playUiSound('click');
+  const audio = document.getElementById('sound-' + type);
+  const btn = document.getElementById('btn-nature-' + type);
+  const names = { wave: '🌊 海浪聲', windbell: '🎐 風吹風鈴', rain: '🌧️ 雨夜聽雨', forest: '🌲 晨曦森林' };
+
+  if (audio.paused) {
+    updateNatureVolumes();
+    audio.play().then(() => {
+      btn.innerText = names[type] + ' (開)';
+      btn.style.boxShadow = "0 0 12px #ffeaa7";
+      btn.style.border = "1.5px solid #ffeaa7";
+      showToast("🌿 開始播放：" + names[type]);
+    }).catch(e => showToast("❌ 音效載入失敗！"));
+  } else {
+    audio.pause();
+    btn.innerText = names[type] + ' (關)';
+    btn.style.boxShadow = "none";
+    btn.style.border = "1px solid rgba(255,255,255,0.4)";
+    showToast("⏸️ 暫停：" + names[type]);
+  }
+}
+
+/* 👑 全站 Master 總音量一鍵控全場 */
+function updateGlobalMasterVolume() {
+  const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
+  if (document.getElementById('meterMaster')) document.getElementById('meterMaster').style.width = (globalMaster * 100) + "%";
+  const bgPlayer = document.getElementById('bgPlayer');
+  const bgmVolInput = document.getElementById('volBgm');
+  if (bgPlayer) {
+    const baseBgm = bgmVolInput ? bgmVolInput.value : 0.8;
+    bgPlayer.volume = baseBgm * globalMaster;
+  }
+  updateNatureVolumes();
+}
+
+/* 🌿 四路大自然獨立音量連動 */
+function updateNatureVolumes() {
+  const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
+  ['wave', 'windbell', 'rain', 'forest'].forEach(type => {
+    const audio = document.getElementById('sound-' + type);
+    const volInput = document.getElementById('vol' + type.charAt(0).toUpperCase() + type.slice(1));
+    const meter = document.getElementById('meter' + type.charAt(0).toUpperCase() + type.slice(1));
+    if (volInput && audio) {
+      audio.volume = volInput.value * globalMaster;
+      if (meter) meter.style.width = (volInput.value * 100) + "%";
+    }
+  });
+}
+
+function updatePanelOpacity(val) {
+  document.documentElement.style.setProperty('--panel-alpha', val); const blurVal = (val == 0) ? '0px' : '14px';
+  document.querySelectorAll('.section-title-btn, .album-controls, .music-box, .mixer-box, .sound-btn, .dj-box').forEach(el => {
+    el.style.backdropFilter = `blur(${blurVal})`; el.style.webkitBackdropFilter = `blur(${blurVal})`;
+  });
+  document.getElementById('opacityValDisplay').innerText = Math.round(val * 100) + "%";
+  if (document.getElementById('meterOpacity')) document.getElementById('meterOpacity').style.width = (val * 100) + "%";
+  if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "panelOpacity", val: val });
+}
+function loadSavedOpacity() { const req = db.transaction("settings", "readonly").objectStore("settings").get("panelOpacity"); req.onsuccess = function() { if (req.result) { const val = req.result.val; document.getElementById('volOpacity').value = val; updatePanelOpacity(val); } }; }
+
+function updateVolumes() {
+  const bgmVol = document.getElementById('volBgm').value;
+  const catVol = document.getElementById('volCat').value;
+  const videoVol = document.getElementById('volVideo').value;
+
+  if (document.getElementById('bgPlayer')) document.getElementById('bgPlayer').volume = bgmVol;
+  if (currentCatAudio) currentCatAudio.volume = catVol;
+  if (currentActiveVideo) currentActiveVideo.volume = videoVol;
+
+  if (document.getElementById('meterBgm')) document.getElementById('meterBgm').style.width = (bgmVol * 100) + "%";
+  if (document.getElementById('meterCat')) document.getElementById('meterCat').style.width = (catVol * 100) + "%";
+  if (document.getElementById('meterVideo')) document.getElementById('meterVideo').style.width = (videoVol * 100) + "%";
+}
+/* --------------------------------------------------------------------------
+   6. [IndexedDB & RPG Save] - 本地資料庫初始化、全機數據 1 鍵 Save/Load
+   -------------------------------------------------------------------------- */
+let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
+let albumMediaList = [], slideIndex = 0, slideTimer = null, isPlayingSlideshow = false, slideshowInterval = 6000;
+let musicList = [], currentTrackIdx = 0, playMode = 'sequence', pressTimer = null, touchStartX = 0, touchEndX = 0;
+const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
+
+const request = indexedDB.open("OpenMeowMasterDB", 5);
+request.onupgradeneeded = function(e) {
+  db = e.target.result;
+  if (!db.objectStoreNames.contains("media")) db.createObjectStore("media", { keyPath: "id", autoIncrement: true });
+  if (!db.objectStoreNames.contains("albums")) db.createObjectStore("albums", { keyPath: "id" });
+  if (db.objectStoreNames.contains("music")) db.deleteObjectStore("music");
+  db.createObjectStore("music", { keyPath: "id", autoIncrement: true });
+  if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
+};
+request.onsuccess = function(e) { 
+  db = e.target.result; 
+  loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); loadSavedOpacity(); loadSavedFontTheme(); initAlbumLongPress(); renderCatGrid();
+  updateVolumes(); updateNatureVolumes();
+};
+
+function exportFullRPGSave() {
+  playUiSound('click'); showToast("⏳ 正在打包全機 RPG 存檔..."); const rpgData = { albums: [], media: [], music: [], settings: [] };
+  const tx = db.transaction(["albums", "media", "music", "settings"], "readonly");
+  tx.objectStore("albums").getAll().onsuccess = (e) => { rpgData.albums = e.target.result; };
+  tx.objectStore("media").getAll().onsuccess = (e) => { rpgData.media = e.target.result; };
+  tx.objectStore("music").getAll().onsuccess = (e) => { rpgData.music = e.target.result; };
+  tx.objectStore("settings").getAll().onsuccess = (e) => { rpgData.settings = e.target.result; };
+  tx.oncomplete = function() {
+    const jsonStr = JSON.stringify(rpgData); const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob); const a = document.createElement("a"); const dateStr = new Date().toISOString().slice(0,10);
+    a.href = url; a.download = `Meow_RPG_Save_${dateStr}.json`; a.click(); URL.revokeObjectURL(url); showToast("💾 成功下載全機 RPG 存檔！");
+  };
+}
+
+function importFullRPGSave(event) {
+  const file = event.target.files[0]; if (!file) return;
+  if (!confirm("⚠️ 讀取 RPG 存檔會覆蓋現有數據，確定要繼續？")) return;
+  const reader = new FileReader(); reader.onload = function(e) {
+    try {
+      const rpgData = JSON.parse(e.target.result); const tx = db.transaction(["albums", "media", "music", "settings"], "readwrite");
+      tx.objectStore("albums").clear(); tx.objectStore("media").clear(); tx.objectStore("music").clear(); tx.objectStore("settings").clear();
+      if (rpgData.albums) rpgData.albums.forEach(item => tx.objectStore("albums").add(item));
+      if (rpgData.media) rpgData.media.forEach(item => tx.objectStore("media").add(item));
+      if (rpgData.music) rpgData.music.forEach(item => tx.objectStore("music").add(item));
+      if (rpgData.settings) rpgData.settings.forEach(item => tx.objectStore("settings").add(item));
+      tx.oncomplete = function() { showToast("🎉 讀檔成功！即將刷新介面..."); setTimeout(() => { location.reload(); }, 1200); };
+    } catch (err) { alert("❌ 存檔格式錯誤！"); }
+  }; reader.readAsText(file); event.target.value = "";
+}
+
+/* --------------------------------------------------------------------------
+   7. [Cat Soundboard] - 真貓語 Soundboard 即時連動
+   -------------------------------------------------------------------------- */
+const catSounds = [
+  { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" }, { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },
+  { name: "急促討食", emoji: "⚡", desc: "動作太慢，扣 50 分！", file: "cat3.mp3" }, { name: "裝可憐喵", emoji: "🥺", desc: "畀粒零食我食啦～", file: "cat4.mp3" },
+  { name: "開心呼嚕", emoji: "🥰", desc: "摸得好舒服，想瞓覺。", file: "cat5.mp3" }, { name: "興奮鳥鳴", emoji: "🐥", desc: "見到窗外有飛鳥！", file: "cat6.mp3" },
+  { name: "告白短喵", emoji: "❤️", desc: "最信任你啦奴才。", file: "cat7.mp3" }, { name: "放術踏踏", emoji: "🐾", desc: "按摩中，請勿打擾。", file: "cat8.mp3" },
+  { name: "迎人高音", emoji: "🎉", desc: "好開心見到你返屋企！", file: "cat9.mp3" }, { name: "滾火低吼", emoji: "😡", desc: "唔好逼我，想咬人！", file: "cat10.mp3" },
+  { name: "警告哈氣", emoji: "🐍", desc: "別過嚟！再過嚟我動手！", file: "cat11.mp3" }, { name: "踩尾尖叫", emoji: "🙀", desc: "踩到我尾巴啦！痛呀！", file: "cat12.mp3" }
+];
+
+function renderCatGrid() {
+  const soundGrid = document.getElementById('soundGrid');
+  if (soundGrid) {
+    soundGrid.innerHTML = "";
+    catSounds.forEach((item) => {
+      const btn = document.createElement('div'); btn.className = 'sound-btn';
+      btn.innerHTML = `<span>${item.emoji}</span>${item.name}`; btn.onclick = () => playRealCatSound(item); soundGrid.appendChild(btn);
+    });
+  }
+}
+
+function playRealCatSound(item) {
+  if (currentCatAudio) { currentCatAudio.pause(); currentCatAudio = null; }
+  currentCatAudio = new Audio('cat' + item.file.replace('cat', '')); currentCatAudio.volume = document.getElementById('volCat').value;
+  currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(e => {
+    currentCatAudio = new Audio(item.file); currentCatAudio.volume = document.getElementById('volCat').value;
+    currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(err => { showToast(`🐾 貓語：${item.desc}`); });
+  });
+}
+
+/* --------------------------------------------------------------------------
+   8. [Jukebox & Playlist] - MP3 歌單上傳、順序/單曲/隨機播放模式
+   -------------------------------------------------------------------------- */
+function uploadMusic(event) {
+  const files = Array.from(event.target.files);
+  if (files.length > 0) {
+    let loadedCount = 0; files.forEach(file => {
+      const reader = new FileReader(); reader.onload = function(e) {
+        const tx = db.transaction("music", "readwrite"); tx.objectStore("music").add({ name: file.name, src: e.target.result });
+        tx.oncomplete = function() { loadedCount++; if (loadedCount === files.length) { loadSavedMusic(); showToast(`🎵 成功加入 ${files.length} 首歌！`); event.target.value = ""; } };
+      }; reader.readAsDataURL(file);
+    });
+  }
+}
+
+function loadSavedMusic() {
+  musicList = []; db.transaction("music", "readonly").objectStore("music").openCursor().onsuccess = function(e) {
+    const cursor = e.target.result; if (cursor) { musicList.push({ id: cursor.key, name: cursor.value.name, src: cursor.value.src }); cursor.continue(); } 
+    else { renderPlaylist(); if (musicList.length > 0 && !document.getElementById('bgPlayer').src) { playTrack(0); } }
+  };
+}
+
+function renderPlaylist() {
+  const display = document.getElementById('playlistDisplay'); if(!display) return; display.innerHTML = "";
+  if (musicList.length === 0) { display.innerHTML = "<div style='text-align:center; color:#dfe6e9; padding:6px; font-size:11px;'>（未有音樂）</div>"; document.getElementById('musicName').innerText = "（未選擇音樂）"; return; }
+  musicList.forEach((track, idx) => {
+    const div = document.createElement('div'); div.className = `track-item ${idx === currentTrackIdx ? 'active' : ''}`;
+    div.innerHTML = `<span>🎵 ${idx + 1}. ${track.name}</span><span class="track-del" onclick="deleteTrack(event, ${track.id})">✕</span>`;
+    div.onclick = () => playTrack(idx); display.appendChild(div);
+  });
+  document.getElementById('musicName').innerText = `🎵 播放中 (${currentTrackIdx + 1}/${musicList.length})：${musicList[currentTrackIdx].name}`;
+}
+
+function playTrack(idx) { if (musicList.length === 0) return; currentTrackIdx = idx; const player = document.getElementById('bgPlayer'); player.src = musicList[currentTrackIdx].src; player.play().then(() => { renderPlaylist(); updateVolumes(); }).catch(e => console.log(e)); }
+function setPlayMode(mode) { playUiSound('click'); playMode = mode; document.getElementById('btnSeq').classList.toggle('active', mode === 'sequence'); document.getElementById('btnLoop').classList.toggle('active', mode === 'single-loop'); document.getElementById('btnRand').classList.toggle('active', mode === 'random'); showToast(`🎵 模式改為：${mode === 'sequence' ? '順序' : (mode === 'single-loop' ? '單曲' : '隨機')}`); }
+function handleTrackEnded() { if (musicList.length === 0) return; if (playMode === 'single-loop') playTrack(currentTrackIdx); else if (playMode === 'random') playTrack(Math.floor(Math.random() * musicList.length)); else playTrack((currentTrackIdx + 1) % musicList.length); }
+function deleteTrack(e, id) { e.stopPropagation(); if (confirm("確定刪除呢首歌？")) { const tx = db.transaction("music", "readwrite").objectStore("music").delete(id); tx.oncomplete = function() { loadSavedMusic(); showToast("🗑️ 已刪除！"); }; } }
+/* --------------------------------------------------------------------------
+   9. [Deck BPM Mixer System] - 雙 Deck Pitch 調速、SYNC 對拍與 Crossfade
+   -------------------------------------------------------------------------- */
 function playSynthSound(type) {
   try {
     const ctx = getAudioContext(); const now = ctx.currentTime;
@@ -294,7 +555,7 @@ function pauseDeck(deck) { playUiSound('click'); const bgPlayer = document.getEl
 function updateCrossfader(val) { 
   const bgPlayer = document.getElementById('bgPlayer'); 
   if (bgPlayer) bgPlayer.volume = document.getElementById('volBgm').value * (1 - val * 0.5); 
-  document.getElementById('meterCrossfader').style.width = (val * 100) + "%";
+  if (document.getElementById('meterCrossfader')) document.getElementById('meterCrossfader').style.width = (val * 100) + "%";
 }
 function autoCrossfade() {
   playUiSound('click'); const slider = document.getElementById('crossfader'); let currentVal = parseFloat(slider.value);
@@ -302,196 +563,9 @@ function autoCrossfade() {
   const timer = setInterval(() => { currentVal += step; slider.value = currentVal; updateCrossfader(currentVal); count++; if (count >= 30) { clearInterval(timer); showToast("🔄 Auto Crossfade 換歌完成！"); } }, 100);
 }
 
-/* ------------------------------------------
-   [4.4] IndexedDB 本地資料庫初始化
-   ------------------------------------------ */
-let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
-let albumMediaList = [], slideIndex = 0, slideTimer = null, isPlayingSlideshow = false, slideshowInterval = 6000;
-let musicList = [], currentTrackIdx = 0, playMode = 'sequence', pressTimer = null, touchStartX = 0, touchEndX = 0;
-const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
-
-const request = indexedDB.open("OpenMeowMasterDB", 5);
-request.onupgradeneeded = function(e) {
-  db = e.target.result;
-  if (!db.objectStoreNames.contains("media")) db.createObjectStore("media", { keyPath: "id", autoIncrement: true });
-  if (!db.objectStoreNames.contains("albums")) db.createObjectStore("albums", { keyPath: "id" });
-  if (db.objectStoreNames.contains("music")) db.deleteObjectStore("music");
-  db.createObjectStore("music", { keyPath: "id", autoIncrement: true });
-  if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
-};
-request.onsuccess = function(e) { 
-  db = e.target.result; 
-  loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); loadSavedOpacity(); loadSavedFontTheme(); initAlbumLongPress(); renderCatGrid();
-  updateVolumes(); updateNatureVolumes();
-};
-/* ==========================================
-   📚 第三頁 app.js - 目錄 Part 4 (11/12)
-   ========================================== */
-
-function toggleFontTheme() {
-  playUiSound('click'); document.body.classList.toggle('jp-font');
-  const isJp = document.body.classList.contains('jp-font'); showToast(isJp ? "✨ 已切換至：日系可愛字體！" : "✨ 已切換至：經典港系粗體！");
-  if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontTheme", val: isJp ? "jp" : "hk" });
-}
-function loadSavedFontTheme() { const req = db.transaction("settings", "readonly").objectStore("settings").get("fontTheme"); req.onsuccess = function() { if (req.result && req.result.val === "jp") document.body.classList.add('jp-font'); }; }
-
-const catSounds = [
-  { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" }, { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },
-  { name: "急促討食", emoji: "⚡", desc: "動作太慢，扣 50 分！", file: "cat3.mp3" }, { name: "裝可憐喵", emoji: "🥺", desc: "畀粒零食我食啦～", file: "cat4.mp3" },
-  { name: "開心呼嚕", emoji: "🥰", desc: "摸得好舒服，想瞓覺。", file: "cat5.mp3" }, { name: "興奮鳥鳴", emoji: "🐥", desc: "見到窗外有飛鳥！", file: "cat6.mp3" },
-  { name: "告白短喵", emoji: "❤️", desc: "最信任你啦奴才。", file: "cat7.mp3" }, { name: "放術踏踏", emoji: "🐾", desc: "按摩中，請勿打擾。", file: "cat8.mp3" },
-  { name: "迎人高音", emoji: "🎉", desc: "好開心見到你返屋企！", file: "cat9.mp3" }, { name: "滾火低吼", emoji: "😡", desc: "唔好逼我，想咬人！", file: "cat10.mp3" },
-  { name: "警告哈氣", emoji: "🐍", desc: "別過嚟！再過嚟我動手！", file: "cat11.mp3" }, { name: "踩尾尖叫", emoji: "🙀", desc: "踩到我尾巴啦！痛呀！", file: "cat12.mp3" }
-];
-
-function renderCatGrid() {
-  const soundGrid = document.getElementById('soundGrid');
-  if (soundGrid) {
-    soundGrid.innerHTML = "";
-    catSounds.forEach((item) => {
-      const btn = document.createElement('div'); btn.className = 'sound-btn';
-      btn.innerHTML = `<span>${item.emoji}</span>${item.name}`; btn.onclick = () => playRealCatSound(item); soundGrid.appendChild(btn);
-    });
-  }
-}
-
-function playRealCatSound(item) {
-  if (currentCatAudio) { currentCatAudio.pause(); currentCatAudio = null; }
-  currentCatAudio = new Audio('cat' + item.file.replace('cat', '')); currentCatAudio.volume = document.getElementById('volCat').value;
-  currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(e => {
-    currentCatAudio = new Audio(item.file); currentCatAudio.volume = document.getElementById('volCat').value;
-    currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(err => { showToast(`🐾 貓語：${item.desc}`); });
-  });
-}
-
-function toggleNatureSound(type) {
-  playUiSound('click');
-  const audio = document.getElementById('sound-' + type);
-  const btn = document.getElementById('btn-nature-' + type);
-  const names = { wave: '🌊 海浪聲', windbell: '🎐 風吹風鈴', rain: '🌧️ 雨夜聽雨', forest: '🌲 晨曦森林' };
-
-  if (audio.paused) {
-    updateNatureVolumes();
-    audio.play().then(() => {
-      btn.innerText = names[type] + ' (開)';
-      btn.style.boxShadow = "0 0 12px #ffeaa7";
-      btn.style.border = "1.5px solid #ffeaa7";
-      showToast("🌿 開始播放：" + names[type]);
-    }).catch(e => showToast("❌ 音效載入失敗！"));
-  } else {
-    audio.pause();
-    btn.innerText = names[type] + ' (關)';
-    btn.style.boxShadow = "none";
-    btn.style.border = "1px solid rgba(255,255,255,0.4)";
-    showToast("⏸️ 暫停：" + names[type]);
-  }
-}
-
-function updateGlobalMasterVolume() {
-  const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
-  if (document.getElementById('meterMaster')) document.getElementById('meterMaster').style.width = (globalMaster * 100) + "%";
-  const bgPlayer = document.getElementById('bgPlayer');
-  const bgmVolInput = document.getElementById('volBgm');
-  if (bgPlayer) {
-    const baseBgm = bgmVolInput ? bgmVolInput.value : 0.8;
-    bgPlayer.volume = baseBgm * globalMaster;
-  }
-  updateNatureVolumes();
-}
-
-function updateNatureVolumes() {
-  const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
-  ['wave', 'windbell', 'rain', 'forest'].forEach(type => {
-    const audio = document.getElementById('sound-' + type);
-    const volInput = document.getElementById('vol' + type.charAt(0).toUpperCase() + type.slice(1));
-    const meter = document.getElementById('meter' + type.charAt(0).toUpperCase() + type.slice(1));
-    if (volInput && audio) {
-      audio.volume = volInput.value * globalMaster;
-      if (meter) meter.style.width = (volInput.value * 100) + "%";
-    }
-  });
-}
-
-function uploadCustomWallpaper(event) {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader(); reader.onload = function(e) {
-      const wpData = e.target.result; document.body.style.backgroundImage = `url(${wpData})`;
-      saveWallpaperSetting("custom", wpData); showToast("✨ 成功換上自訂底紙！");
-    }; reader.readAsDataURL(file);
-  }
-}
-
-function changeWallpaperPreset() {
-  playUiSound('click'); currentPresetIdx = (currentPresetIdx + 1) % presetWallpapers.length;
-  const bgStyle = presetWallpapers[currentPresetIdx]; document.body.style.backgroundImage = "none"; document.body.style.background = bgStyle;
-  saveWallpaperSetting("preset", bgStyle); showToast("🎨 切換預設風格底紙！");
-}
-
-function saveWallpaperSetting(type, val) { db.transaction("settings", "readwrite").objectStore("settings").put({ key: "wallpaper", type: type, val: val }); }
-function loadSavedWallpaper() { const req = db.transaction("settings", "readonly").objectStore("settings").get("wallpaper"); req.onsuccess = function() { if (req.result) { if (req.result.type === "custom") { document.body.style.backgroundImage = `url(${req.result.val})`; } else { document.body.style.background = req.result.val; } } }; }
-
-function updatePanelOpacity(val) {
-  document.documentElement.style.setProperty('--panel-alpha', val); const blurVal = (val == 0) ? '0px' : '14px';
-  document.querySelectorAll('.section-title-btn, .album-controls, .music-box, .mixer-box, .sound-btn, .dj-box').forEach(el => {
-    el.style.backdropFilter = `blur(${blurVal})`; el.style.webkitBackdropFilter = `blur(${blurVal})`;
-  });
-  document.getElementById('opacityValDisplay').innerText = Math.round(val * 100) + "%";
-  document.getElementById('meterOpacity').style.width = (val * 100) + "%";
-  if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "panelOpacity", val: val });
-}
-function loadSavedOpacity() { const req = db.transaction("settings", "readonly").objectStore("settings").get("panelOpacity"); req.onsuccess = function() { if (req.result) { const val = req.result.val; document.getElementById('volOpacity').value = val; updatePanelOpacity(val); } }; }
-
-function updateVolumes() {
-  const bgmVol = document.getElementById('volBgm').value;
-  const catVol = document.getElementById('volCat').value;
-  const videoVol = document.getElementById('volVideo').value;
-
-  if (document.getElementById('bgPlayer')) document.getElementById('bgPlayer').volume = bgmVol;
-  if (currentCatAudio) currentCatAudio.volume = catVol;
-  if (currentActiveVideo) currentActiveVideo.volume = videoVol;
-
-  if (document.getElementById('meterBgm')) document.getElementById('meterBgm').style.width = (bgmVol * 100) + "%";
-  if (document.getElementById('meterCat')) document.getElementById('meterCat').style.width = (catVol * 100) + "%";
-  if (document.getElementById('meterVideo')) document.getElementById('meterVideo').style.width = (videoVol * 100) + "%";
-}
-
-function exportFullRPGSave() {
-  playUiSound('click'); showToast("⏳ 正在打包全機 RPG 存檔..."); const rpgData = { albums: [], media: [], music: [], settings: [] };
-  const tx = db.transaction(["albums", "media", "music", "settings"], "readonly");
-  tx.objectStore("albums").getAll().onsuccess = (e) => { rpgData.albums = e.target.result; };
-  tx.objectStore("media").getAll().onsuccess = (e) => { rpgData.media = e.target.result; };
-  tx.objectStore("music").getAll().onsuccess = (e) => { rpgData.music = e.target.result; };
-  tx.objectStore("settings").getAll().onsuccess = (e) => { rpgData.settings = e.target.result; };
-  tx.oncomplete = function() {
-    const jsonStr = JSON.stringify(rpgData); const blob = new Blob([jsonStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob); const a = document.createElement("a"); const dateStr = new Date().toISOString().slice(0,10);
-    a.href = url; a.download = `Meow_RPG_Save_${dateStr}.json`; a.click(); URL.revokeObjectURL(url); showToast("💾 成功下載全機 RPG 存檔！");
-  };
-}
-
-function importFullRPGSave(event) {
-  const file = event.target.files[0]; if (!file) return;
-  if (!confirm("⚠️ 讀取 RPG 存檔會覆蓋現有數據，確定要繼續？")) return;
-  const reader = new FileReader(); reader.onload = function(e) {
-    try {
-      const rpgData = JSON.parse(e.target.result); const tx = db.transaction(["albums", "media", "music", "settings"], "readwrite");
-      tx.objectStore("albums").clear(); tx.objectStore("media").clear(); tx.objectStore("music").clear(); tx.objectStore("settings").clear();
-      if (rpgData.albums) rpgData.albums.forEach(item => tx.objectStore("albums").add(item));
-      if (rpgData.media) rpgData.media.forEach(item => tx.objectStore("media").add(item));
-      if (rpgData.music) rpgData.music.forEach(item => tx.objectStore("music").add(item));
-      if (rpgData.settings) rpgData.settings.forEach(item => tx.objectStore("settings").add(item));
-      tx.oncomplete = function() { showToast("🎉 讀檔成功！即將刷新介面..."); setTimeout(() => { location.reload(); }, 1200); };
-    } catch (err) { alert("❌ 存檔格式錯誤！"); }
-  }; reader.readAsText(file); event.target.value = "";
-}
-/* ==========================================
-   📚 第三頁 app.js - 目錄 Part 4 (12/12)
-   ========================================== */
-
-/* ------------------------------------------
-   [4.5] 多媒體相簿、播放器與 Lightbox 換壁紙
-   ------------------------------------------ */
+/* --------------------------------------------------------------------------
+   10.[Album & Lightbox Wallpaper] - 多媒體相簿、幻燈片與一鍵設為背景壁紙
+   -------------------------------------------------------------------------- */
 let toastTimer;
 function showToast(msg) {
   const toast = document.getElementById('toast'); toast.innerHTML = msg; toast.style.display = 'block';
@@ -586,42 +660,6 @@ function loadMedia() {
 
 function deleteMedia(id) { if (confirm("確定要刪除？")) { const tx = db.transaction("media", "readwrite").objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
 
-function uploadMusic(event) {
-  const files = Array.from(event.target.files);
-  if (files.length > 0) {
-    let loadedCount = 0; files.forEach(file => {
-      const reader = new FileReader(); reader.onload = function(e) {
-        const tx = db.transaction("music", "readwrite"); tx.objectStore("music").add({ name: file.name, src: e.target.result });
-        tx.oncomplete = function() { loadedCount++; if (loadedCount === files.length) { loadSavedMusic(); showToast(`🎵 成功加入 ${files.length} 首歌！`); event.target.value = ""; } };
-      }; reader.readAsDataURL(file);
-    });
-  }
-}
-
-function loadSavedMusic() {
-  musicList = []; db.transaction("music", "readonly").objectStore("music").openCursor().onsuccess = function(e) {
-    const cursor = e.target.result; if (cursor) { musicList.push({ id: cursor.key, name: cursor.value.name, src: cursor.value.src }); cursor.continue(); } 
-    else { renderPlaylist(); if (musicList.length > 0 && !document.getElementById('bgPlayer').src) { playTrack(0); } }
-  };
-}
-
-function renderPlaylist() {
-  const display = document.getElementById('playlistDisplay'); if(!display) return; display.innerHTML = "";
-  if (musicList.length === 0) { display.innerHTML = "<div style='text-align:center; color:#dfe6e9; padding:6px; font-size:11px;'>（未有音樂）</div>"; document.getElementById('musicName').innerText = "（未選擇音樂）"; return; }
-  musicList.forEach((track, idx) => {
-    const div = document.createElement('div'); div.className = `track-item ${idx === currentTrackIdx ? 'active' : ''}`;
-    div.innerHTML = `<span>🎵 ${idx + 1}. ${track.name}</span><span class="track-del" onclick="deleteTrack(event, ${track.id})">✕</span>`;
-    div.onclick = () => playTrack(idx); display.appendChild(div);
-  });
-  document.getElementById('musicName').innerText = `🎵 播放中 (${currentTrackIdx + 1}/${musicList.length})：${musicList[currentTrackIdx].name}`;
-}
-
-function playTrack(idx) { if (musicList.length === 0) return; currentTrackIdx = idx; const player = document.getElementById('bgPlayer'); player.src = musicList[currentTrackIdx].src; player.play().then(() => { renderPlaylist(); updateVolumes(); }).catch(e => console.log(e)); }
-function confirmRadioPlay(stationName, streamUrl) { playUiSound('click'); if (confirm(`🐾 準備播放《${stationName}》？`)) { const player = document.getElementById('bgPlayer'); player.src = streamUrl; player.play().then(() => { showToast(`📻 直播中：${stationName}`); document.getElementById('musicName').innerText = `📻 直播中：${stationName}`; }).catch(e => showToast("❌ 連線失敗！")); } }
-function setPlayMode(mode) { playUiSound('click'); playMode = mode; document.getElementById('btnSeq').classList.toggle('active', mode === 'sequence'); document.getElementById('btnLoop').classList.toggle('active', mode === 'single-loop'); document.getElementById('btnRand').classList.toggle('active', mode === 'random'); showToast(`🎵 模式改為：${mode === 'sequence' ? '順序' : (mode === 'single-loop' ? '單曲' : '隨機')}`); }
-function handleTrackEnded() { if (musicList.length === 0) return; if (playMode === 'single-loop') playTrack(currentTrackIdx); else if (playMode === 'random') playTrack(Math.floor(Math.random() * musicList.length)); else playTrack((currentTrackIdx + 1) % musicList.length); }
-function deleteTrack(e, id) { e.stopPropagation(); if (confirm("確定刪除呢首歌？")) { const tx = db.transaction("music", "readwrite").objectStore("music").delete(id); tx.oncomplete = function() { loadSavedMusic(); showToast("🗑️ 已刪除！"); }; } }
-
 function openLightboxIndex(idx) {
   if (albumMediaList.length === 0) return; slideIndex = idx; showSlide(slideIndex);
   const lightbox = document.getElementById('lightbox'); lightbox.style.display = 'flex';
@@ -643,7 +681,7 @@ function showSlide(idx) {
   }, 150);
 }
 
-/* 🔥 新功能大腦：相簿放大圖一鍵設為背景壁紙 */
+/* 🖼️ 相簿大圖一鍵設為背景壁紙 */
 function setLightboxImgAsWallpaper() {
   playUiSound('click');
   if (albumMediaList.length === 0) return;
@@ -658,6 +696,25 @@ function setLightboxImgAsWallpaper() {
   saveWallpaperSetting("custom", currentItem.src);
   showToast("✨ 成功將呢張相設為貓貓助手壁紙！");
 }
+
+function uploadCustomWallpaper(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader(); reader.onload = function(e) {
+      const wpData = e.target.result; document.body.style.backgroundImage = `url(${wpData})`;
+      saveWallpaperSetting("custom", wpData); showToast("✨ 成功換上自訂底紙！");
+    }; reader.readAsDataURL(file);
+  }
+}
+
+function changeWallpaperPreset() {
+  playUiSound('click'); currentPresetIdx = (currentPresetIdx + 1) % presetWallpapers.length;
+  const bgStyle = presetWallpapers[currentPresetIdx]; document.body.style.backgroundImage = "none"; document.body.style.background = bgStyle;
+  saveWallpaperSetting("preset", bgStyle); showToast("🎨 切換預設風格底紙！");
+}
+
+function saveWallpaperSetting(type, val) { db.transaction("settings", "readwrite").objectStore("settings").put({ key: "wallpaper", type: type, val: val }); }
+function loadSavedWallpaper() { const req = db.transaction("settings", "readonly").objectStore("settings").get("wallpaper"); req.onsuccess = function() { if (req.result) { if (req.result.type === "custom") { document.body.style.backgroundImage = `url(${req.result.val})`; } else { document.body.style.background = req.result.val; } } }; }
 
 function startSlideshow() { playUiSound('click'); if (albumMediaList.length === 0) { showToast("⚠️ 相簿暫時未有檔案！"); return; } openLightboxIndex(0); isPlayingSlideshow = true; document.getElementById('playPauseBtn').innerText = "⏸️"; resetSlideTimer(); }
 function setSlideshowSpeed(ms) {

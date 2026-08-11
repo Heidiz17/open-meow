@@ -457,10 +457,11 @@ function setPlayMode(mode) { playUiSound('click'); playMode = mode; document.get
 function handleTrackEnded() { if (musicList.length === 0) return; if (playMode === 'single-loop') playTrack(currentTrackIdx); else if (playMode === 'random') playTrack(Math.floor(Math.random() * musicList.length)); else playTrack((currentTrackIdx + 1) % musicList.length); }
 function deleteTrack(e, id) { e.stopPropagation(); if (confirm("確定刪除呢首歌？")) { const tx = db.transaction("music", "readwrite").objectStore("music").delete(id); tx.oncomplete = function() { loadSavedMusic(); showToast("🗑️ 已刪除！"); }; } }
 /* --------------------------------------------------------------------------
-   9. [Deck BPM Mixer System] - 雙 Deck 獨立音軌、Pitch 變速、SYNC 與 🎧 Cue 預聽
+   9. [Deck BPM Mixer System] - 雙 Deck 獨立音軌、Pitch 變速、SYNC、Cue 預聽與 Hot Cue 記憶
    -------------------------------------------------------------------------- */
 let deckABpmVal = 124.0, deckBBpmVal = 120.0;
 let isCueMode = false;
+let deckACueTime = 0, deckBCueTime = 0; // 📍 記憶 Deck A 同 B 嘅 Cue 點時間
 
 /* 🔴🔵 雙 Deck 獨立 MP3 音檔載入 */
 function loadDeckTrack(deck, event) {
@@ -474,8 +475,57 @@ function loadDeckTrack(deck, event) {
   if (player) {
     player.src = fileUrl;
     if (label) label.innerText = "🎵 " + file.name;
+    // 重置該 Deck 嘅 Cue 點
+    if (deck === 'A') { 
+      deckACueTime = 0; 
+      const btn = document.getElementById('btnJumpCueA');
+      if(btn) btn.innerText = "🔥 爆 Chorus (00:00)"; 
+    } else { 
+      deckBCueTime = 0; 
+      const btn = document.getElementById('btnJumpCueB');
+      if(btn) btn.innerText = "🔥 爆 Chorus (00:00)"; 
+    }
     showToast(`✅ Deck ${deck} 已載入：${file.name}`);
     updateCrossfader(document.getElementById('crossfader') ? document.getElementById('crossfader').value : 0.5);
+  }
+}
+
+/* 📍 記低副歌 Chorus 時間點 */
+function setDeckCue(deck) {
+  playUiSound('click');
+  const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
+  if (player && player.src) {
+    const time = player.currentTime;
+    const mins = Math.floor(time / 60);
+    const secs = Math.floor(time % 60).toString().padStart(2, '0');
+    const timeStr = `${mins}:${secs}`;
+    
+    if (deck === 'A') {
+      deckACueTime = time;
+      const btn = document.getElementById('btnJumpCueA');
+      if(btn) btn.innerText = `🔥 爆 Chorus (${timeStr})`;
+    } else {
+      deckBCueTime = time;
+      const btn = document.getElementById('btnJumpCueB');
+      if(btn) btn.innerText = `🔥 爆 Chorus (${timeStr})`;
+    }
+    showToast(`📍 已成功記低 Deck ${deck} 副歌時間點：${timeStr}`);
+  } else {
+    showToast(`⚠️ Deck ${deck} 尚未載入歌曲！`);
+  }
+}
+
+/* 🔥 秒速 Jump 去副歌 Chorus 第一拍 */
+function jumpToDeckCue(deck) {
+  playUiSound('click');
+  const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
+  if (player && player.src) {
+    const targetTime = deck === 'A' ? deckACueTime : deckBCueTime;
+    player.currentTime = targetTime;
+    if (player.paused) player.play();
+    showToast(`🔥 Deck ${deck} 已秒速切入副歌唱段！`);
+  } else {
+    showToast(`⚠️ Deck ${deck} 尚未載入歌曲！`);
   }
 }
 
@@ -528,7 +578,7 @@ function pauseDeck(deck) {
   }
 }
 
-/* 🎧 Cue Mode 預聽切換 (Stereo Split 左右分離) */
+/* 🎧 Cue Mode 預聽切換 */
 function toggleCueMode() {
   playUiSound('click');
   isCueMode = !isCueMode;
@@ -545,7 +595,7 @@ function toggleCueMode() {
   showToast(isCueMode ? "🎧 預聽模式：Deck A 走左耳大喇叭 ‧ Deck B 走右耳耳機！" : "📻 還原標準雙聲道混音模式");
 }
 
-/* 🎚️ Crossfader 雙軌立體聲混音 (含 Cue 獨立耳機音量算式) */
+/* 🎚️ Crossfader 雙軌立體聲混音 */
 function updateCrossfader(val) {
   const playerA = document.getElementById('deckAPlayer');
   const playerB = document.getElementById('deckBPlayer');
@@ -556,11 +606,9 @@ function updateCrossfader(val) {
   const baseVolume = masterVol * bgmVol;
 
   if (isCueMode) {
-    // 🎧 預聽模式：Deck A (大喇叭) 受 Crossfader 控制，Deck B 獨立送往右耳耳機 (受 Cue 音量控制)
     if (playerA) playerA.volume = baseVolume * (1 - val);
-    if (playerB) playerB.volume = baseVolume * cueVol; // 耳機獨立音量，不受 Crossfader 影響！
+    if (playerB) playerB.volume = baseVolume * cueVol;
   } else {
-    // 📻 標準混音模式
     const volA = Math.cos(val * Math.PI / 2);
     const volB = Math.sin(val * Math.PI / 2);
     if (playerA) playerA.volume = baseVolume * volA;

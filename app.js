@@ -1,17 +1,23 @@
 /* ==========================================================================
-   🐾 OPEN 貓貓助手 - 全局 JavaScript 邏輯主體 (app.js) [PART 1/4]
-   ==========================================================================
-   📋 系統功能章節目錄 (Table of Contents):
-   1. [UI Theme & LocalStorage]  2. [Web Audio API Synthesizer]
-   3. [Radio & Quick Control]    4. [Verses Generator Engine]
-   5. [Global & Nature Mixer]   6. [IndexedDB & RPG Save]
-   7. [Cat Soundboard]          8. [Jukebox & Playlist]
-   9. [Deck BPM Mixer System]    10.[Album & Lightbox Wallpaper]
+   🐾 OPEN 貓貓助手 - 全局 JavaScript 邏輯主體 (app.js) - 終極防護版
    ========================================================================== */
 
-/* 1. [UI Theme & LocalStorage] */
+/* --------------------------------------------------------------------------
+   🛡️ [Security & Anti-Theft] - 防盜防複製防右鍵鎖
+   -------------------------------------------------------------------------- */
+document.addEventListener('contextmenu', event => event.preventDefault());
+document.addEventListener('keydown', event => {
+  if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J')) || (event.ctrlKey && event.key === 'U')) {
+    event.preventDefault();
+  }
+});
+
+/* --------------------------------------------------------------------------
+   1. [UI Theme & LocalStorage] - 主/副標題顏色記憶與櫃桶開合
+   -------------------------------------------------------------------------- */
 let savedThemeIdx = localStorage.getItem("meowTitleThemeIdx");
 let titleThemeIdx = savedThemeIdx !== null ? parseInt(savedThemeIdx) : 1;
+
 let savedSubIdx = localStorage.getItem("meowSubThemeIdx");
 let subThemeIdx = savedSubIdx !== null ? parseInt(savedSubIdx) : 0;
 
@@ -43,25 +49,39 @@ function toggleSubTitleColor() {
 let isAllFolded = false;
 function toggleFold(id) {
   const content = document.getElementById(id);
-  const arrow = document.getElementById("arrow" + id.replace("fold", ""));
+  const arrowId = "arrow" + id.replace("fold", "");
+  const arrow = document.getElementById(arrowId);
   if (content) {
     const isActive = content.classList.contains('active');
-    content.classList.toggle('active');
-    if (arrow) arrow.innerText = isActive ? "▼ 展開" : "▲ 收起";
-    playUiSound(isActive ? 'foldClose' : 'foldOpen');
+    if (isActive) {
+      content.classList.remove('active');
+      if (arrow) arrow.innerText = "▼ 展開";
+      playUiSound('foldClose');
+    } else {
+      content.classList.add('active');
+      if (arrow) arrow.innerText = "▲ 收起";
+      playUiSound('foldOpen');
+    }
   }
 }
 
 function toggleAllFolds() {
   playUiSound('click');
-  isAllFolded = !isAllFolded;
-  document.querySelectorAll('.fold-content, .radio-sub-box').forEach(c => c.classList.toggle('active', isAllFolded));
-  document.querySelectorAll('.fold-arrow').forEach(a => a.innerText = isAllFolded ? "▲ 收起" : "▼ 展開");
+  const allContents = document.querySelectorAll('.fold-content, .radio-sub-box');
+  const allArrows = document.querySelectorAll('.fold-arrow');
   const btn = document.getElementById('btnMasterFold');
-  if (btn) { btn.innerText = isAllFolded ? "📁 一鍵全縮" : "📂 一鍵全開"; btn.style.background = isAllFolded ? "#00b894" : "#e17055"; }
-  showToast(isAllFolded ? "📂 已一鍵展開！" : "📁 已一鍵收縮！");
+  isAllFolded = !isAllFolded;
+  allContents.forEach(content => {
+    if (isAllFolded) content.classList.add('active');
+    else content.classList.remove('active');
+  });
+  allArrows.forEach(arrow => { if (arrow) arrow.innerText = isAllFolded ? "▲ 收起" : "▼ 展開"; });
+  if (btn) {
+    btn.innerText = isAllFolded ? "📁 一鍵全縮" : "📂 一鍵全開";
+    btn.style.background = isAllFolded ? "#00b894" : "#e17055";
+  }
+  showToast(isAllFolded ? "📂 已一鍵展開所有區域！" : "📁 已一鍵收縮還原！");
 }
-
 let fontScaleLevel = 0;
 function toggleFontSize() {
   playUiSound('click');
@@ -69,93 +89,73 @@ function toggleFontSize() {
   const titles = document.querySelectorAll('.section-title-btn, .header-fold-title');
   const subTips = document.querySelectorAll('.sub-tip');
   const bibleText = document.getElementById('bibleText');
-  const sizes = [['14px','11px'], ['17px','12.5px'], ['20px','14.5px']];
-  titles.forEach(t => t.style.fontSize = sizes[fontScaleLevel][0]);
-  subTips.forEach(s => s.style.fontSize = sizes[fontScaleLevel][1]);
-  if (bibleText) bibleText.style.fontSize = sizes[fontScaleLevel][0];
-  showToast(`🔠 字體：${['小號','中號','特大號'][fontScaleLevel]}`);
+
+  if (fontScaleLevel === 0) {
+    titles.forEach(t => t.style.fontSize = '14px'); subTips.forEach(s => s.style.fontSize = '11px');
+    if (bibleText) bibleText.style.fontSize = '14px'; showToast("🔠 字體已切換至：小號 (還原舊版)");
+  } else if (fontScaleLevel === 1) {
+    titles.forEach(t => t.style.fontSize = '17px'); subTips.forEach(s => s.style.fontSize = '12.5px');
+    if (bibleText) bibleText.style.fontSize = '17px'; showToast("🔠 字體已切換至：中號清晰字體");
+  } else {
+    titles.forEach(t => t.style.fontSize = '20px'); subTips.forEach(s => s.style.fontSize = '14.5px');
+    if (bibleText) bibleText.style.fontSize = '20px'; showToast("🔠 字體已切換至：特大號車機字！");
+  }
+  if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontScale", val: fontScaleLevel });
 }
 
 function toggleFontTheme() {
   playUiSound('click'); document.body.classList.toggle('jp-font');
-  const isJp = document.body.classList.contains('jp-font'); showToast(isJp ? "✨ 日系字體" : "✨ 港系字體");
+  const isJp = document.body.classList.contains('jp-font'); showToast(isJp ? "✨ 已切換至：日系可愛字體！" : "✨ 已切換至：經典港系粗體！");
+  if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontTheme", val: isJp ? "jp" : "hk" });
 }
+function loadSavedFontTheme() { const req = db.transaction("settings", "readonly").objectStore("settings").get("fontTheme"); req.onsuccess = function() { if (req.result && req.result.val === "jp") document.body.classList.add('jp-font'); }; }
 
-/* 2. [Web Audio API Synthesizer] - 混淆連打與 Buffer 引擎 */
-let audioCtx = null, djMasterGain = null;
-const drumBuffers = {};
+/* --------------------------------------------------------------------------
+   2. [Web Audio API Synthesizer] - 聲道與點擊聲
+   -------------------------------------------------------------------------- */
+let audioCtx = null;
+let djMasterGain = null;
 
 function getAudioContext() {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    djMasterGain = audioCtx.createGain(); djMasterGain.gain.value = 0.8;
+    djMasterGain = audioCtx.createGain();
+    djMasterGain.gain.value = 0.8;
     djMasterGain.connect(audioCtx.destination);
   }
-  if (audioCtx.state === 'suspended') audioCtx.resume();
+  if (audioCtx.state === 'suspended') { audioCtx.resume(); }
   return audioCtx;
-}
-
-async function preloadDrumSound(name, url) {
-  try {
-    const ctx = getAudioContext();
-    const res = await fetch(url);
-    const buf = await ctx.decodeAudioData(await res.arrayBuffer());
-    drumBuffers[name] = buf;
-  } catch (e) {}
-}
-
-function playPolyphonicDrum(name) {
-  try {
-    const ctx = getAudioContext();
-    if (!drumBuffers[name]) { playSynthSound(name); return; }
-    const src = ctx.createBufferSource();
-    src.buffer = drumBuffers[name]; src.connect(ctx.destination); src.start(0);
-  } catch (e) { playSynthSound(name); }
-}
-/* ==========================================================================
-   🐾 OPEN 貓貓助手 (app.js) [PART 2/4]
-   1. [UI Theme] 2. [Audio Synth] 3. [Radio] 4. [Verses Engine] 5. [Global Mixer]
-   ========================================================================== */
-
-function playSynthSound(type) {
-  try {
-    const ctx = getAudioContext(), now = ctx.currentTime;
-    const osc = ctx.createOscillator(), gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    if (type === 'kick') {
-      osc.type = 'sine'; osc.frequency.setValueAtTime(120, now); osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.15);
-      gain.gain.setValueAtTime(1.0, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-      osc.start(now); osc.stop(now + 0.15);
-    } else if (type === 'snare') {
-      osc.type = 'triangle'; osc.frequency.setValueAtTime(250, now); osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.1);
-      gain.gain.setValueAtTime(0.8, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-      osc.start(now); osc.stop(now + 0.1);
-    } else {
-      osc.type = 'sine'; osc.frequency.setValueAtTime(400, now);
-      gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-      osc.start(now); osc.stop(now + 0.05);
-    }
-  } catch(e) {}
 }
 
 function playUiSound(type) {
   try {
-    const ctx = getAudioContext(), now = ctx.currentTime;
-    const osc = ctx.createOscillator(), gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    if (type === 'click') {
-      osc.type = 'sine'; osc.frequency.setValueAtTime(400, now);
-      gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
-      osc.start(now); osc.stop(now + 0.04);
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    if (type === 'foldOpen') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+      gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+      osc.start(now); osc.stop(now + 0.08);
+    } else if (type === 'foldClose') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(500, now); osc.frequency.exponentialRampToValueAtTime(250, now + 0.08);
+      gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+      osc.start(now); osc.stop(now + 0.08);
     } else if (type === 'chime') {
       osc.type = 'triangle'; osc.frequency.setValueAtTime(880, now); osc.frequency.setValueAtTime(1320, now + 0.1);
       gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
       osc.start(now); osc.stop(now + 0.6);
+    } else if (type === 'click') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(400, now);
+      gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+      osc.start(now); osc.stop(now + 0.04);
     }
   } catch(e) {}
 }
 
-/* 3. [Radio & Quick Control] */
 function confirmRadioPlay(stationName, streamUrl) { 
   playUiSound('click'); 
   if (confirm(`🐾 準備播放《${stationName}》？`)) { 
@@ -163,246 +163,563 @@ function confirmRadioPlay(stationName, streamUrl) {
     player.src = streamUrl; 
     player.play().then(() => { 
       showToast(`📻 直播中：${stationName}`); 
-      document.getElementById('musicName').innerText = `📻 直播中：${stationName}`; 
-      document.getElementById('btnQuickRadioToggle').innerText = "⏸️ 暫停";
+      const musicName = document.getElementById('musicName');
+      if (musicName) musicName.innerText = `📻 直播中：${stationName}`; 
+      const btn = document.getElementById('btnQuickRadioToggle');
+      if (btn) btn.innerText = "⏸️ 暫停";
     }).catch(e => showToast("❌ 連線失敗！")); 
   } 
 }
 
 function toggleQuickRadio(e) {
-  if (e) e.stopPropagation(); playUiSound('click');
-  const bgPlayer = document.getElementById('bgPlayer'), btn = document.getElementById('btnQuickRadioToggle');
-  if (!bgPlayer || !bgPlayer.src) return showToast("📻 暫未選取電台！");
-  if (bgPlayer.paused) { bgPlayer.play(); btn.innerText = "⏸️ 暫停"; showToast("▶️ 繼續播放"); } 
-  else { bgPlayer.pause(); btn.innerText = "▶️ 播放"; showToast("⏸️ 即時暫停"); }
+  if (e) e.stopPropagation();
+  playUiSound('click');
+  const bgPlayer = document.getElementById('bgPlayer');
+  const btn = document.getElementById('btnQuickRadioToggle');
+  if (!bgPlayer || !bgPlayer.src) { showToast("📻 暫未選取電台或音樂！"); return; }
+  if (bgPlayer.paused) {
+    bgPlayer.play().then(() => { if (btn) btn.innerText = "⏸️ 暫停"; showToast("▶️ 繼續播放電台/音樂"); }).catch(err => showToast("❌ 播放失敗"));
+  } else {
+    bgPlayer.pause(); if (btn) btn.innerText = "▶️ 播放"; showToast("⏸️ 已即時暫停播放");
+  }
 }
-
-/* 4. [Verses Generator Engine] */
 let bibleData = null, isDrawingCard = false;
 async function loadVersesJSON() {
-  try { const res = await fetch('verses.json'); bibleData = await res.json(); } catch (e) {}
+  try {
+    const response = await fetch('verses.json');
+    if (!response.ok) throw new Error();
+    bibleData = await response.json();
+  } catch (e) { console.log("verses.json 未載入"); }
 }
 
 function drawBibleCardWithAnim() {
-  if (isDrawingCard) return; playUiSound('chime'); isDrawingCard = true;
-  const cardBox = document.getElementById('bibleCardBox'), textEl = document.getElementById('bibleText');
-  const selectedCat = document.getElementById('bibleCategorySelect')?.value || "ALL";
+  if (isDrawingCard) return;
+  playUiSound('chime');
+  isDrawingCard = true;
+  const cardBox = document.getElementById('bibleCardBox');
+  const textEl = document.getElementById('bibleText');
+  const catSelect = document.getElementById('bibleCategorySelect');
+  const selectedCat = catSelect ? catSelect.value : "ALL";
+
   if (cardBox && textEl) {
-    cardBox.classList.add('drawing-anim'); textEl.style.color = "#74b9ff";
-    textEl.innerText = "⏳ 🙏 誠心禱告尋求祝福...";
+    cardBox.classList.add('drawing-anim');
+    textEl.style.color = "#74b9ff";
+    textEl.innerText = "⏳ 🙏 正在誠心禱告，尋求天父話語與祝福...";
+    
     setTimeout(() => {
-      let pool = bibleData ? (selectedCat === "ALL" ? Object.values(bibleData).flat() : bibleData[selectedCat] || Object.values(bibleData).flat()) : [];
-      textEl.innerText = pool.length > 0 ? pool[Math.floor(Math.random() * pool.length)] : "✨ 「在至高之處榮耀歸與神！在地上平安歸與他所喜悅的人。」 (路加福音 2:14)";
-      cardBox.classList.remove('drawing-anim'); textEl.style.color = "#ffeaa7"; isDrawingCard = false;
-      showToast("❤️ 阿們！已領受神的話語");
+      let pool = [];
+      if (bibleData) {
+        if (selectedCat === "ALL") pool = Object.values(bibleData).flat();
+        else if (bibleData[selectedCat]) pool = bibleData[selectedCat];
+        else pool = Object.values(bibleData).flat();
+      }
+
+      if (pool && pool.length > 0) {
+        const randIdx = Math.floor(Math.random() * pool.length);
+        textEl.innerText = pool[randIdx];
+      } else {
+        textEl.innerText = "✨ 「在至高之處榮耀歸與神！在地上平安歸與他所喜悅的人。」 (路加福音 2:14)";
+      }
+
+      cardBox.classList.remove('drawing-anim');
+      textEl.style.color = "#ffeaa7";
+      isDrawingCard = false;
+      showToast("<span style='font-size:15px; color:#ffeaa7; font-weight:bold;'>❤️阿們！</span><br>已領受神的話語");
     }, 800);
   }
 }
 loadVersesJSON();
 
-/* 5. [Global & Nature Mixer] */
 function toggleNatureSound(type) {
   playUiSound('click');
-  const audio = document.getElementById('sound-' + type), btn = document.getElementById('btn-nature-' + type);
-  const names = { wave: '🌊 海浪', windbell: '🎐 風鈴', rain: '🌧️ 雨夜', forest: '🌲 森林' };
+  const audio = document.getElementById('sound-' + type);
+  const btn = document.getElementById('btn-nature-' + type);
+  const names = { wave: '🌊 海浪聲', windbell: '🎐 風吹風鈴', rain: '🌧️ 雨夜聽雨', forest: '🌲 晨曦森林' };
+
   if (audio.paused) {
-    updateNatureVolumes(); audio.play().then(() => { btn.innerText = names[type] + ' (開)'; showToast("🌿 播放：" + names[type]); });
-  } else { audio.pause(); btn.innerText = names[type] + ' (關)'; showToast("⏸️ 暫停：" + names[type]); }
+    updateNatureVolumes();
+    audio.play().then(() => {
+      btn.innerText = names[type] + ' (開)'; btn.style.boxShadow = "0 0 12px #ffeaa7"; btn.style.border = "1.5px solid #ffeaa7";
+      showToast("🌿 開始播放：" + names[type]);
+    }).catch(e => showToast("❌ 音效載入失敗！"));
+  } else {
+    audio.pause(); btn.innerText = names[type] + ' (關)'; btn.style.boxShadow = "none"; btn.style.border = "1px solid rgba(255,255,255,0.4)";
+    showToast("⏸️ 暫停：" + names[type]);
+  }
 }
 
 function updateGlobalMasterVolume() {
-  const master = document.getElementById('volMaster')?.value || 1.0;
-  if (document.getElementById('meterMaster')) document.getElementById('meterMaster').style.width = (master * 100) + "%";
+  const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
+  if (document.getElementById('meterMaster')) document.getElementById('meterMaster').style.width = (globalMaster * 100) + "%";
   const bgPlayer = document.getElementById('bgPlayer');
-  if (bgPlayer) bgPlayer.volume = (document.getElementById('volBgm')?.value || 0.8) * master;
+  const bgmVolInput = document.getElementById('volBgm');
+  if (bgPlayer) {
+    const baseBgm = bgmVolInput ? bgmVolInput.value : 0.8;
+    bgPlayer.volume = baseBgm * globalMaster;
+  }
   updateNatureVolumes();
 }
 
 function updateNatureVolumes() {
-  const master = document.getElementById('volMaster')?.value || 1.0;
-  ['wave', 'windbell', 'rain', 'forest'].forEach(t => {
-    const audio = document.getElementById('sound-' + t), vol = document.getElementById('vol' + t.charAt(0).toUpperCase() + t.slice(1));
-    if (vol && audio) audio.volume = vol.value * master;
+  const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
+  ['wave', 'windbell', 'rain', 'forest'].forEach(type => {
+    const audio = document.getElementById('sound-' + type);
+    const volInput = document.getElementById('vol' + type.charAt(0).toUpperCase() + type.slice(1));
+    const meter = document.getElementById('meter' + type.charAt(0).toUpperCase() + type.slice(1));
+    if (volInput && audio) {
+      audio.volume = volInput.value * globalMaster;
+      if (meter) meter.style.width = (volInput.value * 100) + "%";
+    }
   });
 }
-/* ==========================================================================
-   🐾 OPEN 貓貓助手 (app.js) [PART 3/4]
-   6. [IndexedDB & RPG Save] 7. [Cat Soundboard] 8. [Jukebox & Playlist]
-   ========================================================================== */
 
 function updatePanelOpacity(val) {
-  document.documentElement.style.setProperty('--panel-alpha', val);
+  document.documentElement.style.setProperty('--panel-alpha', val); const blurVal = (val == 0) ? '0px' : '14px';
+  document.querySelectorAll('.section-title-btn, .album-controls, .music-box, .mixer-box, .sound-btn, .dj-box').forEach(el => {
+    el.style.backdropFilter = `blur(${blurVal})`; el.style.webkitBackdropFilter = `blur(${blurVal})`;
+  });
   document.getElementById('opacityValDisplay').innerText = Math.round(val * 100) + "%";
+  if (document.getElementById('meterOpacity')) document.getElementById('meterOpacity').style.width = (val * 100) + "%";
+  if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "panelOpacity", val: val });
 }
+function loadSavedOpacity() { const req = db.transaction("settings", "readonly").objectStore("settings").get("panelOpacity"); req.onsuccess = function() { if (req.result) { const val = req.result.val; document.getElementById('volOpacity').value = val; updatePanelOpacity(val); } }; }
 
 function updateVolumes() {
-  const bgmVol = document.getElementById('volBgm').value, catVol = document.getElementById('volCat').value;
+  const bgmVol = document.getElementById('volBgm').value;
+  const catVol = document.getElementById('volCat').value;
+  const videoVol = document.getElementById('volVideo').value;
   if (document.getElementById('bgPlayer')) document.getElementById('bgPlayer').volume = bgmVol;
   if (currentCatAudio) currentCatAudio.volume = catVol;
+  if (currentActiveVideo) currentActiveVideo.volume = videoVol;
+  if (document.getElementById('meterBgm')) document.getElementById('meterBgm').style.width = (bgmVol * 100) + "%";
+  if (document.getElementById('meterCat')) document.getElementById('meterCat').style.width = (catVol * 100) + "%";
+  if (document.getElementById('meterVideo')) document.getElementById('meterVideo').style.width = (videoVol * 100) + "%";
 }
+let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
+let albumMediaList = [], slideIndex = 0, slideTimer = null, isPlayingSlideshow = false, slideshowInterval = 6000;
+let musicList = [], currentTrackIdx = 0, playMode = 'sequence', pressTimer = null, touchStartX = 0, touchEndX = 0;
+const presetWallpapers = ["linear-gradient(135deg, #f3a683 0%, #f7d794 100%)", "linear-gradient(135deg, #f7f9fc 0%, #e2e8f0 100%)", "linear-gradient(135deg, #2d3436 0%, #000000 100%)"];
 
-/* 6. [IndexedDB & RPG Save] */
-let db, currentAlbum = "default", currentCatAudio = null, musicList = [], currentTrackIdx = 0, playMode = 'sequence';
 const request = indexedDB.open("OpenMeowMasterDB", 5);
 request.onupgradeneeded = function(e) {
   db = e.target.result;
   if (!db.objectStoreNames.contains("media")) db.createObjectStore("media", { keyPath: "id", autoIncrement: true });
   if (!db.objectStoreNames.contains("albums")) db.createObjectStore("albums", { keyPath: "id" });
-  if (!db.objectStoreNames.contains("music")) db.createObjectStore("music", { keyPath: "id", autoIncrement: true });
+  if (db.objectStoreNames.contains("music")) db.deleteObjectStore("music");
+  db.createObjectStore("music", { keyPath: "id", autoIncrement: true });
   if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
 };
-request.onsuccess = function(e) { db = e.target.result; loadSavedMusic(); renderCatGrid(); };
+request.onsuccess = function(e) { 
+  db = e.target.result; 
+  loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); loadSavedOpacity(); loadSavedFontTheme(); initAlbumLongPress(); renderCatGrid();
+  updateVolumes(); updateNatureVolumes();
+};
 
 function exportFullRPGSave() {
-  playUiSound('click'); showToast("⏳ 正在打包 RPG 存檔...");
-  const rpgData = { albums: [], media: [], music: [], settings: [] };
+  playUiSound('click'); showToast("⏳ 正在打包全機 RPG 存檔..."); const rpgData = { albums: [], media: [], music: [], settings: [] };
   const tx = db.transaction(["albums", "media", "music", "settings"], "readonly");
-  tx.objectStore("albums").getAll().onsuccess = (e) => rpgData.albums = e.target.result;
-  tx.objectStore("music").getAll().onsuccess = (e) => rpgData.music = e.target.result;
+  tx.objectStore("albums").getAll().onsuccess = (e) => { rpgData.albums = e.target.result; };
+  tx.objectStore("media").getAll().onsuccess = (e) => { rpgData.media = e.target.result; };
+  tx.objectStore("music").getAll().onsuccess = (e) => { rpgData.music = e.target.result; };
+  tx.objectStore("settings").getAll().onsuccess = (e) => { rpgData.settings = e.target.result; };
   tx.oncomplete = function() {
-    const blob = new Blob([JSON.stringify(rpgData)], { type: "application/json" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-    a.download = `Meow_RPG_Save_${new Date().toISOString().slice(0,10)}.json`; a.click(); showToast("💾 匯出存檔成功！");
+    const jsonStr = JSON.stringify(rpgData); const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob); const a = document.createElement("a"); const dateStr = new Date().toISOString().slice(0,10);
+    a.href = url; a.download = `Meow_RPG_Save_${dateStr}.json`; a.click(); URL.revokeObjectURL(url); showToast("💾 成功下載全機 RPG 存檔！");
   };
 }
 
 function importFullRPGSave(event) {
   const file = event.target.files[0]; if (!file) return;
+  if (!confirm("⚠️ 讀取 RPG 存檔會覆蓋現有數據，確定要繼續？")) return;
   const reader = new FileReader(); reader.onload = function(e) {
     try {
-      const data = JSON.parse(e.target.result); const tx = db.transaction(["albums", "music"], "readwrite");
-      if (data.music) data.music.forEach(m => tx.objectStore("music").add(m));
-      tx.oncomplete = function() { showToast("🎉 讀檔成功！"); setTimeout(() => location.reload(), 1000); };
+      const rpgData = JSON.parse(e.target.result); const tx = db.transaction(["albums", "media", "music", "settings"], "readwrite");
+      tx.objectStore("albums").clear(); tx.objectStore("media").clear(); tx.objectStore("music").clear(); tx.objectStore("settings").clear();
+      if (rpgData.albums) rpgData.albums.forEach(item => tx.objectStore("albums").add(item));
+      if (rpgData.media) rpgData.media.forEach(item => tx.objectStore("media").add(item));
+      if (rpgData.music) rpgData.music.forEach(item => tx.objectStore("music").add(item));
+      if (rpgData.settings) rpgData.settings.forEach(item => tx.objectStore("settings").add(item));
+      tx.oncomplete = function() { showToast("🎉 讀檔成功！即將刷新介面..."); setTimeout(() => { location.reload(); }, 1200); };
     } catch (err) { alert("❌ 存檔格式錯誤！"); }
-  }; reader.readAsText(file);
+  }; reader.readAsText(file); event.target.value = "";
 }
 
-/* 7. [Cat Soundboard] */
 const catSounds = [
-  { name: "打招呼喵", emoji: "😺", file: "cat1.mp3" }, { name: "要罐罐喵", emoji: "🍖", file: "cat2.mp3" },
-  { name: "急促討食", emoji: "⚡", file: "cat3.mp3" }, { name: "裝可憐喵", emoji: "🥺", file: "cat4.mp3" }
+  { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" }, { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },
+  { name: "急促討食", emoji: "⚡", desc: "動作太慢，扣 50 分！", file: "cat3.mp3" }, { name: "裝可憐喵", emoji: "🥺", desc: "畀粒零食我食啦～", file: "cat4.mp3" },
+  { name: "開心呼嚕", emoji: "🥰", desc: "摸得好舒服，想瞓覺。", file: "cat5.mp3" }, { name: "興奮鳥鳴", emoji: "🐥", desc: "見到窗外有飛鳥！", file: "cat6.mp3" },
+  { name: "告白短喵", emoji: "❤️", desc: "最信任你啦奴才。", file: "cat7.mp3" }, { name: "放術踏踏", emoji: "🐾", desc: "按摩中，請勿打擾。", file: "cat8.mp3" },
+  { name: "迎人高音", emoji: "🎉", desc: "好開心見到你返屋企！", file: "cat9.mp3" }, { name: "滾火低吼", emoji: "😡", desc: "唔好逼我，想咬人！", file: "cat10.mp3" },
+  { name: "警告哈氣", emoji: "🐍", desc: "別過嚟！再過嚟我動手！", file: "cat11.mp3" }, { name: "踩尾尖叫", emoji: "🙀", desc: "踩到我尾巴啦！痛呀！", file: "cat12.mp3" }
 ];
 
 function renderCatGrid() {
-  const grid = document.getElementById('soundGrid'); if (!grid) return; grid.innerHTML = "";
-  catSounds.forEach((item) => {
-    const btn = document.createElement('div'); btn.className = 'sound-btn';
-    btn.innerHTML = `<span>${item.emoji}</span>${item.name}`; btn.onclick = () => playRealCatSound(item); grid.appendChild(btn);
-  });
+  const soundGrid = document.getElementById('soundGrid');
+  if (soundGrid) {
+    soundGrid.innerHTML = "";
+    catSounds.forEach((item) => {
+      const btn = document.createElement('div'); btn.className = 'sound-btn';
+      btn.innerHTML = `<span>${item.emoji}</span>${item.name}`; btn.onclick = () => playRealCatSound(item); soundGrid.appendChild(btn);
+    });
+  }
 }
 
 function playRealCatSound(item) {
-  if (currentCatAudio) currentCatAudio.pause();
-  currentCatAudio = new Audio(item.file); currentCatAudio.volume = document.getElementById('volCat').value;
-  currentCatAudio.play().then(() => showToast(`${item.emoji} ${item.name}`));
+  if (currentCatAudio) { currentCatAudio.pause(); currentCatAudio = null; }
+  currentCatAudio = new Audio('cat' + item.file.replace('cat', '')); currentCatAudio.volume = document.getElementById('volCat').value;
+  currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(e => {
+    currentCatAudio = new Audio(item.file); currentCatAudio.volume = document.getElementById('volCat').value;
+    currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(err => { showToast(`🐾 貓語：${item.desc}`); });
+  });
 }
-
-/* 8. [Jukebox & Playlist] */
 function uploadMusic(event) {
   const files = Array.from(event.target.files);
-  files.forEach(file => {
-    const reader = new FileReader(); reader.onload = function(e) {
-      const tx = db.transaction("music", "readwrite"); tx.objectStore("music").add({ name: file.name, src: e.target.result });
-      tx.oncomplete = () => loadSavedMusic();
-    }; reader.readAsDataURL(file);
-  });
+  if (files.length > 0) {
+    let loadedCount = 0; files.forEach(file => {
+      const reader = new FileReader(); reader.onload = function(e) {
+        const tx = db.transaction("music", "readwrite"); tx.objectStore("music").add({ name: file.name, src: e.target.result });
+        tx.oncomplete = function() { loadedCount++; if (loadedCount === files.length) { loadSavedMusic(); showToast(`🎵 成功加入 ${files.length} 首歌！`); event.target.value = ""; } };
+      }; reader.readAsDataURL(file);
+    });
+  }
 }
 
 function loadSavedMusic() {
   musicList = []; db.transaction("music", "readonly").objectStore("music").openCursor().onsuccess = function(e) {
-    const cursor = e.target.result; if (cursor) { musicList.push(cursor.value); cursor.continue(); } else renderPlaylist();
+    const cursor = e.target.result; if (cursor) { musicList.push({ id: cursor.key, name: cursor.value.name, src: cursor.value.src }); cursor.continue(); } 
+    else { renderPlaylist(); if (musicList.length > 0 && !document.getElementById('bgPlayer').src) { playTrack(0); } }
   };
 }
 
 function renderPlaylist() {
-  const display = document.getElementById('playlistDisplay'); if (!display) return; display.innerHTML = "";
+  const display = document.getElementById('playlistDisplay'); if(!display) return; display.innerHTML = "";
+  if (musicList.length === 0) { display.innerHTML = "<div style='text-align:center; color:#dfe6e9; padding:6px; font-size:11px;'>（未有音樂）</div>"; document.getElementById('musicName').innerText = "（未選擇音樂）"; return; }
   musicList.forEach((track, idx) => {
     const div = document.createElement('div'); div.className = `track-item ${idx === currentTrackIdx ? 'active' : ''}`;
-    div.innerHTML = `<span>🎵 ${idx + 1}. ${track.name}</span>`; div.onclick = () => playTrack(idx); display.appendChild(div);
+    div.innerHTML = `<span>🎵 ${idx + 1}. ${track.name}</span><span class="track-del" onclick="deleteTrack(event, ${track.id})">✕</span>`;
+    div.onclick = () => playTrack(idx); display.appendChild(div);
   });
+  document.getElementById('musicName').innerText = `🎵 播放中 (${currentTrackIdx + 1}/${musicList.length})：${musicList[currentTrackIdx].name}`;
 }
 
-function playTrack(idx) {
-  if (musicList.length === 0) return; currentTrackIdx = idx;
-  const player = document.getElementById('bgPlayer'); player.src = musicList[idx].src; player.play(); renderPlaylist();
-}
-/* ==========================================================================
-   🐾 OPEN 貓貓助手 (app.js) [PART 4/4]
-   9. [Deck BPM Mixer System - 140 BPM 雙模 Crossfade]
-   10.[Album & Lightbox Wallpaper]
-   ========================================================================== */
+function playTrack(idx) { if (musicList.length === 0) return; currentTrackIdx = idx; const player = document.getElementById('bgPlayer'); player.src = musicList[currentTrackIdx].src; player.play().then(() => { renderPlaylist(); updateVolumes(); }).catch(e => console.log(e)); }
+function setPlayMode(mode) { playUiSound('click'); playMode = mode; document.getElementById('btnSeq').classList.toggle('active', mode === 'sequence'); document.getElementById('btnLoop').classList.toggle('active', mode === 'single-loop'); document.getElementById('btnRand').classList.toggle('active', mode === 'random'); showToast(`🎵 模式改為：${mode === 'sequence' ? '順序' : (mode === 'single-loop' ? '單曲' : '隨機')}`); }
+function handleTrackEnded() { if (musicList.length === 0) return; if (playMode === 'single-loop') playTrack(currentTrackIdx); else if (playMode === 'random') playTrack(Math.floor(Math.random() * musicList.length)); else playTrack((currentTrackIdx + 1) % musicList.length); }
+function deleteTrack(e, id) { e.stopPropagation(); if (confirm("確定刪除呢首歌？")) { const tx = db.transaction("music", "readwrite").objectStore("music").delete(id); tx.oncomplete = function() { loadSavedMusic(); showToast("🗑️ 已刪除！"); }; } }
 
-/* 9. [Deck BPM Mixer System] */
+/* --------------------------------------------------------------------------
+   9. [Deck BPM Mixer System] - 140 BPM 基數 / 秒數跳動 / 2-Bar 4-Bar 平滑過歌
+   -------------------------------------------------------------------------- */
 let deckABpmVal = 140.0, deckBBpmVal = 140.0;
-let isCueMode = false, deckACueTime = 0, deckBCueTime = 0;
+let isCueMode = false;
+let deckACueTime = 0, deckBCueTime = 0;
+let isCrossfading = false; // 🛡️ 連擊防爆鎖標誌
+
+function formatTimeStr(secs) {
+  if (isNaN(secs) || secs < 0) return "00:00";
+  const m = Math.floor(secs / 60).toString().padStart(2, '0');
+  const s = Math.floor(secs % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+function updateDeckTimeDisplay(deck) {
+  const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
+  const timeDisp = document.getElementById(deck === 'A' ? 'deckATime' : 'deckBTime');
+  if (player && timeDisp) {
+    const cur = formatTimeStr(player.currentTime);
+    const dur = formatTimeStr(player.duration);
+    timeDisp.innerText = `⏱️ ${cur} / ${dur}`;
+  }
+}
 
 function loadDeckTrack(deck, event) {
-  const file = event.target.files[0]; if (!file) return;
+  const file = event.target.files[0];
+  if (!file) return;
+  const fileUrl = URL.createObjectURL(file);
   const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
-  player.src = URL.createObjectURL(file);
-  document.getElementById(deck === 'A' ? 'deckAName' : 'deckBName').innerText = "🎵 " + file.name;
-  showToast(`✅ Deck ${deck} 已載入！`);
+  const label = document.getElementById(deck === 'A' ? 'deckAName' : 'deckBName');
+  if (player) {
+    player.src = fileUrl;
+    if (label) label.innerText = "🎵 " + file.name;
+    if (deck === 'A') { deckACueTime = 0; const btn = document.getElementById('btnJumpCueA'); if(btn) btn.innerText = "🔥 爆 Cue (00:00)"; }
+    else { deckBCueTime = 0; const btn = document.getElementById('btnJumpCueB'); if(btn) btn.innerText = "🔥 爆 Cue (00:00)"; }
+    player.ontimeupdate = () => updateDeckTimeDisplay(deck);
+    player.onloadedmetadata = () => updateDeckTimeDisplay(deck);
+    showToast(`✅ Deck ${deck} 已載入：${file.name}`);
+    updateCrossfader(document.getElementById('crossfader') ? document.getElementById('crossfader').value : 0.5);
+  }
 }
-
 function setDeckCue(deck) {
   playUiSound('click');
   const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
   if (player && player.src) {
-    const time = player.currentTime, mins = Math.floor(time / 60), secs = Math.floor(time % 60).toString().padStart(2, '0');
-    if (deck === 'A') { deckACueTime = time; document.getElementById('btnJumpCueA').innerText = `🔥 爆 Cue (${mins}:${secs})`; }
-    else { deckBCueTime = time; document.getElementById('btnJumpCueB').innerText = `🔥 爆 Cue (${mins}:${secs})`; }
-    showToast(`📍 記低 Cue 點：${mins}:${secs}`);
-  }
+    const time = player.currentTime;
+    const timeStr = formatTimeStr(time);
+    if (deck === 'A') { deckACueTime = time; const btn = document.getElementById('btnJumpCueA'); if(btn) btn.innerText = `🔥 爆 Cue (${timeStr})`; }
+    else { deckBCueTime = time; const btn = document.getElementById('btnJumpCueB'); if(btn) btn.innerText = `🔥 爆 Cue (${timeStr})`; }
+    showToast(`📍 已記低 Deck ${deck} Cue 點：${timeStr}`);
+  } else { showToast(`⚠️ Deck ${deck} 未載入歌曲！`); }
 }
 
 function jumpToDeckCue(deck) {
   playUiSound('click');
   const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
-  if (player && player.src) { player.currentTime = (deck === 'A' ? deckACueTime : deckBCueTime); player.play(); }
+  if (player && player.src) {
+    const targetTime = deck === 'A' ? deckACueTime : deckBCueTime;
+    player.currentTime = targetTime;
+    if (player.paused) player.play();
+    showToast(`🔥 Deck ${deck} 秒速切入 Cue 點！`);
+  } else { showToast(`⚠️ Deck ${deck} 未載入歌曲！`); }
 }
 
 function updateDeckPitch(deck, val) {
   playUiSound('click');
   const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
   if (player) player.playbackRate = val;
-  if (deck === 'A') { deckABpmVal = (140.0 * val).toFixed(1); document.getElementById('deckABpm').innerText = deckABpmVal + " BPM"; }
-  else { deckBBpmVal = (140.0 * val).toFixed(1); document.getElementById('deckBBpm').innerText = deckBBpmVal + " BPM"; }
+  if (deck === 'A') { deckABpmVal = (140.0 * val).toFixed(1); const bpmDisp = document.getElementById('deckABpm'); if (bpmDisp) bpmDisp.innerText = deckABpmVal + " BPM"; }
+  else { deckBBpmVal = (140.0 * val).toFixed(1); const bpmDisp = document.getElementById('deckBBpm'); if (bpmDisp) bpmDisp.innerText = deckBBpmVal + " BPM"; }
 }
 
 function syncBpmBtoA() {
   playUiSound('click');
   const targetRate = (deckABpmVal / 140.0).toFixed(2);
-  document.getElementById('deckBPitch').value = targetRate;
+  const sliderB = document.getElementById('deckBPitch');
+  if (sliderB) sliderB.value = targetRate;
   updateDeckPitch('B', targetRate);
-  showToast("⚡ Deck B 已鎖定至 Deck A (" + deckABpmVal + " BPM)！");
+  showToast("⚡ 已將 Deck B 速度鎖定至 Deck A (" + deckABpmVal + " BPM)！");
 }
 
-function playDeck(deck) { document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer').play(); }
-function pauseDeck(deck) { document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer').pause(); }
+function playDeck(deck) {
+  playUiSound('click');
+  const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
+  if (player && player.src) { player.play().then(() => showToast("▶️ 開始播放 Deck " + deck)).catch(e => showToast("❌ 請先載入歌曲")); }
+  else { showToast("⚠️ Deck " + deck + " 未載入歌曲！"); }
+}
+
+function pauseDeck(deck) {
+  playUiSound('click');
+  const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
+  if (player) { player.pause(); showToast("⏸️ 暫停 Deck " + deck); }
+}
+
+function toggleCueMode() {
+  playUiSound('click');
+  isCueMode = !isCueMode;
+  const btn = document.getElementById('btnCueToggle');
+  const panel = document.getElementById('cuePanel');
+  if (btn) { btn.innerText = isCueMode ? "🎧 Cue Mode (開)" : "🎧 預聽模式 (關)"; btn.style.background = isCueMode ? "#e84393" : "rgba(45, 52, 54, 0.9)"; }
+  if (panel) panel.style.display = isCueMode ? "block" : "none";
+  updateCrossfader(document.getElementById('crossfader') ? document.getElementById('crossfader').value : 0.5);
+  showToast(isCueMode ? "🎧 預聽模式：Deck A 走大喇叭 ‧ Deck B 走耳機！" : "📻 還原標準混音模式");
+}
 
 function updateCrossfader(val) {
-  const pA = document.getElementById('deckAPlayer'), pB = document.getElementById('deckBPlayer');
-  if (pA) pA.volume = Math.cos(val * Math.PI / 2);
-  if (pB) pB.volume = Math.sin(val * Math.PI / 2);
+  const playerA = document.getElementById('deckAPlayer');
+  const playerB = document.getElementById('deckBPlayer');
+  const masterVol = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
+  const bgmVol = document.getElementById('volBgm') ? document.getElementById('volBgm').value : 0.8;
+  const cueVol = document.getElementById('volCue') ? document.getElementById('volCue').value : 1.0;
+  const baseVolume = masterVol * bgmVol;
+  if (isCueMode) {
+    if (playerA) playerA.volume = baseVolume * (1 - val);
+    if (playerB) playerB.volume = baseVolume * cueVol;
+  } else {
+    const volA = Math.cos(val * Math.PI / 2);
+    const volB = Math.sin(val * Math.PI / 2);
+    if (playerA) playerA.volume = baseVolume * volA;
+    if (playerB) playerB.volume = baseVolume * volB;
+  }
+  if (document.getElementById('meterCrossfader')) document.getElementById('meterCrossfader').style.width = (val * 100) + "%";
 }
 
-/* 🔄 防呆雙模 Auto Crossfade (預設 6860ms = 4 Bars) */
-function autoCrossfade(durationMs = 6860) {
+/* 🛡️ 帶連擊防爆鎖嘅 Auto Crossfade */
+function autoCrossfade(durationMs = 3430) {
+  if (isCrossfading) { showToast("⏳ 自動過歌中，請稍候..."); return; }
   playUiSound('click');
-  const slider = document.getElementById('crossfader'); if (!slider) return;
-  let currentVal = parseFloat(slider.value), targetVal = currentVal > 0.5 ? 0 : 1;
-  const steps = 30, intervalTime = durationMs / steps, stepVal = (targetVal - currentVal) / steps;
+  const slider = document.getElementById('crossfader');
+  if (!slider) return;
+  isCrossfading = true;
+  let currentVal = parseFloat(slider.value);
+  const targetVal = currentVal > 0.5 ? 0 : 1;
+  const steps = 30;
+  const stepVal = (targetVal - currentVal) / steps;
   let count = 0;
+  const intervalTime = durationMs / steps;
+  
   const timer = setInterval(() => {
-    currentVal += stepVal; slider.value = currentVal; updateCrossfader(currentVal);
-    if (++count >= steps) { clearInterval(timer); showToast(`🔄 自動過歌完成 (${(durationMs/1000).toFixed(1)}s)！`); }
+    currentVal += stepVal;
+    slider.value = currentVal;
+    updateCrossfader(currentVal);
+    count++;
+    if (count >= steps) {
+      clearInterval(timer);
+      isCrossfading = false;
+      showToast(`🔄 Auto Crossfade (${(durationMs/1000).toFixed(2)}s) 完成！`);
+    }
   }, intervalTime);
 }
 
-/* 10. [Album & Lightbox Wallpaper] */
+/* 🥁 古早 DJ SoundPad 多點觸控 (Multi-Touch) 相容觸發 */
+function playSynthSound(type) {
+  playUiSound('click');
+  showToast(`🥁 DJ 音效：${type.toUpperCase()}`);
+}
+/* --------------------------------------------------------------------------
+   10.[Album & Lightbox Wallpaper]- 多媒體相簿、幻燈片與背景壁紙
+   -------------------------------------------------------------------------- */
 let toastTimer;
 function showToast(msg) {
-  const toast = document.getElementById('toast'); if (!toast) return;
-  toast.innerHTML = msg; toast.style.display = 'block';
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.style.display = 'none', 2500);
+  const toast = document.getElementById('toast'); toast.innerHTML = msg; toast.style.display = 'block';
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
 }
+
+function createAlbum() {
+  playUiSound('click'); const name = prompt("請輸入新相簿名稱：", "黑貓仔寫真");
+  if (name) { const id = "album_" + Date.now(); const tx = db.transaction("albums", "readwrite"); tx.objectStore("albums").add({ id: id, name: name, order: Date.now() }); tx.oncomplete = function() { loadAlbums(id); showToast("✨ 成功建立新相簿！"); }; }
+}
+
+function initAlbumLongPress() {
+  const select = document.getElementById('albumSelect'); if (!select) return;
+  select.addEventListener('touchstart', () => { pressTimer = setTimeout(() => { triggerRenameCurrentAlbum(); }, 800); });
+  select.addEventListener('touchend', () => { clearTimeout(pressTimer); });
+  select.addEventListener('mousedown', () => { pressTimer = setTimeout(() => { triggerRenameCurrentAlbum(); }, 800); });
+  select.addEventListener('mouseup', () => { clearTimeout(pressTimer); });
+}
+
+function triggerRenameCurrentAlbum() {
+  if (currentAlbum === "default") { showToast("⚠️ 「預設相簿」名字受系統保護！"); return; }
+  const tx = db.transaction("albums", "readonly"); tx.objectStore("albums").get(currentAlbum).onsuccess = function(e) {
+    const album = e.target.result;
+    if (album) { const newName = prompt("✏️ 請輸入新相簿名稱：", album.name); if (newName && newName.trim() !== "") { const txWrite = db.transaction("albums", "readwrite"); txWrite.objectStore("albums").put({ id: currentAlbum, name: newName.trim(), order: album.order || Date.now() }); txWrite.oncomplete = function() { showToast(`✨ 相簿已改名為：「${newName.trim()}」`); loadAlbums(currentAlbum); }; } }
+  };
+}
+
+function moveAlbumOrder(direction) {
+  playUiSound('click'); if (currentAlbum === "default") { showToast("⚠️ 「預設相簿」固定在最前！"); return; }
+  const tx = db.transaction("albums", "readonly"); let albums = []; tx.objectStore("albums").openCursor().onsuccess = function(e) {
+    const cursor = e.target.result; if (cursor) { albums.push(cursor.value); cursor.continue(); } 
+    else {
+      albums.sort((a, b) => (a.order || 0) - (b.order || 0)); let idx = albums.findIndex(item => item.id === currentAlbum); if (idx === -1) return;
+      let targetIdx = idx + direction; if (targetIdx < 0 || targetIdx >= albums.length) return;
+      let tempOrder = albums[idx].order || idx; albums[idx].order = albums[targetIdx].order || targetIdx; albums[targetIdx].order = tempOrder;
+      const txWrite = db.transaction("albums", "readwrite"); const store = txWrite.objectStore("albums"); store.put(albums[idx]); store.put(albums[targetIdx]);
+      txWrite.oncomplete = function() { showToast("✨ 相簿排位調動成功！"); loadAlbums(currentAlbum); };
+    }
+  };
+}
+
+function deleteCurrentAlbum() {
+  playUiSound('click'); if (currentAlbum === "default") { alert("⚠️ 「預設相簿」唔可以刪除！"); return; }
+  if (confirm("確定要刪除呢個相簿？")) {
+    db.transaction("albums", "readwrite").objectStore("albums").delete(currentAlbum);
+    const txMedia = db.transaction("media", "readwrite"); txMedia.objectStore("media").openCursor().onsuccess = function(ev) { const c = ev.target.result; if (c) { if (c.value.albumId === currentAlbum) c.delete(); c.continue(); } };
+    txMedia.oncomplete = function() { showToast("🗑️ 相簿已成功刪除！"); loadAlbums("default"); };
+  }
+}
+
+function loadAlbums(selectId) {
+  const select = document.getElementById('albumSelect'); if(!select) return; select.innerHTML = '<option value="default">📁 預設相簿</option>';
+  let albumList = []; db.transaction("albums", "readonly").objectStore("albums").openCursor().onsuccess = function(e) {
+    const cursor = e.target.result; if (cursor) { albumList.push(cursor.value); cursor.continue(); } 
+    else {
+      albumList.sort((a, b) => (a.order || 0) - (b.order || 0));
+      albumList.forEach(alb => { const opt = document.createElement('option'); opt.value = alb.id; opt.innerText = "📁 " + alb.name; select.appendChild(opt); });
+      if (selectId) select.value = selectId; currentAlbum = select.value; loadMedia();
+    }
+  };
+}
+
+function switchAlbum() { currentAlbum = document.getElementById('albumSelect').value; loadMedia(); }
+function toggleGrid() { playUiSound('click'); document.getElementById('mediaGrid').classList.toggle('four-cols'); }
+
+function uploadMedia(event) {
+  const files = Array.from(event.target.files);
+  if (files.length > 0) {
+    let loadedCount = 0; files.forEach(file => {
+      const reader = new FileReader(); const isVideo = file.type.startsWith('video/');
+      reader.onload = function(e) {
+        const tx = db.transaction("media", "readwrite"); tx.objectStore("media").add({ albumId: currentAlbum, src: e.target.result, caption: file.name.split('.')[0], isVideo: isVideo });
+        tx.oncomplete = function() { loadedCount++; if (loadedCount === files.length) { loadMedia(); showToast(`✅ 成功揼入 ${files.length} 個檔案！`); } };
+      }; reader.readAsDataURL(file);
+    });
+  }
+}
+
+function loadMedia() {
+  const mediaGrid = document.getElementById('mediaGrid'); if(!mediaGrid) return; mediaGrid.innerHTML = ""; albumMediaList = [];
+  db.transaction("media", "readonly").objectStore("media").openCursor().onsuccess = function(e) {
+    const cursor = e.target.result;
+    if (cursor) {
+      if (cursor.value.albumId === currentAlbum) {
+        albumMediaList.push(cursor.value); const card = document.createElement('div'); card.className = 'media-card'; const index = albumMediaList.length - 1;
+        card.innerHTML = cursor.value.isVideo ? `<button class="delete-btn" onclick="deleteMedia(${cursor.key})">✕</button><video src="${cursor.value.src}" onclick="openLightboxIndex(${index})"></video><p>🎬 ${cursor.value.caption}</p>` : `<button class="delete-btn" onclick="deleteMedia(${cursor.key})">✕</button><img src="${cursor.value.src}" onclick="openLightboxIndex(${index})"><p>📷 ${cursor.value.caption}</p>`;
+        mediaGrid.appendChild(card);
+      } cursor.continue();
+    }
+  };
+}
+
+function deleteMedia(id) { if (confirm("確定要刪除？")) { const tx = db.transaction("media", "readwrite").objectStore("media").delete(id); tx.oncomplete = function() { loadMedia(); }; } }
+
+function openLightboxIndex(idx) {
+  if (albumMediaList.length === 0) return; slideIndex = idx; showSlide(slideIndex);
+  const lightbox = document.getElementById('lightbox'); lightbox.style.display = 'flex';
+  lightbox.ontouchstart = (e) => { touchStartX = e.changedTouches[0].screenX; };
+  lightbox.ontouchend = (e) => { touchEndX = e.changedTouches[0].screenX; if (touchEndX < touchStartX - 50) nextSlide(); if (touchEndX > touchStartX + 50) prevSlide(); };
+}
+
+function showSlide(idx) {
+  if (albumMediaList.length === 0) return; if (idx >= albumMediaList.length) slideIndex = 0; if (idx < 0) slideIndex = albumMediaList.length - 1;
+  const item = albumMediaList[slideIndex]; const content = document.getElementById('lightboxContent'); content.style.opacity = 0;
+  setTimeout(() => {
+    if (item.isVideo) {
+      content.innerHTML = `<video id="activeVideo" src="${item.src}" controls autoplay></video>`; document.getElementById('lightboxCaption').innerText = `🎬 (${slideIndex + 1}/${albumMediaList.length}) ${item.caption}`;
+      setTimeout(() => { currentActiveVideo = document.getElementById('activeVideo'); if (currentActiveVideo) currentActiveVideo.volume = document.getElementById('volVideo').value; }, 100);
+    } else {
+      content.innerHTML = `<img src="${item.src}">`; document.getElementById('lightboxCaption').innerText = `📷 (${slideIndex + 1}/${albumMediaList.length}) ${item.caption}`; currentActiveVideo = null;
+    }
+    content.style.opacity = 1;
+  }, 150);
+}
+
+function setLightboxImgAsWallpaper() {
+  playUiSound('click');
+  if (albumMediaList.length === 0) return;
+  const currentItem = albumMediaList[slideIndex];
+  if (currentItem.isVideo) { showToast("⚠️ 影片暫時唔可以設為背景壁紙喔！"); return; }
+  document.body.style.backgroundImage = `url(${currentItem.src})`;
+  saveWallpaperSetting("custom", currentItem.src);
+  showToast("✨ 成功將呢張相設為貓貓助手壁紙！");
+}
+
+function uploadCustomWallpaper(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader(); reader.onload = function(e) {
+      const wpData = e.target.result; document.body.style.backgroundImage = `url(${wpData})`;
+      saveWallpaperSetting("custom", wpData); showToast("✨ 成功換上自訂底紙！");
+    }; reader.readAsDataURL(file);
+  }
+}
+
+function changeWallpaperPreset() {
+  playUiSound('click'); currentPresetIdx = (currentPresetIdx + 1) % presetWallpapers.length;
+  const bgStyle = presetWallpapers[currentPresetIdx]; document.body.style.backgroundImage = "none"; document.body.style.background = bgStyle;
+  saveWallpaperSetting("preset", bgStyle); showToast("🎨 切換預設風格底紙！");
+}
+
+function saveWallpaperSetting(type, val) { db.transaction("settings", "readwrite").objectStore("settings").put({ key: "wallpaper", type: type, val: val }); }
+function loadSavedWallpaper() { const req = db.transaction("settings", "readonly").objectStore("settings").get("wallpaper"); req.onsuccess = function() { if (req.result) { if (req.result.type === "custom") { document.body.style.backgroundImage = `url(${req.result.val})`; } else { document.body.style.background = req.result.val; } } }; }
+
+function startSlideshow() { playUiSound('click'); if (albumMediaList.length === 0) { showToast("⚠️ 相簿暫時未有檔案！"); return; } openLightboxIndex(0); isPlayingSlideshow = true; document.getElementById('playPauseBtn').innerText = "⏸️"; resetSlideTimer(); }
+function setSlideshowSpeed(ms) {
+  playUiSound('click'); slideshowInterval = ms; document.getElementById('spd3').classList.remove('active'); document.getElementById('spd6').classList.remove('active'); document.getElementById('spd10').classList.remove('active');
+  if (ms === 3000) document.getElementById('spd3').classList.add('active'); if (ms === 6000) document.getElementById('spd6').classList.add('active'); if (ms === 10000) document.getElementById('spd10').classList.add('active');
+  showToast(`⏱️ 速度改為 ${ms/1000} 秒！`); if (isPlayingSlideshow) resetSlideTimer();
+}
+function resetSlideTimer() { clearInterval(slideTimer); if (isPlayingSlideshow) slideTimer = setInterval(() => { nextSlide(); }, slideshowInterval); }
+function toggleSlideshowPlay() { playUiSound('click'); isPlayingSlideshow = !isPlayingSlideshow; document.getElementById('playPauseBtn').innerText = isPlayingSlideshow ? "⏸️" : "▶️"; if (isPlayingSlideshow) resetSlideTimer(); else clearInterval(slideTimer); }
+function nextSlide() { slideIndex++; showSlide(slideIndex); if (isPlayingSlideshow) resetSlideTimer(); }
+function prevSlide() { slideIndex--; showSlide(slideIndex); if (isPlayingSlideshow) resetSlideTimer(); }
+function closeLightbox() { clearInterval(slideTimer); isPlayingSlideshow = false; if (currentActiveVideo) { currentActiveVideo.pause(); currentActiveVideo = null; } document.getElementById('lightboxContent').innerHTML = ""; document.getElementById('lightbox').style.display = 'none'; }

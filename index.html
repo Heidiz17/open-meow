@@ -1,177 +1,339 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-  <!-- ==========================================
-       📚 index.html [PART 1/4]
-       Chapter 1: 主控制台 | Chapter 2: 每日金句
-       ========================================== -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>🐾 OPEN 貓貓助手 - Heidiz & Gemini P-Chan Production</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<!-- 🛡️ 帶防爆/混淆封鎖 <body contextmenu="false"> -->
 <body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
 
-  <!-- [Chapter 1: 最高主控制台 #foldHeader] -->
-  <div class="section-title-btn" style="margin-top:0; margin-bottom:6px;" onclick="toggleFold('foldHeader')">
-    <div class="header-fold-title" style="width:100%;">
+  <!-- [3.1] Chapter 1: 最高主控制台 (#foldHeader) -->
+  <div class="section-title-btn" style="margin-top: 0; margin-bottom: 6px;" onclick="toggleFold('foldHeader')">
+    <div class="header-fold-title" style="width: 100%;">
       <span>🐾 OPEN 貓貓助手 (主控制台)</span>
       <span class="fold-arrow" id="arrowHeader">▼ 展開</span>
     </div>
   </div>
 
-  <div class="fold-content" id="foldHeader" style="margin-bottom:8px;">
-    <div class="wallpaper-btn-group" style="background:rgba(0,0,0,0.3); padding:8px; border-radius:12px;">
+  <div class="fold-content" id="foldHeader" style="margin-bottom: 8px;">
+    <div class="wallpaper-btn-group" style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);">
+      <button class="btn-compact btn-theme" onclick="changeWallpaperPreset()">🎨 預設風格</button>
+      <label class="btn-compact btn-add" style="background:#00b894;" for="wpInput">🖼️ 換壁紙</label>
+      <input type="file" id="wpInput" accept="image/*" style="display:none;" onchange="uploadCustomWallpaper(event)">
       <button class="btn-font-toggle" onclick="toggleFontTheme()">🔤 港/日</button>
       <button class="btn-compact btn-theme" onclick="toggleFontSize()" style="background:#6c5ce7; color:white;">🔠 字體大細</button>
       <button class="btn-compact" onclick="toggleTitleColor()" style="background:#fd79a8; color:white;">🎨 主標色</button>
+      <button class="btn-compact" onclick="toggleSubTitleColor()" style="background:#e84393; color:white;">🎨 副標色</button>
       <button class="btn-compact btn-add" onclick="toggleAllFolds()" id="btnMasterFold" style="background:#e17055;">📂 一鍵全開</button>
     </div>
   </div>
 
-  <!-- [Chapter 2: 每日聖經金句隨機抽卡區 #foldBible] -->
+  <!-- [3.2] Chapter 2: 每日聖經金句隨機抽卡區 (#foldBible) -->
   <div class="section-title-btn" onclick="toggleFold('foldBible')">
     <div>
       <span class="title-bible">✝️ 每日聖經金句隨機抽卡區</span>
-      <span class="sub-tip">💡 點擊領受天父話語與平安祝福！</span>
+      <span class="sub-tip">💡 叩門就給你們開門：點擊領受天父話語與平安祝福！</span>
     </div>
     <span class="fold-arrow" id="arrowBible">▼ 展開</span>
   </div>
   <div class="fold-content" id="foldBible">
-    <div class="foldable-card" style="padding:15px; text-align:center; background:rgba(0,0,0,0.35); border-radius:12px;">
-      <div id="bibleCardBox" style="min-height:90px; display:flex; justify-content:center; align-items:center; background:rgba(0,0,0,0.4); border-radius:12px; border:2px dashed #ffeaa7;">
-        <p id="bibleText" style="margin:0; font-size:14px; font-weight:900; color:#ffeaa7;">
+    <div class="foldable-card" style="padding: 15px; text-align: center; background: rgba(0,0,0,0.35) !important; border-radius: 12px;">
+      <div id="bibleCardBox" style="min-height: 90px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.4); border-radius: 12px; padding: 14px; border: 2px dashed #ffeaa7;">
+        <p id="bibleText" style="margin: 0; font-size: 14px; font-weight: 900; color: #ffeaa7; line-height: 1.6; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">
           ✨ 「在至高之處榮耀歸與神！在地上平安歸與他所喜悅的人。」 (路加福音 2:14)
         </p>
       </div>
-      <div style="display:flex; gap:8px; margin-top:12px;">
-        <button class="btn-compact" onclick="drawBibleCardWithAnim()" style="flex:1; background:linear-gradient(135deg,#d63031,#e17055); color:white; font-size:13px; padding:12px; border-radius:20px; font-weight:900;">
+
+      <div style="display: flex; gap: 8px; margin-top: 12px;">
+        <button class="btn-compact" onclick="drawBibleCardWithAnim()" style="flex: 1; background: linear-gradient(135deg, #d63031 0%, #e17055 100%); color: #ffffff; font-size: 13px; padding: 12px 15px; border-radius: 20px; border: 1.5px solid #ffeaa7; box-shadow: 0 4px 12px rgba(214, 48, 49, 0.6); font-weight: 900;">
           ✨ 🙏 誠心所願 · 領受話語
         </button>
+        <button class="btn-compact btn-theme" onclick="toggleFold('foldBibleCategory')" style="padding: 10px 14px; font-size: 12px; background: rgba(45, 52, 54, 0.9); color: #ffeaa7; border-radius: 20px;">
+          🎛️ 主題暗掣
+        </button>
+      </div>
+
+      <div class="fold-content" id="foldBibleCategory" style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 10px; border: 1px solid rgba(255,234,167,0.3);">
+        <div style="font-size: 11px; color: #fab1a0; margin-bottom: 6px; font-weight: bold;">🎯 心靈對症下藥（選擇主題）：</div>
+        <select id="bibleCategorySelect" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #ffeaa7; background: #2d3436; color: #ffeaa7; font-size: 12px; font-weight: bold;">
+          <option value="ALL">任意主題</option>
+          <option value="祝福">祝福</option>
+          <option value="傳道">傳道</option>
+          <option value="愛">愛</option>
+          <option value="平安">平安</option>
+          <option value="擔憂">擔憂</option>
+          <option value="救恩">救恩</option>
+          <option value="信仰">信仰</option>
+          <option value="寬恕">寬恕</option>
+          <option value="禱告">禱告</option>
+          <option value="病痛">病痛</option>
+          <option value="恐懼">恐懼</option>
+          <option value="婚姻">婚姻</option>
+          <option value="孩童">孩童</option>
+          <option value="希望">希望</option>
+          <option value="悲愁">悲愁</option>
+          <option value="復活">復活</option>
+          <option value="忿恨">忿恨</option>
+          <option value="公義">公義</option>
+          <option value="威嚴">威嚴</option>
+          <option value="警誡">警誡</option>
+          <option value="界線">界線</option>
+        </select>
       </div>
     </div>
   </div>
-  <!-- ==========================================
-       📚 index.html [PART 2/4]
-       Chapter 3: 貓貓電台俱樂部 | Chapter 4: MP3 歌單
-       ========================================== -->
-
-  <!-- [Chapter 3: 貓貓電台俱樂部 #foldRadio] -->
+  <!-- [3.3] Chapter 3: 貓貓電台俱樂部 (#foldRadio) -->
   <div class="section-title-btn">
-    <div onclick="toggleFold('foldRadio')" style="flex:1; cursor:pointer;">
+    <div onclick="toggleFold('foldRadio')" style="flex: 1; cursor: pointer;">
       <span class="title-radio">📻 貓貓電台俱樂部 (Radio Club)</span>
-      <span class="sub-tip">💡 點擊即播：環球電台 × 🌿 大自然音效</span>
+      <span class="sub-tip">💡 點擊即播：環球電台 × 🌿 大自然音效<br>🎛️ Mixer 即時雙重 Remix 合奏！</span>
     </div>
-    <button class="btn-compact" id="btnQuickRadioToggle" onclick="toggleQuickRadio(event)" style="background:#e17055; color:white; padding:4px 8px; font-size:11px;">⏸️ 暫停</button>
+    <div style="display: flex; align-items: center; gap: 6px;">
+      <button class="btn-compact" id="btnQuickRadioToggle" onclick="toggleQuickRadio(event)" style="background: #e17055; color: white; padding: 4px 8px; font-size: 11px; border-radius: 6px;">⏸️ 暫停</button>
+      <span class="fold-arrow" id="arrowRadio" onclick="toggleFold('foldRadio')">▼ 展開</span>
+    </div>
   </div>
 
   <div class="fold-content" id="foldRadio">
-    <div class="music-box" style="margin-top:0;">
-      <div class="cat-btn bg-dance" onclick="toggleFold('foldDance')">
-        <span>🎧 電子舞曲與 Disco 皇牌區 (4台)</span>
+    <div class="music-box" style="margin-top: 0;">
+      <div style="font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 6px;">🌟 5 大主題皇牌電台 (點擊顏色暗掣展開)：</div>
+      
+      <div class="cat-btn bg-rock" onclick="toggleFold('foldRock')">
+        <span>🎸 搖滾與日系動漫專區 (6台)</span>
+        <span id="arrowRock">▼ 展開</span>
       </div>
-      <div class="radio-sub-box" id="foldDance">
+      <div class="radio-sub-box" id="foldRock">
         <div class="radio-grid-2col">
-          <div class="radio-card-btn" style="background:#f1c40f; color:#000; font-weight:900;" onclick="confirmRadioPlay('頭文字D', 'https://stream.zeno.fm/rqy08onkyedvv')">🔥 🏎️ 頭文字 D Studio</div>
-          <div class="radio-card-btn" style="background:#d63031; color:#fff;" onclick="confirmRadioPlay('Dance Wave', 'https://dancewave.online/dance.mp3')">👑 Dance Wave</div>
+          <div class="radio-card-btn" style="background: #a71d2a; color: #ffffff;" onclick="confirmRadioPlay('JPOP SUKI Radio', 'https://jpopsuki-proxy.stream-hub-th.workers.dev')">🎸 JPOPSUKI 日本台</div>
+          <div class="radio-card-btn" style="background: rgba(232, 67, 147, 0.95); color: #ffffff;" onclick="confirmRadioPlay('Zeno Japan Anime Songs', 'https://stream.zeno.fm/e10726wdz4zuv')">🌸 Anime Songs 櫻花台</div>
+          <div class="radio-card-btn" style="background: #002766; color: #ffffff;" onclick="confirmRadioPlay('Zeno Anime and Japan Hits', 'https://stream.zeno.fm/ddetxwuhkpeuv')">🎌 Anime & Japan Hits</div>
+          <div class="radio-card-btn" style="background: rgba(108, 92, 231, 0.95); color: #ffffff;" onclick="confirmRadioPlay('Radio Paradise (Rock Mix)', 'https://stream.radioparadise.com/rock-128')">🇬🇧 Britpop 英搖台</div>
+          <div class="radio-card-btn" style="background: rgba(45, 52, 54, 0.95); color: #ffffff;" onclick="confirmRadioPlay('ROCK ANTENNE Heavy Metal', 'https://stream.rockantenne.de/heavy-metal/stream/mp3')">🇺🇸 Heavy Metal 重金屬</div>
+          <div class="radio-card-btn" style="background: rgba(211, 84, 0, 0.95); color: #ffffff;" onclick="confirmRadioPlay('ROCK ANTENNE Classic Perlen', 'https://stream.rockantenne.de/classic-perlen/stream/mp3')">📻 80/90s 硬搖滾</div>
         </div>
       </div>
 
-      <!-- 大自然混音器 -->
-      <div class="radio-sub-box" id="foldNature" style="display:block; margin-top:10px;">
+      <div class="cat-btn bg-dance" onclick="toggleFold('foldDance')">
+        <span>🎧 電子舞曲與 Disco 皇牌區 (4台)</span>
+        <span id="arrowDance">▼ 展開</span>
+      </div>
+      <div class="radio-sub-box" id="foldDance">
         <div class="radio-grid-2col">
-          <div class="radio-card-btn" id="btn-nature-wave" style="background:#20bf6b; color:#fff;" onclick="toggleNatureSound('wave')">🌊 海浪聲 (關)</div>
-          <div class="radio-card-btn" id="btn-nature-rain" style="background:#3867d6; color:#fff;" onclick="toggleNatureSound('rain')">🌧️ 雨夜聽雨 (關)</div>
+          <div class="radio-card-btn" style="background: #f1c40f; color: #000000; font-weight: 900;" onclick="confirmRadioPlay('Zeno LS Little Japan InitialD Studio', 'https://stream.zeno.fm/rqy08onkyedvv')">🔥 🏎️ 頭文字 D Studio</div>
+          <div class="radio-card-btn" style="background: #d63031; color: #ffffff; font-weight: 900;" onclick="confirmRadioPlay('Dance Wave! Digital Radio', 'https://dancewave.online/dance.mp3')">👑 Dance Wave (10號)</div>
+          <div class="radio-card-btn" style="background: #fd79a8; color: #ffffff;" onclick="confirmRadioPlay('laut.fm - Eurodance', 'https://stream.laut.fm/eurodance')">🕺 歐洲 90s Eurodance (9號)</div>
+          <div class="radio-card-btn" style="background: #00b894; color: #ffffff;" onclick="confirmRadioPlay('SomaFM: Groove Salad', 'https://ice1.somafm.com/groovesalad-128-aac')">☕ Groove Salad Downtempo (12號)</div>
         </div>
+      </div>
+
+      <div class="cat-btn bg-jazz" onclick="toggleFold('foldJazz')">
+        <span>🎷 爵士與藍調專區 (2台)</span>
+        <span id="arrowJazz">▼ 展開</span>
+      </div>
+      <div class="radio-sub-box" id="foldJazz">
+        <div class="radio-grid-2col">
+          <div class="radio-card-btn" style="background: #002366; color: #ffffff;" onclick="confirmRadioPlay('SmoothJazz.com Global Radio', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 SmoothJazz 爵士台</div>
+          <div class="radio-card-btn" style="background: rgba(0, 128, 128, 0.95); color: #ffffff;" onclick="confirmRadioPlay('Zeno.fm - Acid Jazz Radio', 'http://stream.zeno.fm/0r0xa792kwzuv')">🎷 Acid Jazz 爵士台</div>
+        </div>
+      </div>
+
+      <div class="cat-btn bg-relax" onclick="toggleFold('foldRelax')">
+        <span>☕ 輕柔心靈放鬆專區 (5台)</span>
+        <span id="arrowRelax">▼ 展開</span>
+      </div>
+      <div class="radio-sub-box" id="foldRelax">
+        <div class="radio-grid-2col">
+          <div class="radio-card-btn" style="background: #ffffff; color: #000000;" onclick="confirmRadioPlay('Zeno.fm - Rain Song Radio', 'http://stream.zeno.fm/689zc32y4x8uv')">🌧️ Rain Song 抒情台</div>
+          <div class="radio-card-btn" style="background: #f1c40f; color: #000000;" onclick="confirmRadioPlay('Peaceful Piano', 'https://peacefulpiano.stream.publicradio.org/peacefulpiano.aac')">🎹 和平鋼琴台</div>
+          <div class="radio-card-btn" style="background: rgba(212, 175, 55, 0.95); color: #ffffff;" onclick="confirmRadioPlay('Zeno.fm - Muji Soft Lounge', 'http://stream.zeno.fm/brv193g9468uv')">🍡 Muji Soft 柔和台</div>
+          <div class="radio-card-btn" style="background: #6c5ce7; color: #ffffff;" onclick="confirmRadioPlay('Radio Swiss Classic', 'https://stream.srg-ssr.ch/m/rsc_de/mp3_128')">🎻 Radio Swiss 純古典台</div>
+          <div class="radio-card-btn" style="grid-column: span 2; background: #27ae60; color: #ffffff;" onclick="confirmRadioPlay('Zeno Japanese Styles', 'https://stream.zeno.fm/zc0uwf6tb18uv')">🍃 Zeno Japanese Styles (日系靜心)</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-top: 8px;">
+        <div class="cat-btn" style="flex: 1; margin-top: 0; background: linear-gradient(135deg, #00b894, #00cec9); color: #ffffff;" onclick="toggleFold('foldHK')">
+          <span>🇭🇰 香港頻道 (1台)</span>
+          <span id="arrowHK">▼</span>
+        </div>
+        <div class="cat-btn" style="flex: 1; margin-top: 0; background: linear-gradient(135deg, #0984e3, #6c5ce7); color: #ffffff;" onclick="toggleFold('foldNature')">
+          <span>🌿 大自然聲音區</span>
+          <span id="arrowNature">▼</span>
+        </div>
+      </div>
+
+      <div class="radio-sub-box" id="foldHK">
+        <div class="radio-grid-2col">
+          <div class="radio-card-btn" style="grid-column: span 2; background: #e17055; color: #ffffff;" onclick="confirmRadioPlay('RTHK Radio 2', 'https://media-hub-2345.stream-hub-th.workers.dev/?url=https://stm.rthk.hk/radio2')">📻 RTHK 2 (香港電台第二台)</div>
+        </div>
+      </div>
+
+      <div class="radio-sub-box" id="foldNature">
+        <div class="radio-grid-2col" style="margin-bottom: 10px;">
+          <div class="radio-card-btn" id="btn-nature-wave" style="background: #20bf6b; color: #ffffff;" onclick="toggleNatureSound('wave')">🌊 海浪聲 (關)</div>
+          <div class="radio-card-btn" id="btn-nature-windbell" style="background: #45aaf2; color: #ffffff;" onclick="toggleNatureSound('windbell')">🎐 風吹風鈴 (關)</div>
+          <div class="radio-card-btn" id="btn-nature-rain" style="background: #3867d6; color: #ffffff;" onclick="toggleNatureSound('rain')">🌧️ 雨夜聽雨 (關)</div>
+          <div class="radio-card-btn" id="btn-nature-forest" style="background: #26de81; color: #ffffff;" onclick="toggleNatureSound('forest')">🌲 晨曦森林 (關)</div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; border: 1px solid rgba(255,234,167,0.3);">
+          <div style="font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 4px;">
+            🎛️ 即時混音控制台 (帶彩虹能量條)
+          </div>
+          <div class="mixer-channel">
+            <label>👑 全站 Master 音量：</label>
+            <input type="range" id="volMaster" min="0" max="1" step="0.05" value="1.0" oninput="updateGlobalMasterVolume()">
+            <div class="meter-bar"><div class="meter-fill" id="meterMaster" style="width: 100%;"></div></div>
+          </div>
+          <div class="mixer-channel">
+            <label>🌊 海浪聲音量：</label>
+            <input type="range" id="volWave" min="0" max="1" step="0.05" value="0.7" oninput="updateNatureVolumes()">
+            <div class="meter-bar"><div class="meter-fill" id="meterWave" style="width: 70%;"></div></div>
+          </div>
+          <div class="mixer-channel">
+            <label>🎐 風鈴聲音量：</label>
+            <input type="range" id="volWindbell" min="0" max="1" step="0.05" value="0.5" oninput="updateNatureVolumes()">
+            <div class="meter-bar"><div class="meter-fill" id="meterWindbell" style="width: 50%;"></div></div>
+          </div>
+          <div class="mixer-channel">
+            <label>🌧️ 落雨聲音量：</label>
+            <input type="range" id="volRain" min="0" max="1" step="0.05" value="0.8" oninput="updateNatureVolumes()">
+            <div class="meter-bar"><div class="meter-fill" id="meterRain" style="width: 80%;"></div></div>
+          </div>
+          <div class="mixer-channel">
+            <label>🌲 森林聲音量：</label>
+            <input type="range" id="volForest" min="0" max="1" step="0.05" value="0.6" oninput="updateNatureVolumes()">
+            <div class="meter-bar"><div class="meter-fill" id="meterForest" style="width: 60%;"></div></div>
+          </div>
+        </div>
+
         <audio id="sound-wave" src="wave.mp3" loop></audio>
+        <audio id="sound-windbell" src="windbell.mp3" loop></audio>
         <audio id="sound-rain" src="rain.mp3" loop></audio>
+        <audio id="sound-forest" src="forest.mp3" loop></audio>
       </div>
     </div>
   </div>
 
-  <!-- [Chapter 4: MP3 歌單播放器 #foldMusic] -->
+  <!-- [3.4] Chapter 4: MP3 歌單播放器 (#foldMusic) -->
   <div class="section-title-btn" onclick="toggleFold('foldMusic')">
     <div>
       <span class="title-music">🎵 專屬背景音樂歌單 (MP3 Jukebox)</span>
+      <span class="sub-tip">💡 支援無限首自動編號、多模式循環與背景播放</span>
     </div>
     <span class="fold-arrow" id="arrowMusic">▼ 展開</span>
   </div>
   <div class="fold-content" id="foldMusic">
-    <div class="music-box" style="margin-top:0;">
-      <label class="btn-compact btn-add" for="musicInput">➕ 揼入 MP3</label>
-      <input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="uploadMusic(event)">
-      <div id="musicName" style="margin:8px 0; font-size:12px; color:#fff;">🎵 播放中 : 暫無音樂</div>
+    <div class="music-box" style="margin-top: 0;">
+      <div class="playlist-controls">
+        <label class="btn-compact btn-add" for="musicInput">➕ 揼入 MP3</label>
+        <input type="file" id="musicInput" accept="audio/*" multiple style="display:none;" onchange="uploadMusic(event)">
+        <button class="btn-compact mode-btn active" id="btnSeq" onclick="setPlayMode('sequence')">🔁 順序</button>
+        <button class="btn-compact mode-btn" id="btnLoop" onclick="setPlayMode('single-loop')">🔂 單曲</button>
+        <button class="btn-compact mode-btn" id="btnRand" onclick="setPlayMode('random')">🔀 隨機</button>
+      </div>
+      <div id="musicName" style="margin: 8px 0; font-size: 12px; font-weight: 900; color: #fff;">🎵 播放中 : 暫無音樂</div>
       <div class="playlist-list" id="playlistDisplay"></div>
-      <audio id="bgPlayer" controls></audio>
+      <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
     </div>
   </div>
-  <!-- ==========================================
-       📚 index.html [PART 3/4]
-       Chapter 5: 貓貓相簿 | Chapter 6: 雙 Deck BPM 140 控制台
-       ========================================== -->
-
-  <!-- [Chapter 5: 貓貓專屬多媒體相簿 #foldAlbum] -->
+  <!-- [3.5] Chapter 5: 貓貓專屬多媒體相簿 (#foldAlbum) -->
   <div class="section-title-btn" onclick="toggleFold('foldAlbum')">
-    <div><span class="title-album">🖼️ 貓貓專屬多媒體相簿</span></div>
+    <div>
+      <span class="title-album">🖼️ 貓貓專屬多媒體相簿 (一鍵換壁紙)</span>
+      <span class="sub-tip">💡 長按相簿選單改名 ‧ ◀ ▶ 自由調動排位‧🎬幻燈片<br>同步播放電台‧MP3‧大自然音效‧即時 BGM REMIX！⚡</span>
+    </div>
     <span class="fold-arrow" id="arrowAlbum">▼ 展開</span>
   </div>
   <div class="fold-content" id="foldAlbum">
+    <div class="album-controls">
+      <div style="width: 100%;">
+        <select id="albumSelect" class="album-select" onchange="switchAlbum()"></select>
+      </div>
+      <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center; width: 100%;">
+        <button class="btn-compact btn-add" onclick="createAlbum()">➕ 新建</button>
+        <button class="btn-compact btn-move" onclick="moveAlbumOrder(-1)">◀ 移前</button>
+        <button class="btn-compact btn-move" onclick="moveAlbumOrder(1)">▶ 移後</button>
+        <button class="btn-compact btn-del" onclick="deleteCurrentAlbum()">🗑️ 刪除</button>
+        <label class="btn-compact btn-upload" for="mediaInput">📸 揼入相片</label>
+        <input type="file" id="mediaInput" accept="image/*,video/*" multiple style="display:none;" onchange="uploadMedia(event)">
+        <button class="btn-compact btn-grid" onclick="toggleGrid()">📐 2/4格</button>
+        <button class="btn-compact btn-slide" onclick="startSlideshow()">▶️ 幻燈片</button>
+      </div>
+    </div>
     <div class="media-grid" id="mediaGrid"></div>
   </div>
 
-  <!-- [Chapter 6: 雙 Deck BPM 140 混音控制台 #foldDeck] -->
+  <!-- [3.6] Chapter 6: 雙 Deck BPM 140 混音控制台 (#foldDeck) -->
   <div class="section-title-btn" onclick="toggleFold('foldDeck')">
     <div>
       <span class="title-mixer">🎧 🎛️ 雙 Deck BPM 140 混音控制台</span>
-      <span class="sub-tip">💡 預設 140 BPM ‧ 📍 記 Cue 爆 Cue ‧ 🔄 2-Bar / 4-Bar 自動過歌！</span>
+      <span class="sub-tip">💡 雙軌 140 BPM 基數 ‧ 📍 記 Cue 爆 Cue ‧ 🔄 2-Bar / 4-Bar 預設過歌！</span>
     </div>
     <span class="fold-arrow" id="arrowDeck">▼ 展開</span>
   </div>
   <div class="fold-content" id="foldDeck">
     <div class="dj-box">
       <div class="deck-container">
-        <!-- DECK A -->
+        <!-- 🔴 DECK A 卡牌 -->
         <div class="deck-card">
           <div class="deck-title">🔴 DECK A</div>
-          <div id="deckAName" style="font-size:11px; color:#fab1a0;">(未載入歌曲)</div>
+          <div id="deckAName" style="font-size:11px; color:#fab1a0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px;">(未載入歌曲)</div>
           <div class="bpm-display" id="deckABpm">140.0 BPM</div>
           <input type="range" class="pitch-slider" id="deckAPitch" min="0.9" max="1.1" step="0.01" value="1.0" oninput="updateDeckPitch('A', this.value)">
-          <div style="display:flex; gap:3px; margin-top:6px;">
-            <label class="btn-compact btn-add" for="deckAInput" style="font-size:10px; flex:1;">📂 載入 A</label>
+          <div style="display:flex; gap:3px; justify-content:center; margin-top:6px;">
+            <label class="btn-compact btn-add" for="deckAInput" style="font-size:10px; padding:6px 4px; flex:1;">📂 載入 A</label>
             <input type="file" id="deckAInput" accept="audio/*" style="display:none;" onchange="loadDeckTrack('A', event)">
-            <button class="btn-compact btn-add" onclick="playDeck('A')" style="font-size:10px; flex:1;">▶️ PLAY</button>
-            <button class="btn-compact btn-del" onclick="pauseDeck('A')" style="font-size:10px; flex:0.6;">⏸️</button>
+            <button class="btn-compact btn-add" onclick="playDeck('A')" style="font-size:10px; padding:6px 4px; flex:1;">▶️ PLAY</button>
+            <button class="btn-compact btn-del" onclick="pauseDeck('A')" style="font-size:10px; padding:6px 4px; flex:0.6;">⏸️</button>
           </div>
           <div style="display:flex; gap:3px; margin-top:6px;">
-            <button class="btn-compact" onclick="setDeckCue('A')" style="flex:1; font-size:10px; background:#6c5ce7; color:white;">📍 記 Cue</button>
-            <button class="btn-compact" id="btnJumpCueA" onclick="jumpToDeckCue('A')" style="flex:1.2; font-size:10px; background:#d63031; color:white;">🔥 爆 Cue (00:00)</button>
+            <button class="btn-compact" onclick="setDeckCue('A')" style="flex:1; font-size:10px; background:#6c5ce7; color:white; padding:6px 2px; text-align:center;">📍 記 Cue</button>
+            <button class="btn-compact" id="btnJumpCueA" onclick="jumpToDeckCue('A')" style="flex:1.2; font-size:10px; background:#d63031; color:white; padding:6px 2px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">🔥 爆 Cue (00:00)</button>
           </div>
           <audio id="deckAPlayer" loop></audio>
         </div>
 
-        <!-- DECK B -->
+        <!-- 🔵 DECK B 卡牌 -->
         <div class="deck-card">
           <div class="deck-title">🔵 DECK B</div>
-          <div id="deckBName" style="font-size:11px; color:#74b9ff;">(未載入歌曲)</div>
+          <div id="deckBName" style="font-size:11px; color:#74b9ff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px;">(未載入歌曲)</div>
           <div class="bpm-display" id="deckBBpm">140.0 BPM</div>
           <input type="range" class="pitch-slider" id="deckBPitch" min="0.9" max="1.1" step="0.01" value="1.0" oninput="updateDeckPitch('B', this.value)">
-          <div style="display:flex; gap:3px; margin-top:6px;">
-            <label class="btn-compact btn-add" for="deckBInput" style="background:#0984e3; font-size:10px; flex:1;">📂 載入 B</label>
+          <div style="display:flex; gap:3px; justify-content:center; margin-top:6px;">
+            <label class="btn-compact btn-add" for="deckBInput" style="background:#0984e3; font-size:10px; padding:6px 4px; flex:1;">📂 載入 B</label>
             <input type="file" id="deckBInput" accept="audio/*" style="display:none;" onchange="loadDeckTrack('B', event)">
-            <button class="btn-compact btn-add" onclick="playDeck('B')" style="font-size:10px; flex:1;">▶️ PLAY</button>
-            <button class="btn-compact btn-del" onclick="pauseDeck('B')" style="font-size:10px; flex:0.6;">⏸️</button>
+            <button class="btn-compact btn-add" onclick="playDeck('B')" style="font-size:10px; padding:6px 4px; flex:1;">▶️ PLAY</button>
+            <button class="btn-compact btn-del" onclick="pauseDeck('B')" style="font-size:10px; padding:6px 4px; flex:0.6;">⏸️</button>
           </div>
           <div style="display:flex; gap:3px; margin-top:6px;">
-            <button class="btn-compact" onclick="setDeckCue('B')" style="flex:1; font-size:10px; background:#6c5ce7; color:white;">📍 記 Cue</button>
-            <button class="btn-compact" id="btnJumpCueB" onclick="jumpToDeckCue('B')" style="flex:1.2; font-size:10px; background:#d63031; color:white;">🔥 爆 Cue (00:00)</button>
+            <button class="btn-compact" onclick="setDeckCue('B')" style="flex:1; font-size:10px; background:#6c5ce7; color:white; padding:6px 2px; text-align:center;">📍 記 Cue</button>
+            <button class="btn-compact" id="btnJumpCueB" onclick="jumpToDeckCue('B')" style="flex:1.2; font-size:10px; background:#d63031; color:white; padding:6px 2px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">🔥 爆 Cue (00:00)</button>
           </div>
           <audio id="deckBPlayer" loop></audio>
         </div>
       </div>
 
-      <!-- 🔄 140 BPM 雙模式過歌掣 -->
-      <div style="display:flex; gap:6px; margin-top:10px;">
+      <div style="display:flex; gap:6px; margin-bottom:8px;">
+        <button class="btn-compact btn-grid" onclick="syncBpmBtoA()" style="flex:1; padding:8px;">⚡ SYNC 自動對拍 (B 鎖定 A)</button>
+        <button class="btn-compact" id="btnCueToggle" onclick="toggleCueMode()" style="background:rgba(45, 52, 54, 0.9); color:#ffeaa7; padding:8px; border:1px solid #ffeaa7;">🎧 預聽模式 (關)</button>
+      </div>
+
+      <div id="cuePanel" style="display:none; background:rgba(0,0,0,0.4); border-radius:10px; padding:8px; margin-bottom:8px; border:1px dashed #fd79a8;">
+        <div class="mixer-channel" style="margin-bottom:0;">
+          <label style="color:#fd79a8;">🎧 右耳耳機 Cue 音量：</label>
+          <input type="range" id="volCue" min="0" max="2" step="0.05" value="1.0" oninput="updateCrossfader(document.getElementById('crossfader').value)">
+        </div>
+      </div>
+
+      <div class="mixer-channel">
+        <label>🎚️ Crossfader (A ◀ 淡入/淡出 ▶ B)：</label>
+        <input type="range" id="crossfader" min="0" max="1" step="0.02" value="0.5" oninput="updateCrossfader(this.value)">
+        <div class="meter-bar"><div class="meter-fill" id="meterCrossfader" style="width:50%;"></div></div>
+      </div>
+
+      <div style="display:flex; gap:6px; margin-top:6px;">
         <button class="btn-compact btn-slide" onclick="autoCrossfade(3430)" style="flex:1; padding:10px 0; background:#6c5ce7;">
           🔄 2 Bars (3.4s 快切)
         </button>
@@ -179,72 +341,151 @@
           🔄 4 Bars (6.9s 順滑)
         </button>
       </div>
-      <input type="range" id="crossfader" min="0" max="1" step="0.02" value="0.5" oninput="updateCrossfader(this.value)" style="margin-top:8px; width:100%;">
     </div>
   </div>
-  <!-- ==========================================
-       📚 index.html [PART 4/4]
-       Chapter 7: 24 宮格鼓組 | Chapter 8: Mixer | Chapter 9: RPG Save
-       ========================================== -->
-
-  <!-- [Chapter 7: 24 宮格 DJ 鼓組 + 真貓語 #foldPadUnified] -->
+  <!-- [3.7] Chapter 7: 24 宮格 DJ 鼓組 + 真貓語 (#foldPadUnified) -->
   <div class="section-title-btn" onclick="toggleFold('foldPadUnified')">
     <div>
-      <span class="title-mixer">🥁 24 宮格 DJ 鼓組 + 🐱 真貓語 Soundboard</span>
-      <span class="sub-tip">💡 onmousedown 秒響零延遲 ‧ 多點觸控 Polyphonic 防死火！</span>
+      <span class="title-mixer">🥁 24 宮格古早 DJ 鼓組 + 🐱 真貓語 Soundboard</span>
+      <span class="sub-tip">💡 上層 12 格古早 DJ 多聲道狂打 + 下層 12 格精選貓語 Soundboard！</span>
     </div>
     <span class="fold-arrow" id="arrowPadUnified">▼ 展開</span>
   </div>
   <div class="fold-content" id="foldPadUnified">
     <div class="dj-box">
-      <div class="dj-grid">
-        <div class="dj-pad" onmousedown="playPolyphonicDrum('kick')"><span>🥁</span>Kick</div>
-        <div class="dj-pad" onmousedown="playPolyphonicDrum('snare')"><span>🪘</span>Snare</div>
-        <div class="dj-pad" onmousedown="playPolyphonicDrum('hihat')"><span>💥</span>Hi-Hat</div>
-        <div class="dj-pad" onmousedown="playPolyphonicDrum('crash')"><span>✨</span>Crash</div>
+      <div style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 4px;">
+        🥁 12 大粒古早 DJ / 鼓組 / 琶音 SoundPad (支援多鍵狂打)：
       </div>
-      <div class="sound-grid" id="soundGrid" style="margin-top:10px;"></div>
+      <div class="dj-grid">
+        <div class="dj-pad appraisal" onmousedown="playPolyphonicDrum('yeah')"><span>🔥</span>Yeah!</div>
+        <div class="dj-pad appraisal" onmousedown="playPolyphonicDrum('go')"><span>🚀</span>Let's Go</div>
+        <div class="dj-pad appraisal" onmousedown="playPolyphonicDrum('check')"><span>🗣️</span>Check It</div>
+
+        <div class="dj-pad" onmousedown="playPolyphonicDrum('crash')"><span>✨</span>Crash</div>
+        <div class="dj-pad" onmousedown="playPolyphonicDrum('snare')"><span>🪘</span>Snare</div>
+        <div class="dj-pad" onmousedown="playPolyphonicDrum('kick')"><span>🥁</span>Kick</div>
+
+        <div class="dj-pad" onmousedown="playPolyphonicDrum('hihat')"><span>💥</span>Hi-Hat</div>
+        <div class="dj-pad" onmousedown="playPolyphonicDrum('tom')"><span>🥁</span>Tom</div>
+        <div class="dj-pad" onmousedown="playPolyphonicDrum('clap')"><span>👏</span>Clap</div>
+
+        <div class="dj-pad arp" onmousedown="playPolyphonicDrum('laser')"><span>🔫</span>Laser</div>
+        <div class="dj-pad arp" onmousedown="playPolyphonicDrum('stutter')"><span>⚡</span>Stutter</div>
+        <div class="dj-pad arp" onmousedown="playPolyphonicDrum('arpUp')"><span>🎹</span>Arp Up</div>
+      </div>
+
+      <div style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin: 14px 0 8px; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 4px;">
+        🐱 12 大粒精選真貓語 Soundboard (即點即播連擊特效)：
+      </div>
+      <div class="sound-grid" id="soundGrid"></div>
     </div>
   </div>
 
-  <!-- [Chapter 8: 聲音 MIXER 與介面主控台 #foldMixer] -->
+  <!-- [3.8] Chapter 8: 雙層獨立 MIXER 主控台 (#foldMixer) -->
   <div class="section-title-btn" onclick="toggleFold('foldMixer')">
-    <div><span class="title-mixer">🎛️ 聲音 MIXER 與介面主控台</span></div>
+    <div>
+      <span class="title-mixer">🎛️ 聲音 MIXER 與介面主控台</span>
+      <span class="sub-tip">💡 點擊展開：獨立調校大自然四音軌、主音量與能量條動態視效</span>
+    </div>
     <span class="fold-arrow" id="arrowMixer">▼ 展開</span>
   </div>
   <div class="fold-content" id="foldMixer">
     <div class="mixer-box">
+      <div class="mixer-title" style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 10px; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 4px;">
+        👑 上層：全站 Master 音量與介面主控
+      </div>
       <div class="mixer-channel">
-        <label>👑 全站 Master 音量：</label>
-        <input type="range" id="volMaster" min="0" max="1" step="0.05" value="1.0" oninput="updateGlobalMasterVolume()">
+        <label>🎛️ 介面不透明度 (<span id="opacityValDisplay" style="color:#ffeaa7;">45%</span>)：</label>
+        <input type="range" id="volOpacity" min="0" max="1" step="0.05" value="0.45" oninput="updatePanelOpacity(this.value)">
+        <div class="meter-bar"><div class="meter-fill" id="meterOpacity"></div></div>
       </div>
       <div class="mixer-channel">
         <label>🎵 背景 MP3：</label>
         <input type="range" id="volBgm" min="0" max="1" step="0.05" value="0.8" oninput="updateVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterBgm"></div></div>
       </div>
       <div class="mixer-channel">
         <label>🐱 貓貓真聲：</label>
         <input type="range" id="volCat" min="0" max="1" step="0.05" value="1.0" oninput="updateVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterCat"></div></div>
+      </div>
+      <div class="mixer-channel">
+        <label>🎬 影片原聲：</label>
+        <input type="range" id="volVideo" min="0" max="1" step="0.05" value="0.9" oninput="updateVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterVideo"></div></div>
+      </div>
+
+      <div class="mixer-title" style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin: 14px 0 10px; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 4px;">
+        🌿 下層：四路大自然環境音專用 Mixer
+      </div>
+      <div class="mixer-channel">
+        <label>🌊 海浪聲音量：</label>
+        <input type="range" id="volWave" min="0" max="1" step="0.05" value="0.7" oninput="updateNatureVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterWave"></div></div>
+      </div>
+      <div class="mixer-channel">
+        <label>🎐 風鈴聲音量：</label>
+        <input type="range" id="volWindbell" min="0" max="1" step="0.05" value="0.5" oninput="updateNatureVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterWindbell"></div></div>
+      </div>
+      <div class="mixer-channel">
+        <label>🌧️ 落雨聲音量：</label>
+        <input type="range" id="volRain" min="0" max="1" step="0.05" value="0.8" oninput="updateNatureVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterRain"></div></div>
+      </div>
+      <div class="mixer-channel">
+        <label>🌲 森林聲音量：</label>
+        <input type="range" id="volForest" min="0" max="1" step="0.05" value="0.6" oninput="updateNatureVolumes()">
+        <div class="meter-bar"><div class="meter-fill" id="meterForest" style="width: 60%;"></div></div>
       </div>
     </div>
   </div>
 
-  <!-- [Chapter 9: RPG 存檔管理與備份 #foldRPG] -->
+  <!-- [3.9] Chapter 9: RPG 存檔管理與備份 (#foldRPG) -->
   <div class="section-title-btn" onclick="toggleFold('foldRPG')">
-    <div><span>💾 貓貓助手 RPG 存檔管理 (1 鍵 Save/Load)</span></div>
+    <div>
+      <span>💾 貓貓助手 RPG 存檔管理 (全機數據 1 鍵 Save/Load)</span>
+      <span class="sub-tip">💡 點擊展開：匯出/匯入全機相簿、歌單與介面設定檔</span>
+    </div>
     <span class="fold-arrow" id="arrowRPG">▼ 展開</span>
   </div>
   <div class="fold-content" id="foldRPG">
-    <div class="save-box" style="padding:10px; display:flex; gap:8px;">
-      <button class="btn-compact btn-rpg-save" onclick="exportFullRPGSave()" style="background:#2ecc71; color:white; flex:1; padding:10px;">📤 匯出 RPG Save 檔</button>
-      <label class="btn-compact btn-rpg-load" for="rpgLoadInput" style="background:#9b59b6; color:white; flex:1; padding:10px; text-align:center;">📥 讀取 RPG Save 檔</label>
+    <div class="save-box" style="padding: 10px; border-radius: 12px; margin-bottom: 10px; display: flex; gap: 8px; background: rgba(0,0,0,0.35);">
+      <button class="btn-compact btn-rpg-save" onclick="exportFullRPGSave()" style="background: rgba(46, 204, 161, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px;">📤 匯出 RPG Save 檔</button>
+      <label class="btn-compact btn-rpg-load" for="rpgLoadInput" style="background: rgba(155, 89, 182, 0.9); color: white; border: 1px solid rgba(255,255,255,0.4); flex: 1; padding: 10px; font-size: 12px; text-align:center;">📥 讀取 RPG Save 檔</label>
       <input type="file" id="rpgLoadInput" accept=".json" style="display:none;" onchange="importFullRPGSave(event)">
     </div>
   </div>
 
+  <div class="notice-card">
+    <h4>⚠️ 終極溫馨提示</h4>
+    <p>
+      清快取或 Delete 快取資料會搞到啲相消失㗎！<br>
+      請大家善用上面嘅 <b>「RPG 存檔系統」</b> 定時 Save 檔，<br><br>
+      咁就可以永久保存晒啲靚靚相同歌單，唔怕遺失啦！✨
+    </p>
+  </div>
+
   <div class="toast-box" id="toast"></div>
 
-  <div style="text-align:center; color:rgba(255,255,255,0.85); font-size:10px; font-weight:bold; margin-top:20px;">
+  <div class="lightbox" id="lightbox">
+    <span class="close-btn" onclick="closeLightbox()">&times;</span>
+    <div id="lightboxContent"></div>
+    <div class="lightbox-controls">
+      <button class="slide-btn" onclick="prevSlide()">◀</button>
+      <button class="slide-btn" id="playPauseBtn" onclick="toggleSlideshowPlay()">⏸️</button>
+      <button class="slide-btn" onclick="nextSlide()">▶</button>
+      <button class="slide-btn" style="width:auto; padding:0 12px; border-radius:20px; font-size:12px; background:#00b894;" onclick="setLightboxImgAsWallpaper()">🖼️ 設為壁紙</button>
+      <div class="speed-btn-group">
+        <button class="speed-btn" id="spd3" onclick="setSlideshowSpeed(3000)">3秒</button>
+        <button class="speed-btn active" id="spd6" onclick="setSlideshowSpeed(6000)">6秒</button>
+        <button class="speed-btn" id="spd10" onclick="setSlideshowSpeed(10000)">10秒</button>
+      </div>
+    </div>
+    <p id="lightboxCaption"></p>
+  </div>
+
+  <div style="text-align: center; color: rgba(255,255,255,0.85); font-size: 10px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; text-shadow: 0px 0px 3px rgba(44, 24, 16, 0.9);">
     © 2026 Heidiz & Gemini P-Chan Production. All Rights Reserved.
   </div>
 

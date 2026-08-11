@@ -313,16 +313,16 @@
           <div id="deckAName" style="font-size:11px; color:#fab1a0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px;">(未載入歌曲)</div>
           <div class="bpm-display" id="deckABpm">124.0 BPM</div>
           <input type="range" class="pitch-slider" id="deckAPitch" min="0.9" max="1.1" step="0.01" value="1.0" oninput="updateDeckPitch('A', this.value)">
-          <div style="display:flex; gap:4px; justify-content:center; margin-top:6px; flex-wrap:wrap;">
-            <label class="btn-compact btn-add" for="deckAInput" style="font-size:11px; padding:6px 8px;">📂 載入 A</label>
+          <div style="display:flex; gap:3px; justify-content:center; margin-top:6px;">
+            <label class="btn-compact btn-add" for="deckAInput" style="font-size:10px; padding:6px 4px; flex:1;">📂 載入 A</label>
             <input type="file" id="deckAInput" accept="audio/*" style="display:none;" onchange="loadDeckTrack('A', event)">
-            <button class="btn-compact btn-add" onclick="playDeck('A')">▶️ Play</button>
-            <button class="btn-compact btn-del" onclick="pauseDeck('A')">⏸️</button>
+            <button class="btn-compact btn-add" onclick="playDeck('A')" style="font-size:10px; padding:6px 4px; flex:1;">▶️ PLAY</button>
+            <button class="btn-compact btn-del" onclick="pauseDeck('A')" style="font-size:10px; padding:6px 4px; flex:0.6;">⏸️</button>
           </div>
-          <!-- 📍 Deck A Hot Cue 副歌按鈕組 -->
-          <div style="display:flex; gap:4px; margin-top:6px;">
-            <button class="btn-compact" onclick="setDeckCue('A')" style="flex:1; font-size:10px; background:#6c5ce7; color:white; padding:5px 2px;">📍 記低 Chorus</button>
-            <button class="btn-compact" id="btnJumpCueA" onclick="jumpToDeckCue('A')" style="flex:1.2; font-size:10px; background:#d63031; color:white; padding:5px 2px;">🔥 爆 Chorus (00:00)</button>
+          <!-- 📍 Deck A 精簡版 Hot Cue 按鈕組 -->
+          <div style="display:flex; gap:3px; margin-top:6px;">
+            <button class="btn-compact" onclick="setDeckCue('A')" style="flex:1; font-size:10px; background:#6c5ce7; color:white; padding:6px 2px; text-align:center;">📍 記 Cue</button>
+            <button class="btn-compact" id="btnJumpCueA" onclick="jumpToDeckCue('A')" style="flex:1.2; font-size:10px; background:#d63031; color:white; padding:6px 2px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">🔥 爆 Cue (00:00)</button>
           </div>
           <audio id="deckAPlayer" loop></audio>
         </div>
@@ -333,16 +333,16 @@
           <div id="deckBName" style="font-size:11px; color:#74b9ff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px;">(未載入歌曲)</div>
           <div class="bpm-display" id="deckBBpm">120.0 BPM</div>
           <input type="range" class="pitch-slider" id="deckBPitch" min="0.9" max="1.1" step="0.01" value="1.0" oninput="updateDeckPitch('B', this.value)">
-          <div style="display:flex; gap:4px; justify-content:center; margin-top:6px; flex-wrap:wrap;">
-            <label class="btn-compact btn-add" for="deckBInput" style="background:#0984e3; font-size:11px; padding:6px 8px;">📂 載入 B</label>
+          <div style="display:flex; gap:3px; justify-content:center; margin-top:6px;">
+            <label class="btn-compact btn-add" for="deckBInput" style="background:#0984e3; font-size:10px; padding:6px 4px; flex:1;">📂 載入 B</label>
             <input type="file" id="deckBInput" accept="audio/*" style="display:none;" onchange="loadDeckTrack('B', event)">
-            <button class="btn-compact btn-add" onclick="playDeck('B')">▶️ Play</button>
-            <button class="btn-compact btn-del" onclick="pauseDeck('B')">⏸️</button>
+            <button class="btn-compact btn-add" onclick="playDeck('B')" style="font-size:10px; padding:6px 4px; flex:1;">▶️ PLAY</button>
+            <button class="btn-compact btn-del" onclick="pauseDeck('B')" style="font-size:10px; padding:6px 4px; flex:0.6;">⏸️</button>
           </div>
-          <!-- 📍 Deck B Hot Cue 副歌按鈕組 -->
-          <div style="display:flex; gap:4px; margin-top:6px;">
-            <button class="btn-compact" onclick="setDeckCue('B')" style="flex:1; font-size:10px; background:#6c5ce7; color:white; padding:5px 2px;">📍 記低 Chorus</button>
-            <button class="btn-compact" id="btnJumpCueB" onclick="jumpToDeckCue('B')" style="flex:1.2; font-size:10px; background:#d63031; color:white; padding:5px 2px;">🔥 爆 Chorus (00:00)</button>
+          <!-- 📍 Deck B 精簡版 Hot Cue 按鈕組 -->
+          <div style="display:flex; gap:3px; margin-top:6px;">
+            <button class="btn-compact" onclick="setDeckCue('B')" style="flex:1; font-size:10px; background:#6c5ce7; color:white; padding:6px 2px; text-align:center;">📍 記 Cue</button>
+            <button class="btn-compact" id="btnJumpCueB" onclick="jumpToDeckCue('B')" style="flex:1.2; font-size:10px; background:#d63031; color:white; padding:6px 2px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">🔥 爆 Cue (00:00)</button>
           </div>
           <audio id="deckBPlayer" loop></audio>
         </div>
@@ -351,10 +351,10 @@
       <!-- 🎧 獨立 Cue 預聽模式與按鈕區 -->
       <div style="display:flex; gap:6px; margin-bottom:8px;">
         <button class="btn-compact btn-grid" onclick="syncBpmBtoA()" style="flex:1; padding:8px;">⚡ SYNC 自動對拍 (B 鎖定 A)</button>
-        <button class="btn-compact" id="btnCueToggle" onclick="toggleCueMode()" style="background:rgba(45, 52, 54, 0.9); color:#ffeaa7; padding:8px; border:1px solid #ffeaa7;">🎧 預聽模式 (關閉)</button>
+        <button class="btn-compact" id="btnCueToggle" onclick="toggleCueMode()" style="background:rgba(45, 52, 54, 0.9); color:#ffeaa7; padding:8px; border:1px solid #ffeaa7;">🎧 預聽模式 (關)</button>
       </div>
 
-      <!-- 🎧 獨立耳機音量控制板 (點擊預聽模式時展開) -->
+      <!-- 🎧 獨立耳機音量控制板 -->
       <div id="cuePanel" style="display:none; background:rgba(0,0,0,0.4); border-radius:10px; padding:8px; margin-bottom:8px; border:1px dashed #fd79a8;">
         <div class="mixer-channel" style="margin-bottom:0;">
           <label style="color:#fd79a8;">🎧 右耳耳機 Cue 音量：</label>

@@ -479,11 +479,11 @@ function loadDeckTrack(deck, event) {
     if (deck === 'A') { 
       deckACueTime = 0; 
       const btn = document.getElementById('btnJumpCueA');
-      if(btn) btn.innerText = "🔥 爆 Chorus (00:00)"; 
+      if(btn) btn.innerText = "🔥 爆 Cue (00:00)"; 
     } else { 
       deckBCueTime = 0; 
       const btn = document.getElementById('btnJumpCueB');
-      if(btn) btn.innerText = "🔥 爆 Chorus (00:00)"; 
+      if(btn) btn.innerText = "🔥 爆 Cue (00:00)"; 
     }
     showToast(`✅ Deck ${deck} 已載入：${file.name}`);
     updateCrossfader(document.getElementById('crossfader') ? document.getElementById('crossfader').value : 0.5);
@@ -503,15 +503,15 @@ function setDeckCue(deck) {
     if (deck === 'A') {
       deckACueTime = time;
       const btn = document.getElementById('btnJumpCueA');
-      if(btn) btn.innerText = `🔥 爆 Chorus (${timeStr})`;
+      if(btn) btn.innerText = `🔥 爆 Cue (${timeStr})`;
     } else {
       deckBCueTime = time;
       const btn = document.getElementById('btnJumpCueB');
-      if(btn) btn.innerText = `🔥 爆 Chorus (${timeStr})`;
+      if(btn) btn.innerText = `🔥 爆 Cue (${timeStr})`;
     }
-    showToast(`📍 已成功記低 Deck ${deck} 副歌時間點：${timeStr}`);
+    showToast(`📍 已記低 Deck ${deck} Cue 點：${timeStr}`);
   } else {
-    showToast(`⚠️ Deck ${deck} 尚未載入歌曲！`);
+    showToast(`⚠️ Deck ${deck} 未載入歌曲！`);
   }
 }
 
@@ -523,9 +523,9 @@ function jumpToDeckCue(deck) {
     const targetTime = deck === 'A' ? deckACueTime : deckBCueTime;
     player.currentTime = targetTime;
     if (player.paused) player.play();
-    showToast(`🔥 Deck ${deck} 已秒速切入副歌唱段！`);
+    showToast(`🔥 Deck ${deck} 秒速切入 Cue 點！`);
   } else {
-    showToast(`⚠️ Deck ${deck} 尚未載入歌曲！`);
+    showToast(`⚠️ Deck ${deck} 未載入歌曲！`);
   }
 }
 
@@ -553,7 +553,7 @@ function syncBpmBtoA() {
   const sliderB = document.getElementById('deckBPitch');
   if (sliderB) sliderB.value = targetRate;
   updateDeckPitch('B', targetRate);
-  showToast("⚡ 已將 Deck B 速度自動鎖定至 Deck A (" + deckABpmVal + " BPM)！");
+  showToast("⚡ 已將 Deck B 速度鎖定至 Deck A (" + deckABpmVal + " BPM)！");
 }
 
 /* ▶️ ⏸️ 雙 Deck 獨立播放控制 */
@@ -565,7 +565,7 @@ function playDeck(deck) {
       showToast("▶️ 開始播放 Deck " + deck);
     }).catch(e => showToast("❌ 請先載入歌曲到 Deck " + deck));
   } else {
-    showToast("⚠️ Deck " + deck + " 尚未載入歌曲！");
+    showToast("⚠️ Deck " + deck + " 未載入歌曲！");
   }
 }
 
@@ -586,13 +586,13 @@ function toggleCueMode() {
   const panel = document.getElementById('cuePanel');
   
   if (btn) {
-    btn.innerText = isCueMode ? "🎧 Cue Mode (開啟中)" : "🎧 預聽模式 (關閉)";
+    btn.innerText = isCueMode ? "🎧 Cue Mode (開)" : "🎧 預聽模式 (關)";
     btn.style.background = isCueMode ? "#e84393" : "rgba(45, 52, 54, 0.9)";
   }
   if (panel) panel.style.display = isCueMode ? "block" : "none";
   
   updateCrossfader(document.getElementById('crossfader') ? document.getElementById('crossfader').value : 0.5);
-  showToast(isCueMode ? "🎧 預聽模式：Deck A 走左耳大喇叭 ‧ Deck B 走右耳耳機！" : "📻 還原標準雙聲道混音模式");
+  showToast(isCueMode ? "🎧 預聽模式：Deck A 走大喇叭 ‧ Deck B 走耳機！" : "📻 還原標準混音模式");
 }
 
 /* 🎚️ Crossfader 雙軌立體聲混音 */

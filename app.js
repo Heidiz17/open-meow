@@ -569,11 +569,12 @@ function autoCrossfade(durationMs = 3430) {
 }
 /* --------------------------------------------------------------------------
 /* --------------------------------------------------------------------------
-   4a. [12 古早 MP3 真音效 DSP 0延遲 RAM 預載引擎 + 2.0 狂暴模式]
+   4a. [12 古早 MP3 真音效 DSP 0延遲 RAM 預載引擎 + 乾淨 Cut-Off 0連音 + 2.0 狂暴模式]
    -------------------------------------------------------------------------- */
 const soundBuffers = {}; // 存放解碼後嘅 RAM 音效
+const activeSources = {}; // 🛡️ 紀錄現時播放中嘅音源，用於極速 Cut-off 防黏連
 
-// 💡 100% 跟足古早 test：讀取並解碼 12 個 MP3 檔存入 RAM
+// 💡 讀取並解碼 12 個 MP3 檔存入 RAM
 async function loadAndDecodeFiles(event) {
   const files = event.target.files;
   if (!files.length) return;
@@ -631,7 +632,7 @@ async function autoFetchMp3s() {
 }
 autoFetchMp3s();
 
-// ⚡ 0 延遲發聲核心 + 2.0 狂暴模式
+// ⚡ 0 延遲發聲核心 + 乾淨 Cut-Off 0連聲 + 2.0 狂暴模式
 function playSynthSound(type, event) {
   if (event) event.preventDefault();
   playUiSound('click');
@@ -641,6 +642,14 @@ function playSynthSound(type, event) {
     const now = ctx.currentTime;
     const multiplier = isSuperBoostActive ? 2.0 : 1.0;
     
+    // ✂️ 【關鍵升級】：如果同一個鼓/音效上一次未播完，即刻強制 Cut 掉，防止低頻 Kick / Tom 黏連爆音！
+    if (activeSources[type]) {
+      try {
+        activeSources[type].stop(now);
+        activeSources[type].disconnect();
+      } catch (err) {}
+    }
+
     const padGain = ctx.createGain();
     padGain.gain.setValueAtTime(0.8 * multiplier, now);
     
@@ -660,6 +669,10 @@ function playSynthSound(type, event) {
       source.buffer = soundBuffers[type];
       source.connect(padGain);
       source.start(now);
+      
+      // 記低現時呢個音源，供下次點擊時自動 Cut-off
+      activeSources[type] = source;
+
       showToast(`🥁 12 古早 MP3 打擊：${type.toUpperCase()} ${isSuperBoostActive ? '(💥 2.0x)' : ''}`);
     } else {
       showToast(`⚠️ 尚未載入【${type}】MP3！請點右上角「📁 載入 12 MP3」`);
@@ -674,6 +687,7 @@ function showToast(msg) {
   const toast = document.getElementById('toast'); toast.innerHTML = msg; toast.style.display = 'block';
   clearTimeout(toastTimer); toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
 }
+
 
 /* --------------------------------------------------------------------------
    4b. [RPG Save System, Album Management & Wallpaper Controls]

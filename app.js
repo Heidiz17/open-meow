@@ -568,11 +568,50 @@ function autoCrossfade(durationMs = 3430) {
   }, intervalTime);
 }
 /* --------------------------------------------------------------------------
-   4a. [12 DSP Multi-Touch Synth Engine with 2.0 Super Boost Mode]
+/* --------------------------------------------------------------------------
+   4a. [12 古早 MP3 真音效 DSP 零延遲引擎 + 2.0 狂暴模式]
    -------------------------------------------------------------------------- */
-function playSynthSound(type, event) {
+const mp3SoundFiles = {
+  yeah: "yeah.mp3",
+  go: "go.mp3",
+  check: "check.mp3",
+  crash: "crash.mp3",
+  snare: "snare.mp3",
+  kick: "kick.mp3",
+  clap: "clap.mp3",
+  tom: "tom.mp3",
+  hihat: "hihat.mp3",
+  laser: "laser.mp3",
+  stutter: "stutter.mp3",
+  arpUp: "arpup.mp3"
+};
+
+const audioBufferCache = {};
+
+// ⚡ 預載 MP3 到 Web Audio DSP Memory，實現 0 延遲即點即發聲
+async function loadMp3AudioBuffer(type) {
+  if (audioBufferCache[type]) return audioBufferCache[type];
+  try {
+    const ctx = getAudioContext();
+    const filePath = mp3SoundFiles[type];
+    if (!filePath) return null;
+    const response = await fetch(filePath);
+    const arrayBuffer = await response.arrayBuffer();
+    const decodedData = await ctx.decodeAudioData(arrayBuffer);
+    audioBufferCache[type] = decodedData;
+    return decodedData;
+  } catch (e) {
+    console.log("MP3 載入失敗/降級處理：", type, e);
+    return null;
+  }
+}
+
+// 預先載入所有 12 個 MP3 檔案
+Object.keys(mp3SoundFiles).forEach(type => loadMp3AudioBuffer(type));
+
+async function playSynthSound(type, event) {
   if (event) {
-    event.preventDefault(); // 防止手機長按選取或縮放
+    event.preventDefault(); // 防止手機長按或雙擊畫面縮放
   }
   playUiSound('click');
   
@@ -580,13 +619,13 @@ function playSynthSound(type, event) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     
-    // 💥 計算 2.0 狂暴模式增益倍率
+    // 💥 2.0 狂暴模式增益 (標準 1.0x，狂暴 2.0x)
     const multiplier = isSuperBoostActive ? 2.0 : 1.0;
     
     const padGain = ctx.createGain();
-    padGain.gain.setValueAtTime(0.6 * multiplier, now);
+    padGain.gain.setValueAtTime(0.8 * multiplier, now);
     
-    // 🛡️ 專業動態限幅器 (Limiter)，確保狂暴 2.0x 唔會爆音損壞喇叭
+    // 🛡️ 防爆動態限幅器 (Limiter)，確保 2.0 狂暴打鼓唔會爆音損壞喇叭
     const limiter = ctx.createDynamicsCompressor();
     limiter.threshold.setValueAtTime(-6, now);
     limiter.knee.setValueAtTime(0, now);
@@ -597,103 +636,30 @@ function playSynthSound(type, event) {
     padGain.connect(limiter);
     limiter.connect(djMasterGain || ctx.destination);
 
-    if (type === 'yeah' || type === 'go' || type === 'check') {
+    // 嘗試讀取已預載嘅真實 MP3 Buffer
+    const buffer = await loadMp3AudioBuffer(type);
+
+    if (buffer) {
+      // 🚀 優先使用 MP3 真音效發聲 (0 延遲 BufferSource)
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(padGain);
+      source.start(now);
+    } else {
+      // 🔄 備用方案：如未搵到 MP3 則自動使用 DSP 備用發聲
       const osc = ctx.createOscillator();
       osc.type = 'sawtooth';
-      const startFreq = type === 'yeah' ? 400 : (type === 'go' ? 600 : 300);
-      osc.frequency.setValueAtTime(startFreq, now);
-      osc.frequency.exponentialRampToValueAtTime(startFreq * 1.5, now + 0.15);
-      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-      osc.connect(padGain); osc.start(now); osc.stop(now + 0.2);
-
-    } else if (type === 'kick') {
-      const osc = ctx.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(130, now);
-      osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.15);
-      padGain.gain.setValueAtTime(0.9 * multiplier, now);
+      osc.frequency.setValueAtTime(300, now);
       padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-      osc.connect(padGain); osc.start(now); osc.stop(now + 0.15);
-
-    } else if (type === 'snare') {
-      const osc = ctx.createOscillator();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(180, now);
-      padGain.gain.setValueAtTime(0.7 * multiplier, now);
-      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-      osc.connect(padGain); osc.start(now); osc.stop(now + 0.1);
-
-    } else if (type === 'hihat') {
-      const osc = ctx.createOscillator();
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(8000, now);
-      padGain.gain.setValueAtTime(0.3 * multiplier, now);
-      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-      osc.connect(padGain); osc.start(now); osc.stop(now + 0.05);
-
-    } else if (type === 'crash') {
-      const osc = ctx.createOscillator();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(5000, now);
-      osc.frequency.exponentialRampToValueAtTime(1000, now + 0.4);
-      padGain.gain.setValueAtTime(0.5 * multiplier, now);
-      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-      osc.connect(padGain); osc.start(now); osc.stop(now + 0.4);
-
-    } else if (type === 'tom') {
-      const osc = ctx.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(220, now);
-      osc.frequency.exponentialRampToValueAtTime(60, now + 0.2);
-      padGain.gain.setValueAtTime(0.8 * multiplier, now);
-      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-      osc.connect(padGain); osc.start(now); osc.stop(now + 0.2);
-
-    } else if (type === 'clap') {
-      const osc = ctx.createOscillator();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(1000, now);
-      padGain.gain.setValueAtTime(0.6 * multiplier, now);
-      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-      osc.connect(padGain); osc.start(now); osc.stop(now + 0.08);
-
-    } else if (type === 'laser') {
-      const osc = ctx.createOscillator();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(1500, now);
-      osc.frequency.exponentialRampToValueAtTime(100, now + 0.18);
-      padGain.gain.setValueAtTime(0.5 * multiplier, now);
-      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
-      osc.connect(padGain); osc.start(now); osc.stop(now + 0.18);
-
-    } else if (type === 'stutter') {
-      for (let i = 0; i < 3; i++) {
-        const osc = ctx.createOscillator();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(800, now + (i * 0.04));
-        const subGain = ctx.createGain();
-        subGain.gain.setValueAtTime(0.4 * multiplier, now + (i * 0.04));
-        subGain.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.04) + 0.03);
-        osc.connect(subGain); subGain.connect(limiter);
-        osc.start(now + (i * 0.04)); osc.stop(now + (i * 0.04) + 0.03);
-      }
-
-    } else if (type === 'arpUp') {
-      const freqs = [523.25, 659.25, 783.99, 1046.50];
-      freqs.forEach((f, i) => {
-        const osc = ctx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(f, now + (i * 0.05));
-        const subGain = ctx.createGain();
-        subGain.gain.setValueAtTime(0.3 * multiplier, now + (i * 0.05));
-        subGain.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.05) + 0.1);
-        osc.connect(subGain); subGain.connect(limiter);
-        osc.start(now + (i * 0.05)); osc.stop(now + (i * 0.05) + 0.1);
-      });
+      osc.connect(padGain);
+      osc.start(now);
+      osc.stop(now + 0.15);
     }
-  } catch(e) { console.log("Audio Synth Error: ", e); }
+  } catch(e) {
+    console.log("Play Sound Error: ", e);
+  }
 
-  showToast(`🥁 12 古早擊打：${type.toUpperCase()} ${isSuperBoostActive ? '(💥 2.0x)' : ''}`);
+  showToast(`🥁 12 古早 MP3 打擊：${type.toUpperCase()} ${isSuperBoostActive ? '(💥 2.0x)' : ''}`);
 }
 
 let toastTimer;
@@ -701,6 +667,7 @@ function showToast(msg) {
   const toast = document.getElementById('toast'); toast.innerHTML = msg; toast.style.display = 'block';
   clearTimeout(toastTimer); toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
 }
+
 /* --------------------------------------------------------------------------
    4b. [RPG Save System, Album Management & Wallpaper Controls]
    -------------------------------------------------------------------------- */

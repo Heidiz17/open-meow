@@ -1,15 +1,28 @@
 /* ==========================================================================
-   🐾 OPEN 貓貓助手 - 全局 JavaScript 邏輯主體 (app.js) - 終極防護版
+   🐾 OPEN 貓貓助手 - 全局 JavaScript 邏輯主體 (app.js) - 終極升級整合版
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   🛡️ [Security & Anti-Theft] - 防盜防複製防右鍵鎖
+   🛡️ [Security & Autoplay Prevention] - 防盜鎖與強制防自動播歌機制
    -------------------------------------------------------------------------- */
 document.addEventListener('contextmenu', event => event.preventDefault());
 document.addEventListener('keydown', event => {
   if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J')) || (event.ctrlKey && event.key === 'U')) {
     event.preventDefault();
   }
+});
+
+// 🛡️ 強制所有音訊與 MP3 預設暫停，防止開機亂自動播歌
+window.addEventListener('DOMContentLoaded', () => {
+  const bgPlayer = document.getElementById('bgPlayer');
+  if (bgPlayer) {
+    bgPlayer.pause();
+    bgPlayer.currentTime = 0;
+  }
+  document.querySelectorAll('audio').forEach(audio => {
+    audio.pause();
+  });
+  console.log("🛡️ 防自動播歌機制已啟動：所有音訊已鎖定暫停。");
 });
 
 /* --------------------------------------------------------------------------
@@ -82,6 +95,7 @@ function toggleAllFolds() {
   }
   showToast(isAllFolded ? "📂 已一鍵展開所有區域！" : "📁 已一鍵收縮還原！");
 }
+
 let fontScaleLevel = 0;
 function toggleFontSize() {
   playUiSound('click');
@@ -109,12 +123,12 @@ function toggleFontTheme() {
   if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "fontTheme", val: isJp ? "jp" : "hk" });
 }
 function loadSavedFontTheme() { const req = db.transaction("settings", "readonly").objectStore("settings").get("fontTheme"); req.onsuccess = function() { if (req.result && req.result.val === "jp") document.body.classList.add('jp-font'); }; }
-
 /* --------------------------------------------------------------------------
-   2. [Web Audio API Synthesizer] - 聲道與點擊聲
+   2. [Web Audio API DSP Synthesizer] - 聲道、UI音效與 2.0 狂暴增益模式
    -------------------------------------------------------------------------- */
 let audioCtx = null;
 let djMasterGain = null;
+let isSuperBoostActive = false; // 💥 狂暴模式開關
 
 function getAudioContext() {
   if (!audioCtx) {
@@ -125,6 +139,17 @@ function getAudioContext() {
   }
   if (audioCtx.state === 'suspended') { audioCtx.resume(); }
   return audioCtx;
+}
+
+function toggleSuperBoost() {
+  playUiSound('click');
+  isSuperBoostActive = !isSuperBoostActive;
+  const btn = document.getElementById('btnSuperBoost');
+  if (btn) {
+    btn.innerText = isSuperBoostActive ? "💥 狂暴模式 (2.0x 啟動)" : "⚡ 標準模式 (1.0x)";
+    btn.style.background = isSuperBoostActive ? "#d63031" : "#00b894";
+  }
+  showToast(isSuperBoostActive ? "💥 狂暴模式已開啓：古早鼓組增益提升至 2.0 倍！" : "✨ 已還原至標準 1.0 倍立體聲");
 }
 
 function playUiSound(type) {
@@ -183,6 +208,84 @@ function toggleQuickRadio(e) {
     bgPlayer.pause(); if (btn) btn.innerText = "▶️ 播放"; showToast("⏸️ 已即時暫停播放");
   }
 }
+
+/* --------------------------------------------------------------------------
+   🎛️ [Logarithmic Volume Curve] - 攤開 0% 至 30% 靈敏區間
+   -------------------------------------------------------------------------- */
+function scaleLogarithmicVolume(sliderVal) {
+  const val = parseFloat(sliderVal);
+  return val * val; // 利用平滑對數轉化，將頭 30% 細細聲區間攤開
+}
+
+function toggleNatureSound(type) {
+  playUiSound('click');
+  const audio = document.getElementById('sound-' + type);
+  const btn = document.getElementById('btn-nature-' + type);
+  const names = { wave: '🌊 海浪聲', windbell: '🎐 風吹風鈴', rain: '🌧️ 雨夜聽雨', forest: '🌲 晨曦森林' };
+
+  if (audio.paused) {
+    updateNatureVolumes();
+    audio.play().then(() => {
+      btn.innerText = names[type] + ' (開)'; btn.style.boxShadow = "0 0 12px #ffeaa7"; btn.style.border = "1.5px solid #ffeaa7";
+      showToast("🌿 開始播放：" + names[type]);
+    }).catch(e => showToast("❌ 音效載入失敗！"));
+  } else {
+    audio.pause(); btn.innerText = names[type] + ' (關)'; btn.style.boxShadow = "none"; btn.style.border = "1px solid rgba(255,255,255,0.4)";
+    showToast("⏸️ 暫停：" + names[type]);
+  }
+}
+
+function updateGlobalMasterVolume() {
+  const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
+  if (document.getElementById('meterMaster')) document.getElementById('meterMaster').style.width = (globalMaster * 100) + "%";
+  const bgPlayer = document.getElementById('bgPlayer');
+  const bgmVolInput = document.getElementById('volBgm');
+  if (bgPlayer) {
+    const baseBgm = bgmVolInput ? scaleLogarithmicVolume(bgmVolInput.value) : 0.8;
+    bgPlayer.volume = baseBgm * globalMaster;
+  }
+  updateNatureVolumes();
+}
+
+function updateNatureVolumes() {
+  const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
+  ['wave', 'windbell', 'rain', 'forest'].forEach(type => {
+    const audio = document.getElementById('sound-' + type);
+    const volInput = document.getElementById('vol' + type.charAt(0).toUpperCase() + type.slice(1));
+    const meter = document.getElementById('meter' + type.charAt(0).toUpperCase() + type.slice(1));
+    if (volInput && audio) {
+      const mappedVol = scaleLogarithmicVolume(volInput.value);
+      audio.volume = mappedVol * globalMaster;
+      if (meter) meter.style.width = (volInput.value * 100) + "%";
+    }
+  });
+}
+
+function updatePanelOpacity(val) {
+  document.documentElement.style.setProperty('--panel-alpha', val); const blurVal = (val == 0) ? '0px' : '14px';
+  document.querySelectorAll('.section-title-btn, .album-controls, .music-box, .mixer-box, .sound-btn, .dj-box').forEach(el => {
+    el.style.backdropFilter = `blur(${blurVal})`; el.style.webkitBackdropFilter = `blur(${blurVal})`;
+  });
+  document.getElementById('opacityValDisplay').innerText = Math.round(val * 100) + "%";
+  if (document.getElementById('meterOpacity')) document.getElementById('meterOpacity').style.width = (val * 100) + "%";
+  if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "panelOpacity", val: val });
+}
+function loadSavedOpacity() { const req = db.transaction("settings", "readonly").objectStore("settings").get("panelOpacity"); req.onsuccess = function() { if (req.result) { const val = req.result.val; document.getElementById('volOpacity').value = val; updatePanelOpacity(val); } }; }
+
+function updateVolumes() {
+  const bgmVol = scaleLogarithmicVolume(document.getElementById('volBgm').value);
+  const catVol = scaleLogarithmicVolume(document.getElementById('volCat').value);
+  const videoVol = scaleLogarithmicVolume(document.getElementById('volVideo').value);
+  if (document.getElementById('bgPlayer')) document.getElementById('bgPlayer').volume = bgmVol;
+  if (currentCatAudio) currentCatAudio.volume = catVol;
+  if (currentActiveVideo) currentActiveVideo.volume = videoVol;
+  if (document.getElementById('meterBgm')) document.getElementById('meterBgm').style.width = (document.getElementById('volBgm').value * 100) + "%";
+  if (document.getElementById('meterCat')) document.getElementById('meterCat').style.width = (document.getElementById('volCat').value * 100) + "%";
+  if (document.getElementById('meterVideo')) document.getElementById('meterVideo').style.width = (document.getElementById('volVideo').value * 100) + "%";
+}
+/* --------------------------------------------------------------------------
+   3. [Bible, Cat Sounds, MP3 Playlist & Deck BPM Mixer System]
+   -------------------------------------------------------------------------- */
 let bibleData = null, isDrawingCard = false;
 async function loadVersesJSON() {
   try {
@@ -230,71 +333,6 @@ function drawBibleCardWithAnim() {
 }
 loadVersesJSON();
 
-function toggleNatureSound(type) {
-  playUiSound('click');
-  const audio = document.getElementById('sound-' + type);
-  const btn = document.getElementById('btn-nature-' + type);
-  const names = { wave: '🌊 海浪聲', windbell: '🎐 風吹風鈴', rain: '🌧️ 雨夜聽雨', forest: '🌲 晨曦森林' };
-
-  if (audio.paused) {
-    updateNatureVolumes();
-    audio.play().then(() => {
-      btn.innerText = names[type] + ' (開)'; btn.style.boxShadow = "0 0 12px #ffeaa7"; btn.style.border = "1.5px solid #ffeaa7";
-      showToast("🌿 開始播放：" + names[type]);
-    }).catch(e => showToast("❌ 音效載入失敗！"));
-  } else {
-    audio.pause(); btn.innerText = names[type] + ' (關)'; btn.style.boxShadow = "none"; btn.style.border = "1px solid rgba(255,255,255,0.4)";
-    showToast("⏸️ 暫停：" + names[type]);
-  }
-}
-
-function updateGlobalMasterVolume() {
-  const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
-  if (document.getElementById('meterMaster')) document.getElementById('meterMaster').style.width = (globalMaster * 100) + "%";
-  const bgPlayer = document.getElementById('bgPlayer');
-  const bgmVolInput = document.getElementById('volBgm');
-  if (bgPlayer) {
-    const baseBgm = bgmVolInput ? bgmVolInput.value : 0.8;
-    bgPlayer.volume = baseBgm * globalMaster;
-  }
-  updateNatureVolumes();
-}
-
-function updateNatureVolumes() {
-  const globalMaster = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
-  ['wave', 'windbell', 'rain', 'forest'].forEach(type => {
-    const audio = document.getElementById('sound-' + type);
-    const volInput = document.getElementById('vol' + type.charAt(0).toUpperCase() + type.slice(1));
-    const meter = document.getElementById('meter' + type.charAt(0).toUpperCase() + type.slice(1));
-    if (volInput && audio) {
-      audio.volume = volInput.value * globalMaster;
-      if (meter) meter.style.width = (volInput.value * 100) + "%";
-    }
-  });
-}
-
-function updatePanelOpacity(val) {
-  document.documentElement.style.setProperty('--panel-alpha', val); const blurVal = (val == 0) ? '0px' : '14px';
-  document.querySelectorAll('.section-title-btn, .album-controls, .music-box, .mixer-box, .sound-btn, .dj-box').forEach(el => {
-    el.style.backdropFilter = `blur(${blurVal})`; el.style.webkitBackdropFilter = `blur(${blurVal})`;
-  });
-  document.getElementById('opacityValDisplay').innerText = Math.round(val * 100) + "%";
-  if (document.getElementById('meterOpacity')) document.getElementById('meterOpacity').style.width = (val * 100) + "%";
-  if (db) db.transaction("settings", "readwrite").objectStore("settings").put({ key: "panelOpacity", val: val });
-}
-function loadSavedOpacity() { const req = db.transaction("settings", "readonly").objectStore("settings").get("panelOpacity"); req.onsuccess = function() { if (req.result) { const val = req.result.val; document.getElementById('volOpacity').value = val; updatePanelOpacity(val); } }; }
-
-function updateVolumes() {
-  const bgmVol = document.getElementById('volBgm').value;
-  const catVol = document.getElementById('volCat').value;
-  const videoVol = document.getElementById('volVideo').value;
-  if (document.getElementById('bgPlayer')) document.getElementById('bgPlayer').volume = bgmVol;
-  if (currentCatAudio) currentCatAudio.volume = catVol;
-  if (currentActiveVideo) currentActiveVideo.volume = videoVol;
-  if (document.getElementById('meterBgm')) document.getElementById('meterBgm').style.width = (bgmVol * 100) + "%";
-  if (document.getElementById('meterCat')) document.getElementById('meterCat').style.width = (catVol * 100) + "%";
-  if (document.getElementById('meterVideo')) document.getElementById('meterVideo').style.width = (videoVol * 100) + "%";
-}
 let db, currentAlbum = "default", currentCatAudio = null, currentActiveVideo = null, currentPresetIdx = 0;
 let albumMediaList = [], slideIndex = 0, slideTimer = null, isPlayingSlideshow = false, slideshowInterval = 6000;
 let musicList = [], currentTrackIdx = 0, playMode = 'sequence', pressTimer = null, touchStartX = 0, touchEndX = 0;
@@ -314,36 +352,6 @@ request.onsuccess = function(e) {
   loadAlbums(); loadMedia(); loadSavedMusic(); loadSavedWallpaper(); loadSavedOpacity(); loadSavedFontTheme(); initAlbumLongPress(); renderCatGrid();
   updateVolumes(); updateNatureVolumes();
 };
-
-function exportFullRPGSave() {
-  playUiSound('click'); showToast("⏳ 正在打包全機 RPG 存檔..."); const rpgData = { albums: [], media: [], music: [], settings: [] };
-  const tx = db.transaction(["albums", "media", "music", "settings"], "readonly");
-  tx.objectStore("albums").getAll().onsuccess = (e) => { rpgData.albums = e.target.result; };
-  tx.objectStore("media").getAll().onsuccess = (e) => { rpgData.media = e.target.result; };
-  tx.objectStore("music").getAll().onsuccess = (e) => { rpgData.music = e.target.result; };
-  tx.objectStore("settings").getAll().onsuccess = (e) => { rpgData.settings = e.target.result; };
-  tx.oncomplete = function() {
-    const jsonStr = JSON.stringify(rpgData); const blob = new Blob([jsonStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob); const a = document.createElement("a"); const dateStr = new Date().toISOString().slice(0,10);
-    a.href = url; a.download = `Meow_RPG_Save_${dateStr}.json`; a.click(); URL.revokeObjectURL(url); showToast("💾 成功下載全機 RPG 存檔！");
-  };
-}
-
-function importFullRPGSave(event) {
-  const file = event.target.files[0]; if (!file) return;
-  if (!confirm("⚠️ 讀取 RPG 存檔會覆蓋現有數據，確定要繼續？")) return;
-  const reader = new FileReader(); reader.onload = function(e) {
-    try {
-      const rpgData = JSON.parse(e.target.result); const tx = db.transaction(["albums", "media", "music", "settings"], "readwrite");
-      tx.objectStore("albums").clear(); tx.objectStore("media").clear(); tx.objectStore("music").clear(); tx.objectStore("settings").clear();
-      if (rpgData.albums) rpgData.albums.forEach(item => tx.objectStore("albums").add(item));
-      if (rpgData.media) rpgData.media.forEach(item => tx.objectStore("media").add(item));
-      if (rpgData.music) rpgData.music.forEach(item => tx.objectStore("music").add(item));
-      if (rpgData.settings) rpgData.settings.forEach(item => tx.objectStore("settings").add(item));
-      tx.oncomplete = function() { showToast("🎉 讀檔成功！即將刷新介面..."); setTimeout(() => { location.reload(); }, 1200); };
-    } catch (err) { alert("❌ 存檔格式錯誤！"); }
-  }; reader.readAsText(file); event.target.value = "";
-}
 
 const catSounds = [
   { name: "打招呼喵", emoji: "😺", desc: "奴才你返嚟啦！", file: "cat1.mp3" }, { name: "要罐罐喵", emoji: "🍖", desc: "快啲開罐罐！急需要！", file: "cat2.mp3" },
@@ -367,12 +375,15 @@ function renderCatGrid() {
 
 function playRealCatSound(item) {
   if (currentCatAudio) { currentCatAudio.pause(); currentCatAudio = null; }
-  currentCatAudio = new Audio('cat' + item.file.replace('cat', '')); currentCatAudio.volume = document.getElementById('volCat').value;
+  currentCatAudio = new Audio('cat' + item.file.replace('cat', ''));
+  currentCatAudio.volume = scaleLogarithmicVolume(document.getElementById('volCat').value);
   currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(e => {
-    currentCatAudio = new Audio(item.file); currentCatAudio.volume = document.getElementById('volCat').value;
+    currentCatAudio = new Audio(item.file);
+    currentCatAudio.volume = scaleLogarithmicVolume(document.getElementById('volCat').value);
     currentCatAudio.play().then(() => { showToast(`${item.emoji} ${item.name}：${item.desc}`); }).catch(err => { showToast(`🐾 貓語：${item.desc}`); });
   });
 }
+
 function uploadMusic(event) {
   const files = Array.from(event.target.files);
   if (files.length > 0) {
@@ -388,7 +399,7 @@ function uploadMusic(event) {
 function loadSavedMusic() {
   musicList = []; db.transaction("music", "readonly").objectStore("music").openCursor().onsuccess = function(e) {
     const cursor = e.target.result; if (cursor) { musicList.push({ id: cursor.key, name: cursor.value.name, src: cursor.value.src }); cursor.continue(); } 
-    else { renderPlaylist(); if (musicList.length > 0 && !document.getElementById('bgPlayer').src) { playTrack(0); } }
+    else { renderPlaylist(); }
   };
 }
 
@@ -408,13 +419,10 @@ function setPlayMode(mode) { playUiSound('click'); playMode = mode; document.get
 function handleTrackEnded() { if (musicList.length === 0) return; if (playMode === 'single-loop') playTrack(currentTrackIdx); else if (playMode === 'random') playTrack(Math.floor(Math.random() * musicList.length)); else playTrack((currentTrackIdx + 1) % musicList.length); }
 function deleteTrack(e, id) { e.stopPropagation(); if (confirm("確定刪除呢首歌？")) { const tx = db.transaction("music", "readwrite").objectStore("music").delete(id); tx.oncomplete = function() { loadSavedMusic(); showToast("🗑️ 已刪除！"); }; } }
 
-/* --------------------------------------------------------------------------
-   9. [Deck BPM Mixer System] - 140 BPM 基數 / 秒數跳動 / 2-Bar 4-Bar 平滑過歌
-   -------------------------------------------------------------------------- */
 let deckABpmVal = 140.0, deckBBpmVal = 140.0;
 let isCueMode = false;
 let deckACueTime = 0, deckBCueTime = 0;
-let isCrossfading = false; // 🛡️ 連擊防爆鎖標誌
+let isCrossfading = false;
 
 function formatTimeStr(secs) {
   if (isNaN(secs) || secs < 0) return "00:00";
@@ -450,6 +458,7 @@ function loadDeckTrack(deck, event) {
     updateCrossfader(document.getElementById('crossfader') ? document.getElementById('crossfader').value : 0.5);
   }
 }
+
 function setDeckCue(deck) {
   playUiSound('click');
   const player = document.getElementById(deck === 'A' ? 'deckAPlayer' : 'deckBPlayer');
@@ -518,8 +527,8 @@ function updateCrossfader(val) {
   const playerA = document.getElementById('deckAPlayer');
   const playerB = document.getElementById('deckBPlayer');
   const masterVol = document.getElementById('volMaster') ? document.getElementById('volMaster').value : 1.0;
-  const bgmVol = document.getElementById('volBgm') ? document.getElementById('volBgm').value : 0.8;
-  const cueVol = document.getElementById('volCue') ? document.getElementById('volCue').value : 1.0;
+  const bgmVol = document.getElementById('volBgm') ? scaleLogarithmicVolume(document.getElementById('volBgm').value) : 0.8;
+  const cueVol = document.getElementById('volCue') ? scaleLogarithmicVolume(document.getElementById('volCue').value) : 1.0;
   const baseVolume = masterVol * bgmVol;
   if (isCueMode) {
     if (playerA) playerA.volume = baseVolume * (1 - val);
@@ -533,7 +542,6 @@ function updateCrossfader(val) {
   if (document.getElementById('meterCrossfader')) document.getElementById('meterCrossfader').style.width = (val * 100) + "%";
 }
 
-/* 🛡️ 帶連擊防爆鎖嘅 Auto Crossfade */
 function autoCrossfade(durationMs = 3430) {
   if (isCrossfading) { showToast("⏳ 自動過歌中，請稍候..."); return; }
   playUiSound('click');
@@ -559,13 +567,12 @@ function autoCrossfade(durationMs = 3430) {
     }
   }, intervalTime);
 }
-
 /* --------------------------------------------------------------------------
-   🥁 [Web Audio API Multi-Touch Synth Engine] - 12 古早多點打擊引擎
+   4a. [12 DSP Multi-Touch Synth Engine with 2.0 Super Boost Mode]
    -------------------------------------------------------------------------- */
 function playSynthSound(type, event) {
   if (event) {
-    event.preventDefault(); // 防止手機長按或雙擊縮放
+    event.preventDefault(); // 防止手機長按選取或縮放
   }
   playUiSound('click');
   
@@ -573,10 +580,22 @@ function playSynthSound(type, event) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     
-    // 獨立音量控制，確保多點打擊（兩點/三點疊音）時唔會破音
+    // 💥 計算 2.0 狂暴模式增益倍率
+    const multiplier = isSuperBoostActive ? 2.0 : 1.0;
+    
     const padGain = ctx.createGain();
-    padGain.gain.setValueAtTime(0.6, now);
-    padGain.connect(djMasterGain || ctx.destination);
+    padGain.gain.setValueAtTime(0.6 * multiplier, now);
+    
+    // 🛡️ 專業動態限幅器 (Limiter)，確保狂暴 2.0x 唔會爆音損壞喇叭
+    const limiter = ctx.createDynamicsCompressor();
+    limiter.threshold.setValueAtTime(-6, now);
+    limiter.knee.setValueAtTime(0, now);
+    limiter.ratio.setValueAtTime(20, now);
+    limiter.attack.setValueAtTime(0.001, now);
+    limiter.release.setValueAtTime(0.05, now);
+
+    padGain.connect(limiter);
+    limiter.connect(djMasterGain || ctx.destination);
 
     if (type === 'yeah' || type === 'go' || type === 'check') {
       const osc = ctx.createOscillator();
@@ -585,83 +604,67 @@ function playSynthSound(type, event) {
       osc.frequency.setValueAtTime(startFreq, now);
       osc.frequency.exponentialRampToValueAtTime(startFreq * 1.5, now + 0.15);
       padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-      osc.connect(padGain);
-      osc.start(now);
-      osc.stop(now + 0.2);
+      osc.connect(padGain); osc.start(now); osc.stop(now + 0.2);
 
     } else if (type === 'kick') {
       const osc = ctx.createOscillator();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(130, now);
       osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.15);
-      padGain.gain.setValueAtTime(0.9, now);
+      padGain.gain.setValueAtTime(0.9 * multiplier, now);
       padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-      osc.connect(padGain);
-      osc.start(now);
-      osc.stop(now + 0.15);
+      osc.connect(padGain); osc.start(now); osc.stop(now + 0.15);
 
     } else if (type === 'snare') {
       const osc = ctx.createOscillator();
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(180, now);
-      padGain.gain.setValueAtTime(0.7, now);
+      padGain.gain.setValueAtTime(0.7 * multiplier, now);
       padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-      osc.connect(padGain);
-      osc.start(now);
-      osc.stop(now + 0.1);
+      osc.connect(padGain); osc.start(now); osc.stop(now + 0.1);
 
     } else if (type === 'hihat') {
       const osc = ctx.createOscillator();
       osc.type = 'square';
       osc.frequency.setValueAtTime(8000, now);
-      padGain.gain.setValueAtTime(0.3, now);
+      padGain.gain.setValueAtTime(0.3 * multiplier, now);
       padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-      osc.connect(padGain);
-      osc.start(now);
-      osc.stop(now + 0.05);
+      osc.connect(padGain); osc.start(now); osc.stop(now + 0.05);
 
     } else if (type === 'crash') {
       const osc = ctx.createOscillator();
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(5000, now);
       osc.frequency.exponentialRampToValueAtTime(1000, now + 0.4);
-      padGain.gain.setValueAtTime(0.5, now);
+      padGain.gain.setValueAtTime(0.5 * multiplier, now);
       padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-      osc.connect(padGain);
-      osc.start(now);
-      osc.stop(now + 0.4);
+      osc.connect(padGain); osc.start(now); osc.stop(now + 0.4);
 
     } else if (type === 'tom') {
       const osc = ctx.createOscillator();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(220, now);
       osc.frequency.exponentialRampToValueAtTime(60, now + 0.2);
-      padGain.gain.setValueAtTime(0.8, now);
+      padGain.gain.setValueAtTime(0.8 * multiplier, now);
       padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-      osc.connect(padGain);
-      osc.start(now);
-      osc.stop(now + 0.2);
+      osc.connect(padGain); osc.start(now); osc.stop(now + 0.2);
 
     } else if (type === 'clap') {
       const osc = ctx.createOscillator();
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(1000, now);
-      padGain.gain.setValueAtTime(0.6, now);
+      padGain.gain.setValueAtTime(0.6 * multiplier, now);
       padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-      osc.connect(padGain);
-      osc.start(now);
-      osc.stop(now + 0.08);
+      osc.connect(padGain); osc.start(now); osc.stop(now + 0.08);
 
     } else if (type === 'laser') {
       const osc = ctx.createOscillator();
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(1500, now);
       osc.frequency.exponentialRampToValueAtTime(100, now + 0.18);
-      padGain.gain.setValueAtTime(0.5, now);
+      padGain.gain.setValueAtTime(0.5 * multiplier, now);
       padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
-      osc.connect(padGain);
-      osc.start(now);
-      osc.stop(now + 0.18);
+      osc.connect(padGain); osc.start(now); osc.stop(now + 0.18);
 
     } else if (type === 'stutter') {
       for (let i = 0; i < 3; i++) {
@@ -669,12 +672,10 @@ function playSynthSound(type, event) {
         osc.type = 'square';
         osc.frequency.setValueAtTime(800, now + (i * 0.04));
         const subGain = ctx.createGain();
-        subGain.gain.setValueAtTime(0.4, now + (i * 0.04));
+        subGain.gain.setValueAtTime(0.4 * multiplier, now + (i * 0.04));
         subGain.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.04) + 0.03);
-        osc.connect(subGain);
-        subGain.connect(djMasterGain || ctx.destination);
-        osc.start(now + (i * 0.04));
-        osc.stop(now + (i * 0.04) + 0.03);
+        osc.connect(subGain); subGain.connect(limiter);
+        osc.start(now + (i * 0.04)); osc.stop(now + (i * 0.04) + 0.03);
       }
 
     } else if (type === 'arpUp') {
@@ -684,28 +685,53 @@ function playSynthSound(type, event) {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(f, now + (i * 0.05));
         const subGain = ctx.createGain();
-        subGain.gain.setValueAtTime(0.3, now + (i * 0.05));
+        subGain.gain.setValueAtTime(0.3 * multiplier, now + (i * 0.05));
         subGain.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.05) + 0.1);
-        osc.connect(subGain);
-        subGain.connect(djMasterGain || ctx.destination);
-        osc.start(now + (i * 0.05));
-        osc.stop(now + (i * 0.05) + 0.1);
+        osc.connect(subGain); subGain.connect(limiter);
+        osc.start(now + (i * 0.05)); osc.stop(now + (i * 0.05) + 0.1);
       });
     }
-  } catch(e) {
-    console.log("Audio Synth Error: ", e);
-  }
+  } catch(e) { console.log("Audio Synth Error: ", e); }
 
-  showToast(`🥁 12 古早打擊：${type.toUpperCase()}`);
+  showToast(`🥁 12 古早擊打：${type.toUpperCase()} ${isSuperBoostActive ? '(💥 2.0x)' : ''}`);
 }
 
-/* --------------------------------------------------------------------------
-   10.[Album & Lightbox Wallpaper]- 多媒體相簿、幻燈片與背景壁紙
-   -------------------------------------------------------------------------- */
 let toastTimer;
 function showToast(msg) {
   const toast = document.getElementById('toast'); toast.innerHTML = msg; toast.style.display = 'block';
   clearTimeout(toastTimer); toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
+}
+/* --------------------------------------------------------------------------
+   4b. [RPG Save System, Album Management & Wallpaper Controls]
+   -------------------------------------------------------------------------- */
+function exportFullRPGSave() {
+  playUiSound('click'); showToast("⏳ 正在打包全機 RPG 存檔..."); const rpgData = { albums: [], media: [], music: [], settings: [] };
+  const tx = db.transaction(["albums", "media", "music", "settings"], "readonly");
+  tx.objectStore("albums").getAll().onsuccess = (e) => { rpgData.albums = e.target.result; };
+  tx.objectStore("media").getAll().onsuccess = (e) => { rpgData.media = e.target.result; };
+  tx.objectStore("music").getAll().onsuccess = (e) => { rpgData.music = e.target.result; };
+  tx.objectStore("settings").getAll().onsuccess = (e) => { rpgData.settings = e.target.result; };
+  tx.oncomplete = function() {
+    const jsonStr = JSON.stringify(rpgData); const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob); const a = document.createElement("a"); const dateStr = new Date().toISOString().slice(0,10);
+    a.href = url; a.download = `Meow_RPG_Save_${dateStr}.json`; a.click(); URL.revokeObjectURL(url); showToast("💾 成功下載全機 RPG 存檔！");
+  };
+}
+
+function importFullRPGSave(event) {
+  const file = event.target.files[0]; if (!file) return;
+  if (!confirm("⚠️ 讀取 RPG 存檔會覆蓋現有數據，確定要繼續？")) return;
+  const reader = new FileReader(); reader.onload = function(e) {
+    try {
+      const rpgData = JSON.parse(e.target.result); const tx = db.transaction(["albums", "media", "music", "settings"], "readwrite");
+      tx.objectStore("albums").clear(); tx.objectStore("media").clear(); tx.objectStore("music").clear(); tx.objectStore("settings").clear();
+      if (rpgData.albums) rpgData.albums.forEach(item => tx.objectStore("albums").add(item));
+      if (rpgData.media) rpgData.media.forEach(item => tx.objectStore("media").add(item));
+      if (rpgData.music) rpgData.music.forEach(item => tx.objectStore("music").add(item));
+      if (rpgData.settings) rpgData.settings.forEach(item => tx.objectStore("settings").add(item));
+      tx.oncomplete = function() { showToast("🎉 讀檔成功！即將刷新介面..."); setTimeout(() => { location.reload(); }, 1200); };
+    } catch (err) { alert("❌ 存檔格式錯誤！"); }
+  }; reader.readAsText(file); event.target.value = "";
 }
 
 function createAlbum() {
@@ -809,7 +835,7 @@ function showSlide(idx) {
   setTimeout(() => {
     if (item.isVideo) {
       content.innerHTML = `<video id="activeVideo" src="${item.src}" controls autoplay></video>`; document.getElementById('lightboxCaption').innerText = `🎬 (${slideIndex + 1}/${albumMediaList.length}) ${item.caption}`;
-      setTimeout(() => { currentActiveVideo = document.getElementById('activeVideo'); if (currentActiveVideo) currentActiveVideo.volume = document.getElementById('volVideo').value; }, 100);
+      setTimeout(() => { currentActiveVideo = document.getElementById('activeVideo'); if (currentActiveVideo) currentActiveVideo.volume = scaleLogarithmicVolume(document.getElementById('volVideo').value); }, 100);
     } else {
       content.innerHTML = `<img src="${item.src}">`; document.getElementById('lightboxCaption').innerText = `📷 (${slideIndex + 1}/${albumMediaList.length}) ${item.caption}`; currentActiveVideo = null;
     }

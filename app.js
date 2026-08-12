@@ -569,63 +569,81 @@ function autoCrossfade(durationMs = 3430) {
 }
 /* --------------------------------------------------------------------------
 /* --------------------------------------------------------------------------
-   4a. [12 古早 MP3 真音效 DSP 零延遲引擎 + 2.0 狂暴模式]
+   4a. [12 古早 MP3 真音效 DSP 0延遲 RAM 預載引擎 + 2.0 狂暴模式]
    -------------------------------------------------------------------------- */
-const mp3SoundFiles = {
-  yeah: "yeah.mp3",
-  go: "go.mp3",
-  check: "check.mp3",
-  crash: "crash.mp3",
-  snare: "snare.mp3",
-  kick: "kick.mp3",
-  clap: "clap.mp3",
-  tom: "tom.mp3",
-  hihat: "hihat.mp3",
-  laser: "laser.mp3",
-  stutter: "stutter.mp3",
-  arpUp: "arpup.mp3"
-};
+const soundBuffers = {}; // 存放解碼後嘅 RAM 音效
 
-const audioBufferCache = {};
+// 💡 100% 跟足古早 test：讀取並解碼 12 個 MP3 檔存入 RAM
+async function loadAndDecodeFiles(event) {
+  const files = event.target.files;
+  if (!files.length) return;
 
-// ⚡ 預載 MP3 到 Web Audio DSP Memory，實現 0 延遲即點即發聲
-async function loadMp3AudioBuffer(type) {
-  if (audioBufferCache[type]) return audioBufferCache[type];
-  try {
-    const ctx = getAudioContext();
-    const filePath = mp3SoundFiles[type];
-    if (!filePath) return null;
-    const response = await fetch(filePath);
-    const arrayBuffer = await response.arrayBuffer();
-    const decodedData = await ctx.decodeAudioData(arrayBuffer);
-    audioBufferCache[type] = decodedData;
-    return decodedData;
-  } catch (e) {
-    console.log("MP3 載入失敗/降級處理：", type, e);
-    return null;
+  showToast("⏳ 正在用晶片解碼 12 個 MP3 存入 RAM...");
+
+  let loadedCount = 0;
+  for (let file of files) {
+    const name = file.name.toLowerCase();
+    try {
+      const ctx = getAudioContext();
+      const arrayBuffer = await file.arrayBuffer();
+      const decodedData = await ctx.decodeAudioData(arrayBuffer);
+      
+      if (name.includes('yeah')) soundBuffers['yeah'] = decodedData;
+      else if (name.includes('go')) soundBuffers['go'] = decodedData;
+      else if (name.includes('check')) soundBuffers['check'] = decodedData;
+      else if (name.includes('crash')) soundBuffers['crash'] = decodedData;
+      else if (name.includes('kick')) soundBuffers['kick'] = decodedData;
+      else if (name.includes('snare')) soundBuffers['snare'] = decodedData;
+      else if (name.includes('clap')) soundBuffers['clap'] = decodedData;
+      else if (name.includes('tom')) soundBuffers['tom'] = decodedData;
+      else if (name.includes('hihat')) soundBuffers['hihat'] = decodedData;
+      else if (name.includes('laser')) soundBuffers['laser'] = decodedData;
+      else if (name.includes('stutter')) soundBuffers['stutter'] = decodedData;
+      else if (name.includes('arpup')) soundBuffers['arpUp'] = decodedData;
+
+      loadedCount++;
+    } catch (e) {
+      console.log(`⚠️ 解碼失敗：${file.name}`, e);
+    }
   }
+
+  showToast(`✅ 成功載入 ${loadedCount} 個 MP3！即刻狂打 0 延遲！`);
 }
 
-// 預先載入所有 12 個 MP3 檔案
-Object.keys(mp3SoundFiles).forEach(type => loadMp3AudioBuffer(type));
+// 🌐 網頁啟動時自動靜默 fetch 載入
+const autoMp3List = {
+  yeah: "yeah.mp3", go: "go.mp3", check: "check.mp3", crash: "crash.mp3",
+  snare: "snare.mp3", kick: "kick.mp3", clap: "clap.mp3", tom: "tom.mp3",
+  hihat: "hihat.mp3", laser: "laser.mp3", stutter: "stutter.mp3", arpUp: "arpup.mp3"
+};
 
-async function playSynthSound(type, event) {
-  if (event) {
-    event.preventDefault(); // 防止手機長按或雙擊畫面縮放
-  }
+async function autoFetchMp3s() {
+  const ctx = getAudioContext();
+  Object.keys(autoMp3List).forEach(async (type) => {
+    try {
+      const res = await fetch(autoMp3List[type]);
+      if (res.ok) {
+        const ab = await res.arrayBuffer();
+        soundBuffers[type] = await ctx.decodeAudioData(ab);
+      }
+    } catch (e) {}
+  });
+}
+autoFetchMp3s();
+
+// ⚡ 0 延遲發聲核心 + 2.0 狂暴模式
+function playSynthSound(type, event) {
+  if (event) event.preventDefault();
   playUiSound('click');
   
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
-    
-    // 💥 2.0 狂暴模式增益 (標準 1.0x，狂暴 2.0x)
     const multiplier = isSuperBoostActive ? 2.0 : 1.0;
     
     const padGain = ctx.createGain();
     padGain.gain.setValueAtTime(0.8 * multiplier, now);
     
-    // 🛡️ 防爆動態限幅器 (Limiter)，確保 2.0 狂暴打鼓唔會爆音損壞喇叭
     const limiter = ctx.createDynamicsCompressor();
     limiter.threshold.setValueAtTime(-6, now);
     limiter.knee.setValueAtTime(0, now);
@@ -636,30 +654,19 @@ async function playSynthSound(type, event) {
     padGain.connect(limiter);
     limiter.connect(djMasterGain || ctx.destination);
 
-    // 嘗試讀取已預載嘅真實 MP3 Buffer
-    const buffer = await loadMp3AudioBuffer(type);
-
-    if (buffer) {
-      // 🚀 優先使用 MP3 真音效發聲 (0 延遲 BufferSource)
+    if (soundBuffers[type]) {
+      // 🚀 有 MP3 RAM Buffer：發出 100% 真 MP3 鼓聲！
       const source = ctx.createBufferSource();
-      source.buffer = buffer;
+      source.buffer = soundBuffers[type];
       source.connect(padGain);
       source.start(now);
+      showToast(`🥁 12 古早 MP3 打擊：${type.toUpperCase()} ${isSuperBoostActive ? '(💥 2.0x)' : ''}`);
     } else {
-      // 🔄 備用方案：如未搵到 MP3 則自動使用 DSP 備用發聲
-      const osc = ctx.createOscillator();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(300, now);
-      padGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-      osc.connect(padGain);
-      osc.start(now);
-      osc.stop(now + 0.15);
+      showToast(`⚠️ 尚未載入【${type}】MP3！請點右上角「📁 載入 12 MP3」`);
     }
   } catch(e) {
     console.log("Play Sound Error: ", e);
   }
-
-  showToast(`🥁 12 古早 MP3 打擊：${type.toUpperCase()} ${isSuperBoostActive ? '(💥 2.0x)' : ''}`);
 }
 
 let toastTimer;

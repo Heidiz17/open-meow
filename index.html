@@ -358,8 +358,10 @@
   </div>
   <div class="fold-content" id="foldPadUnified">
     <div class="dj-box">
-      <div style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 4px;">
-        🥁 12 大粒古早 DJ / 鼓組 / 琶音 SoundPad (支援兩點/三點 Multi-Touch 狂打)：
+      <div style="font-size: 13px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 4px; display:flex; justify-content:space-between; align-items:center;">
+        <span>🥁 12 大粒古早 DJ / 鼓組 SoundPad：</span>
+        <label class="btn-compact btn-add" for="drumFileInput" style="font-size:11px; padding:4px 8px; background:#00b894; margin:0;">📁 載入 12 MP3</label>
+        <input type="file" id="drumFileInput" accept="audio/*" multiple style="display:none;" onchange="loadAndDecodeFiles(event)">
       </div>
       <div class="dj-grid">
         <div class="dj-pad appraisal" onpointerdown="playSynthSound('yeah', event)"><span>🔥</span>Yeah!</div>

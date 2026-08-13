@@ -635,7 +635,6 @@ autoFetchMp3s();
 // ⚡ 0 延遲發聲核心 + 乾淨 Cut-Off 0連聲 + 2.0 狂暴模式
 function playSynthSound(type, event) {
   if (event) event.preventDefault();
-  playUiSound('click');
   
   try {
     const ctx = getAudioContext();

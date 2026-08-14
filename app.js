@@ -632,16 +632,16 @@ async function autoFetchMp3s() {
 }
 autoFetchMp3s();
 
-// ⚡ 0 延遲發聲核心 + 乾淨 Cut-Off 0連聲 + 2.0 狂暴模式
+// ⚡ 0 延遲發聲核心 + 智能分流（有 MP3 播 MP3，冇 MP3 播模擬聲）
 function playSynthSound(type, event) {
   if (event) event.preventDefault();
-  
+
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     const multiplier = isSuperBoostActive ? 2.0 : 1.0;
-    
-    // ✂️ 【關鍵升級】：如果同一個鼓/音效上一次未播完，即刻強制 Cut 掉，防止低頻 Kick / Tom 黏連爆音！
+
+    // ✂️ Cut-Off 防黏連
     if (activeSources[type]) {
       try {
         activeSources[type].stop(now);
@@ -651,7 +651,7 @@ function playSynthSound(type, event) {
 
     const padGain = ctx.createGain();
     padGain.gain.setValueAtTime(0.8 * multiplier, now);
-    
+
     const limiter = ctx.createDynamicsCompressor();
     limiter.threshold.setValueAtTime(-6, now);
     limiter.knee.setValueAtTime(0, now);
@@ -663,18 +663,18 @@ function playSynthSound(type, event) {
     limiter.connect(djMasterGain || ctx.destination);
 
     if (soundBuffers[type]) {
-      // 🚀 有 MP3 RAM Buffer：發出 100% 真 MP3 鼓聲！
+      // 🚀【情況 A】：有 MP3！100% 只發出純淨真 MP3 鼓聲（不加嘟嘟聲）
       const source = ctx.createBufferSource();
       source.buffer = soundBuffers[type];
       source.connect(padGain);
       source.start(now);
       
-      // 記低現時呢個音源，供下次點擊時自動 Cut-off
       activeSources[type] = source;
-
-      showToast(`🥁 12 古早 MP3 打擊：${type.toUpperCase()} ${isSuperBoostActive ? '(💥 2.0x)' : ''}`);
+      showToast(`🥁 打擊：${type.toUpperCase()}`);
     } else {
-      showToast(`⚠️ 尚未載入【${type}】MP3！請點右上角「📁 載入 12 MP3」`);
+      // 💡【情況 B】：未有 MP3！自動播返 UI 點擊聲頂替，確保一定有聲！
+      playUiSound('click');
+      showToast(`⚠️ 請點右上角「📁 載入 12 MP3」`);
     }
   } catch(e) {
     console.log("Play Sound Error: ", e);

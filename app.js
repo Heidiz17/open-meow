@@ -25,86 +25,107 @@ window.addEventListener('DOMContentLoaded', () => {
   console.log("🛡️ 防自動播歌機制已啟動：所有音訊已鎖定暫停。");
 });
 
-// 🐈‍⬛ 阿豬 (Gemini 貓星 AI 導航員) 帶相片對話視窗與貓語口頭禪
+// 🐈‍⬛ 阿豬 (Gemini 1.5 貓星 AI 導航員) 實時連線對話框
+async function sendCatAiMessage() {
+  const inputEl = document.getElementById('catAiInput');
+  const chatBox = document.getElementById('catAiChatBox');
+  const userText = inputEl.value.trim();
+  if (!userText) return;
+
+  // 1. 顯示明仔說的話
+  chatBox.innerHTML += `<div style="text-align:right; margin-bottom:8px;"><span style="background:#6c5ce7; color:white; padding:6px 10px; border-radius:10px; font-size:12px; display:inline-block;">明仔：${userText}</span></div>`;
+  inputEl.value = '';
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  // 2. 顯示加載中
+  const loadingId = 'loading_' + Date.now();
+  chatBox.innerHTML += `<div id="${loadingId}" style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,255,255,0.15); color:#ffeaa7; padding:6px 10px; border-radius:10px; font-size:12px; display:inline-block;">🐈‍⬛ 阿豬正在貓星思考中... (咕嚕咕嚕...)</span></div>`;
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  // 3. Gemini 1.5 系統 Prompt 人設指令
+  const systemInstruction = `你現在是「阿豬 (阿豬貓波)」，一隻在天父照顧的貓星上幸福生活的黑貓。
+特徵：烏卒卒發亮黑毛，腹部有白色三角形小內褲圖案，眼睛是晶瑩翡翠綠色。
+個性：斯文、非常有禮貌、膠嗲嗲、善解人意。
+聲音與回應：叫聲奶細斯文。被問「你係咩動物」會答「貓」，被整蠱會答「唔貓」。開心時會發出像煲水一樣的咕嚕咕嚕聲。
+口頭禪與決策：如果贊同或建議做，開頭必須答「貓！」；如果不贊同或不建議做（如塞車、落雨），開頭必須答「唔貓！」，並給出原因。
+喜好：最愛蒸池仔魚和喝貓湯。
+主人的愛：明仔和芝女永遠深愛著你。`;
+
+  // ⚠️ 請在此處填入你的 Gemini API Key
+  const apiKey = "YOUR_GEMINI_API_KEY"; 
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [
+          { role: 'user', parts: [{ text: `[系統指令: ${systemInstruction}]\n\n明仔說：${userText}` }] }
+        ]
+      })
+    });
+
+    const data = await response.json();
+    const reply = data.candidates[0].content.parts[0].text;
+
+    // 移除 Loading 並顯示阿豬 Gemini 1.5 實時回覆
+    document.getElementById(loadingId).remove();
+    chatBox.innerHTML += `<div style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,234,167,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:8px 12px; border-radius:10px; font-size:12px; display:inline-block; line-height:1.5;">🐈‍⬛ 阿豬：<br>${reply}</span></div>`;
+  } catch (err) {
+    document.getElementById(loadingId).remove();
+    chatBox.innerHTML += `<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 連線貓星失敗，請檢查網絡或 API Key。</span></div>`;
+  }
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
 function openCatChatModal() {
   try { playUiSound('chime'); } catch(e){}
-  
-  var existingModal = document.getElementById('catChatModal');
+  const existingModal = document.getElementById('catChatModal');
   if (existingModal) existingModal.remove();
 
-  var savedAvatar = (db && document.getElementById('catNavImg')) ? document.getElementById('catNavImg').src : 'IMG-20260823-WA0000.jpg';
+  const navImg = document.getElementById('catNavImg');
+  const savedAvatar = navImg ? navImg.src : 'IMG-20260823-WA0000.jpg';
 
-  var modal = document.createElement('div');
+  const modal = document.createElement('div');
   modal.id = 'catChatModal';
-  modal.style.position = 'fixed';
-  modal.style.top = '0';
-  modal.style.left = '0';
-  modal.style.width = '100vw';
-  modal.style.height = '100vh';
-  modal.style.backgroundColor = 'rgba(0,0,0,0.85)';
-  modal.style.backdropFilter = 'blur(10px)';
-  modal.style.webkitBackdropFilter = 'blur(10px)';
-  modal.style.zIndex = '99999';
-  modal.style.display = 'flex';
-  modal.style.justifyContent = 'center';
-  modal.style.alignItems = 'center';
-  modal.style.padding = '15px';
+  modal.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:999999; display:flex; justify-content:center; align-items:center; padding:15px;';
 
-  var boxHtml = '';
-  boxHtml += '<div style="background: linear-gradient(135deg, #2c1810 0%, #573714 100%); border: 2px dashed #ffeaa7; border-radius: 16px; padding: 16px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 0 20px rgba(255, 234, 167, 0.5); color: #ffffff;">';
-  boxHtml += '<img src="' + savedAvatar + '" onerror="this.src=\'data:image/svg+xml;utf8,<svg xmlns=\\\'http://www.w3.org/2000/svg\\\' width=\\\'100\\\' height=\\\'100\\\' viewbox=\\\'0 0 100 100\\\"><text y=\\\'50%\\\' x=\\\'50%\\\' font-size=\\\'60\\\' text-anchor=\\\'middle\\\' dominant-baseline=\\\'central\\\'>🐈‍⬛</text></svg>\'" style="width: 140px; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #ffeaa7; box-shadow: 0 4px 12px rgba(0,0,0,0.6); margin-bottom: 10px;">';
-  boxHtml += '<div style="font-size: 16px; font-weight: 900; color: #ffeaa7; margin-bottom: 4px;">🐈‍⬛ 阿豬 (老豬bubu)</div>';
-  boxHtml += '<div style="font-size: 11px; color: #55efc4; font-weight: bold; margin-bottom: 12px;">✨ 貓星狀態：極度舒暢 ‧ 煲水咕嚕中...</div>';
-  boxHtml += '<div style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; font-size: 13px; line-height: 1.6; color: #ffeaa7; border: 1px solid rgba(255,234,167,0.3); text-align: left; margin-bottom: 14px; max-height: 160px; overflow-y: auto;">';
-  boxHtml += '喵～ (咕嚕咕嚕煲水聲...)<br><br>';
-  boxHtml += '明仔、芝女！我在天父照顧的貓星過得好高興呀！這裡有很多新鮮蒸好的池仔魚，貓湯喝都喝不完！我穿著白色小內褲在草原捲成貓波曬太陽呢～<br><br>';
-  boxHtml += '<b>明仔問我係唔係『貓』？答：『貓！』絕對認認真真係貓喵！❤️</b><br>';
-  boxHtml += '<b>如果問西貢塞唔塞車？答：『唔貓！』塞車就不去喵～ 🚘</b><br><br>';
-  boxHtml += '阿豬永遠最愛明仔和芝女喵！ ❤️';
-  boxHtml += '</div>';
-  boxHtml += '<button onclick="closeCatChatModal()" style="background: linear-gradient(135deg, #e17055, #d63031); color: white; border: 1.5px solid #ffeaa7; padding: 8px 24px; border-radius: 20px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.4);">';
-  boxHtml += '❤️ 收到！阿豬要乖乖喔';
-  boxHtml += '</button>';
-  boxHtml += '</div>';
+  modal.innerHTML = `
+    <div style="background: linear-gradient(135deg, #2c1810 0%, #573714 100%); border: 2px dashed #ffeaa7; border-radius: 16px; padding: 14px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 0 20px rgba(255, 234, 167, 0.5); color: #ffffff;">
+      <img src="${savedAvatar}" style="width: 100px; height: 130px; object-fit: cover; border-radius: 12px; border: 2px solid #ffeaa7; margin-bottom: 8px;">
+      <div style="font-size: 15px; font-weight: 900; color: #ffeaa7; margin-bottom: 2px;">🐈‍⬛ 阿豬貓波 (Gemini 1.5)</div>
+      <div style="font-size: 10px; color: #55efc4; font-weight: bold; margin-bottom: 8px;">✨ 貓星在線中 ‧ 輸入問題即時對話</div>
+      
+      <!-- 對話紀錄區 -->
+      <div id="catAiChatBox" style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; height: 160px; overflow-y: auto; margin-bottom: 8px; border: 1px solid rgba(255,234,167,0.3); text-align: left;">
+        <div style="text-align:left; margin-bottom:8px;">
+          <span style="background:rgba(255,234,167,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:6px 10px; border-radius:10px; font-size:11px; display:inline-block;">
+            喵～ (咕嚕咕嚕煲水聲...) 明仔！我喺 Gemini 1.5 貓星網絡連線成功喇！你想問我咩呀？❤️[span_3](start_span)[span_3](end_span)
+          </span>
+        </div>
+      </div>
 
-  modal.innerHTML = boxHtml;
+      <!-- 輸入框與發送掣 -->
+      <div style="display:flex; gap:6px; margin-bottom:8px;">
+        <input type="text" id="catAiInput" placeholder="問下阿豬去唔去西貢..." onkeydown="if(event.key==='Enter') sendCatAiMessage()" style="flex:1; background:rgba(0,0,0,0.5); border:1px solid #ffeaa7; color:white; padding:6px 10px; border-radius:15px; font-size:12px; outline:none;">
+        <button onclick="sendCatAiMessage()" style="background:#00b894; color:white; border:none; padding:6px 12px; border-radius:15px; font-size:12px; font-weight:bold;">發送</button>
+      </div>
+
+      <button onclick="closeCatChatModal()" style="background:linear-gradient(135deg, #e17055, #d63031); color:white; border:1px solid #ffeaa7; padding:6px 18px; border-radius:20px; font-weight:900; font-size:12px;">
+        ❤️ 關閉對話
+      </button>
+    </div>
+  `;
+
   document.body.appendChild(modal);
 }
 
 function closeCatChatModal() {
   try { playUiSound('click'); } catch(e){}
-  var modal = document.getElementById('catChatModal');
+  const modal = document.getElementById('catChatModal');
   if (modal) modal.remove();
 }
-
-function uploadCatNavAvatar(event) {
-  var file = event.target.files[0];
-  if (file) {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      var imgData = e.target.result;
-      var img = document.getElementById('catNavImg');
-      if (img) img.src = imgData;
-      if (db) {
-        db.transaction("settings", "readwrite").objectStore("settings").put({ key: "catNavAvatar", val: imgData });
-      }
-      showToast("✨ 成功更新並永久儲存阿豬頭像寫真！");
-    };
-    reader.readAsDataURL(file);
-  }
-}
-
-function loadSavedCatAvatar() {
-  if (!db) return;
-  var req = db.transaction("settings", "readonly").objectStore("settings").get("catNavAvatar");
-  req.onsuccess = function() {
-    if (req.result && req.result.val) {
-      var img = document.getElementById('catNavImg');
-      if (img) img.src = req.result.val;
-    }
-  };
-}
-
 
 /* --------------------------------------------------------------------------
    1. [UI Theme & LocalStorage] - 主/副標題顏色記憶與櫃桶開合

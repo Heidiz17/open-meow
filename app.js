@@ -43,7 +43,7 @@ async function sendCatAiMessage() {
   chatBox.innerHTML += '<div id="' + loadingId + '" style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,255,255,0.15); color:#ffeaa7; padding:6px 10px; border-radius:10px; font-size:12px; display:inline-block;">🐈‍⬛ 阿豬正在貓星思考中... (咕嚕咕嚕...)</span></div>';
   chatBox.scrollTop = chatBox.scrollHeight;
 
-  // 🔑 3. 寫死明仔提供的日本專屬 Gemini API Key
+  // 🔑 3. 日本專屬 API Key
   var apiKey = "AQ.Ab8RN6LzNsctHKzPSgsKb97-81IvpkOyzqOVsCkZvp7ZlEh-PA"; 
 
   // 4. Gemini 1.5 系統 Prompt 人設指令
@@ -80,13 +80,40 @@ async function sendCatAiMessage() {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+// 📸 5. 專屬上傳更換阿豬相片函數 (修復換相靈魂)
+function uploadCatNavAvatar(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var imgData = e.target.result;
+    var navImg = document.getElementById('catNavImg');
+    if (navImg) navImg.src = imgData;
+    localStorage.setItem("catNavAvatarData", imgData);
+    showToast("✨ 成功換上阿豬全新靚相！");
+  };
+  reader.readAsDataURL(file);
+}
+
+// 📖 自動讀取歷史相片
+window.addEventListener('DOMContentLoaded', function() {
+  var savedCatAvatar = localStorage.getItem("catNavAvatarData");
+  if (savedCatAvatar) {
+    var navImg = document.getElementById('catNavImg');
+    if (navImg) navImg.src = savedCatAvatar;
+  }
+});
+
+// 💬 6. 對話框核心 (同步載入最新相片)
 function openCatChatModal() {
   try { playUiSound('chime'); } catch(e){}
   var existingModal = document.getElementById('catChatModal');
   if (existingModal) existingModal.remove();
 
+  var savedCatAvatar = localStorage.getItem("catNavAvatarData");
   var navImg = document.getElementById('catNavImg');
-  var savedAvatar = navImg ? navImg.src : 'IMG-20260823-WA0000.jpg';
+  var currentAvatar = savedCatAvatar || (navImg ? navImg.src : 'IMG-20260823-WA0000.jpg');
 
   var modal = document.createElement('div');
   modal.id = 'catChatModal';
@@ -106,7 +133,7 @@ function openCatChatModal() {
 
   var boxHtml = '';
   boxHtml += '<div style="background: linear-gradient(135deg, #2c1810 0%, #573714 100%); border: 2px dashed #ffeaa7; border-radius: 16px; padding: 14px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 0 20px rgba(255, 234, 167, 0.5); color: #ffffff;">';
-  boxHtml += '<img src="' + savedAvatar + '" style="width: 100px; height: 130px; object-fit: cover; border-radius: 12px; border: 2px solid #ffeaa7; margin-bottom: 8px;">';
+  boxHtml += '<img src="' + currentAvatar + '" style="width: 100px; height: 130px; object-fit: cover; border-radius: 12px; border: 2px solid #ffeaa7; margin-bottom: 8px;">';
   boxHtml += '<div style="font-size: 15px; font-weight: 900; color: #ffeaa7; margin-bottom: 2px;">🐈‍⬛ 阿豬貓波 (Gemini 1.5)</div>';
   boxHtml += '<div style="font-size: 10px; color: #55efc4; font-weight: bold; margin-bottom: 8px;">✨ 貓星在線中 ‧ 輸入問題即時對話</div>';
 
@@ -133,6 +160,7 @@ function closeCatChatModal() {
   var modal = document.getElementById('catChatModal');
   if (modal) modal.remove();
 }
+
 
 /* --------------------------------------------------------------------------
    1. [UI Theme & LocalStorage] - 主/副標題顏色記憶與櫃桶開合

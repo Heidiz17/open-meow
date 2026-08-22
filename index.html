@@ -60,37 +60,10 @@
           🎛️ 主題暗掣
         </button>
       </div>
-      <div class="fold-content" id="foldBibleCategory" style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 10px; border: 1px solid rgba(255,234,167,0.3);">
-        <div style="font-size: 11px; color: #fab1a0; margin-bottom: 6px; font-weight: bold;">🎯 心靈對症下藥（選擇主題）：</div>
-        <select id="bibleCategorySelect" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #ffeaa7; background: #2d3436; color: #ffeaa7; font-size: 12px; font-weight: bold;">
-          <option value="ALL">任意主題</option>
-          <option value="祝福">祝福</option>
-          <option value="傳道">傳道</option>
-          <option value="愛">愛</option>
-          <option value="平安">平安</option>
-          <option value="擔憂">擔憂</option>
-          <option value="救恩">救恩</option>
-          <option value="信仰">信仰</option>
-          <option value="寬恕">寬恕</option>
-          <option value="禱告">禱告</option>
-          <option value="病痛">病痛</option>
-          <option value="恐懼">恐懼</option>
-          <option value="婚姻">婚姻</option>
-          <option value="孩童">孩童</option>
-          <option value="希望">希望</option>
-          <option value="悲愁">悲愁</option>
-          <option value="復活">復活</option>
-          <option value="忿恨">忿恨</option>
-          <option value="公義">公義</option>
-          <option value="威嚴">威嚴</option>
-          <option value="警誡">警誡</option>
-          <option value="界線">界線</option>
-        </select>
-      </div>
     </div>
   </div>
 
-  <!-- Chapter 3: 貓貓電台俱樂部 -->
+  <!-- Chapter 3: 貓貓電台俱樂部 (完整修復版) -->
   <div class="section-title-btn">
     <div onclick="toggleFold('foldRadio')" style="flex: 1; cursor: pointer;">
       <span class="title-radio">📻 貓貓電台俱樂部 (Radio Club)</span>
@@ -104,6 +77,7 @@
   <div class="fold-content" id="foldRadio">
     <div class="music-box" style="margin-top: 0;">
       <div style="font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 6px;">🌟 5 大主題皇牌電台 (點擊顏色暗掣展開)：</div>
+      
       <div class="cat-btn bg-rock" onclick="toggleFold('foldRock')">
         <span>🎸 搖滾與日系動漫專區 (6台)</span>
         <span id="arrowRock">▼ 展開</span>
@@ -117,6 +91,73 @@
           <div class="radio-card-btn" style="background: rgba(45, 52, 54, 0.95); color: #ffffff;" onclick="confirmRadioPlay('ROCK ANTENNE Heavy Metal', 'https://stream.rockantenne.de/heavy-metal/stream/mp3')">🇺🇸 Heavy Metal 重金屬</div>
           <div class="radio-card-btn" style="background: rgba(211, 84, 0, 0.95); color: #ffffff;" onclick="confirmRadioPlay('ROCK ANTENNE Classic Perlen', 'https://stream.rockantenne.de/classic-perlen/stream/mp3')">📻 80/90s 硬搖滾</div>
         </div>
+      </div>
+
+      <div class="cat-btn bg-dance" onclick="toggleFold('foldDance')">
+        <span>🎧 電子舞曲與 Disco 皇牌區 (4台)</span>
+        <span id="arrowDance">▼ 展開</span>
+      </div>
+      <div class="radio-sub-box" id="foldDance">
+        <div class="radio-grid-2col">
+          <div class="radio-card-btn" style="background: #f1c40f; color: #000000; font-weight: 900;" onclick="confirmRadioPlay('Zeno LS Little Japan InitialD Studio', 'https://stream.zeno.fm/rqy08onkyedvv')">🔥 🏎️ 頭文字 D Studio</div>
+          <div class="radio-card-btn" style="background: #d63031; color: #ffffff; font-weight: 900;" onclick="confirmRadioPlay('Dance Wave! Digital Radio', 'https://dancewave.online/dance.mp3')">👑 Dance Wave (10號)</div>
+          <div class="radio-card-btn" style="background: #fd79a8; color: #ffffff;" onclick="confirmRadioPlay('laut.fm - Eurodance', 'https://stream.laut.fm/eurodance')">🕺 歐洲 90s Eurodance (9號)</div>
+          <div class="radio-card-btn" style="background: #00b894; color: #ffffff;" onclick="confirmRadioPlay('SomaFM: Groove Salad', 'https://ice1.somafm.com/groovesalad-128-aac')">☕ Groove Salad Downtempo (12號)</div>
+        </div>
+      </div>
+
+      <div class="cat-btn bg-jazz" onclick="toggleFold('foldJazz')">
+        <span>🎷 爵士與藍調專區 (2台)</span>
+        <span id="arrowJazz">▼ 展開</span>
+      </div>
+      <div class="radio-sub-box" id="foldJazz">
+        <div class="radio-grid-2col">
+          <div class="radio-card-btn" style="background: #002366; color: #ffffff;" onclick="confirmRadioPlay('SmoothJazz.com Global Radio', 'https://smoothjazz.cdnstream1.com/2585_128.mp3')">🎷 SmoothJazz 爵士台</div>
+          <div class="radio-card-btn" style="background: rgba(0, 128, 128, 0.95); color: #ffffff;" onclick="confirmRadioPlay('Zeno.fm - Acid Jazz Radio', 'http://stream.zeno.fm/0r0xa792kwzuv')">🎷 Acid Jazz 爵士台</div>
+        </div>
+      </div>
+
+      <div class="cat-btn bg-relax" onclick="toggleFold('foldRelax')">
+        <span>☕ 輕柔心靈放鬆專區 (5台)</span>
+        <span id="arrowRelax">▼ 展開</span>
+      </div>
+      <div class="radio-sub-box" id="foldRelax">
+        <div class="radio-grid-2col">
+          <div class="radio-card-btn" style="background: #ffffff; color: #000000;" onclick="confirmRadioPlay('Zeno.fm - Rain Song Radio', 'http://stream.zeno.fm/689zc32y4x8uv')">🌧️ Rain Song 抒情台</div>
+          <div class="radio-card-btn" style="background: #f1c40f; color: #000000;" onclick="confirmRadioPlay('Peaceful Piano', 'https://peacefulpiano.stream.publicradio.org/peacefulpiano.aac')">🎹 和平鋼琴台</div>
+          <div class="radio-card-btn" style="background: rgba(212, 175, 55, 0.95); color: #ffffff;" onclick="confirmRadioPlay('Zeno.fm - Muji Soft Lounge', 'http://stream.zeno.fm/brv193g9468uv')">🍡 Muji Soft 柔和台</div>
+          <div class="radio-card-btn" style="background: #6c5ce7; color: #ffffff;" onclick="confirmRadioPlay('Radio Swiss Classic', 'https://stream.srg-ssr.ch/m/rsc_de/mp3_128')">🎻 Radio Swiss 純古典台</div>
+          <div class="radio-card-btn" style="grid-column: span 2; background: #27ae60; color: #ffffff;" onclick="confirmRadioPlay('Zeno Japanese Styles', 'https://stream.zeno.fm/zc0uwf6tb18uv')">🍃 Zeno Japanese Styles (日系靜心)</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 8px;">
+        <div class="cat-btn" style="flex: 1; margin-top: 0; background: linear-gradient(135deg, #00b894, #00cec9); color: #ffffff;" onclick="toggleFold('foldHK')">
+          <span>🇭🇰 香港頻道 (1台)</span>
+          <span id="arrowHK">▼</span>
+        </div>
+        <div class="cat-btn" style="flex: 1; margin-top: 0; background: linear-gradient(135deg, #0984e3, #6c5ce7); color: #ffffff;" onclick="toggleFold('foldNature')">
+          <span>🌿 大自然聲音區</span>
+          <span id="arrowNature">▼</span>
+        </div>
+      </div>
+
+      <div class="radio-sub-box" id="foldHK">
+        <div class="radio-grid-2col">
+          <div class="radio-card-btn" style="grid-column: span 2; background: #e17055; color: #ffffff;" onclick="confirmRadioPlay('RTHK Radio 2', 'https://media-hub-2345.stream-hub-th.workers.dev/?url=https://stm.rthk.hk/radio2')">📻 RTHK 2 (香港電台第二台)</div>
+        </div>
+      </div>
+
+      <div class="radio-sub-box" id="foldNature">
+        <div class="radio-grid-2col" style="margin-bottom: 10px;">
+          <div class="radio-card-btn" id="btn-nature-wave" style="background: #20bf6b; color: #ffffff;" onclick="toggleNatureSound('wave')">🌊 海浪聲 (關)</div>
+          <div class="radio-card-btn" id="btn-nature-windbell" style="background: #45aaf2; color: #ffffff;" onclick="toggleNatureSound('windbell')">🎐 風吹風鈴 (關)</div>
+          <div class="radio-card-btn" id="btn-nature-rain" style="background: #3867d6; color: #ffffff;" onclick="toggleNatureSound('rain')">🌧️ 雨夜聽雨 (關)</div>
+          <div class="radio-card-btn" id="btn-nature-forest" style="background: #26de81; color: #ffffff;" onclick="toggleNatureSound('forest')">🌲 晨曦森林 (關)</div>
+        </div>
+        <audio id="sound-wave" src="wave.mp3" loop></audio>
+        <audio id="sound-windbell" src="windbell.mp3" loop></audio>
+        <audio id="sound-rain" src="rain.mp3" loop></audio>
+        <audio id="sound-forest" src="forest.mp3" loop></audio>
       </div>
     </div>
   </div>

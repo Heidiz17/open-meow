@@ -56,33 +56,41 @@
         <button class="btn-compact" onclick="drawBibleCardWithAnim()" style="flex: 1; background: linear-gradient(135deg, #d63031 0%, #e17055 100%); color: #ffffff; font-size: 13px; padding: 12px 15px; border-radius: 20px; border: 1.5px solid #ffeaa7; box-shadow: 0 4px 12px rgba(214, 48, 49, 0.6); font-weight: 900;">
           ✨ 🙏 誠心所願 · 領受話語
         </button>
-        <button class="btn-compact btn-theme" onclick="toggleFold('foldBibleCategory')" style="padding: 10px 14px; font-size: 12px; background: rgba(45, 52, 54, 0.9); color: #ffeaa7; border-radius: 20px;">
-          🎛️ 主題暗掣
-        </button>
       </div>
     </div>
   </div>
 
-  <!-- Chapter 2.5: 🐈‍⬛ 阿豬貓星導航員 (老豬bubu) 獨立區塊 -->
+  <!-- Chapter 2.5: 🐈‍⬛ 阿豬貓波 貓星導航員 獨立區塊 -->
   <div class="section-title-btn" onclick="toggleFold('foldCatNav')">
     <div>
-      <span class="title-bible">🐈‍⬛ 阿豬貓星導航員 (老豬bubu)</span>
-      <span class="sub-tip">💡 點擊阿豬相片或傾計掣，即時與貓星的阿豬 AI 連線！</span>
+      <span class="title-bible">🐈‍⬛ 阿豬貓波 貓星導航員</span>
+      <span class="sub-tip">💡 點擊阿豬相片或傾計掣，即時與天父貓星的阿豬 AI 連線！</span>
     </div>
     <span class="fold-arrow" id="arrowCatNav">▼ 展開</span>
   </div>
-  <div class="fold-content" id="foldCatNav">
+  <div class="fold-content active" id="foldCatNav">
     <div style="background: linear-gradient(135deg, rgba(44,24,16,0.9) 0%, rgba(87,55,20,0.9) 100%); border-radius: 12px; padding: 12px; border: 2px dashed #ffeaa7; box-shadow: 0 0 12px rgba(255, 234, 167, 0.4); display: flex; align-items: center; gap: 12px;">
-      <img src="IMG-20260823-WA0000.jpg" alt="阿豬" onclick="openCatChatModal()" style="width: 75px; height: 95px; object-fit: cover; border-radius: 10px; border: 2px solid #ffeaa7; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.5);">
+      
+      <!-- 阿豬相片 + 換相按鈕 -->
+      <div style="text-align: center;">
+        <img id="catNavImg" src="IMG-20260823-WA0000.jpg" onclick="openCatChatModal()" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewbox=\'0 0 100 100\'><text y=\'50%\' x=\'50%\' font-size=\'50\' text-anchor=\'middle\' dominant-baseline=\'central\'>🐈‍⬛</text></svg>'" style="width: 75px; height: 95px; object-fit: cover; border-radius: 10px; border: 2px solid #ffeaa7; box-shadow: 0 4px 8px rgba(0,0,0,0.5); cursor: pointer;">
+        <label for="catImgInput" class="btn-compact" style="font-size: 9px; padding: 3px 6px; margin-top: 4px; background: #00b894; color: white; border-radius: 6px; display: block; cursor: pointer;">📸 換阿豬相</label>
+        <input type="file" id="catImgInput" accept="image/*" style="display:none;" onchange="uploadCatNavAvatar(event)">
+      </div>
+
       <div style="text-align: left; flex: 1;">
-        <div style="font-size: 14px; font-weight: 900; color: #ffeaa7; margin-bottom: 3px;">🐈‍⬛ 阿豬 (老豬bubu)</div>
-        <div style="font-size: 11px; color: #55efc4; font-weight: bold; margin-bottom: 8px;">✨ 貓星狀態：極度舒暢 ‧ 煲水咕嚕中</div>
-        <button class="btn-compact" onclick="openCatChatModal()" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; padding: 8px 14px; font-size: 11px; border-radius: 15px; border: 1px solid #ffeaa7;">
+        <div style="font-size: 14px; font-weight: 900; color: #ffeaa7; margin-bottom: 3px;">🐈‍⬛ 阿豬貓波</div>
+        <div style="font-size: 11px; color: #55efc4; font-weight: bold; margin-bottom: 4px;">✨ 貓星狀態：極度舒暢 ‧ 煲水咕嚕中</div>
+        <div style="font-size: 10px; color: #ffeaa7; opacity: 0.95; margin-bottom: 8px; line-height: 1.4;">
+          ☀️ 喺天父照顧嘅貓星草原上，開心捲成貓波曬太陽，好幸福好高興中！🐾
+        </div>
+        <button class="btn-compact" onclick="openCatChatModal()" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; padding: 7px 12px; font-size: 11px; border-radius: 15px; border: 1px solid #ffeaa7; font-weight: bold;">
           💬 與阿豬 AI 傾計
         </button>
       </div>
     </div>
   </div>
+
 
   <!-- Chapter 3: 貓貓電台俱樂部 -->
   <div class="section-title-btn">

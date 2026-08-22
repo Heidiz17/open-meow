@@ -25,44 +25,86 @@ window.addEventListener('DOMContentLoaded', () => {
   console.log("🛡️ 防自動播歌機制已啟動：所有音訊已鎖定暫停。");
 });
 
-// 🐈‍⬛ 阿豬 (Gemini 貓星 AI 導航員) 帶相片對話視窗
+// 🐈‍⬛ 阿豬 (Gemini 貓星 AI 導航員) 帶相片對話視窗與貓語口頭禪
 function openCatChatModal() {
-  playUiSound('chime');
+  try { playUiSound('chime'); } catch(e){}
   
-  const modal = document.createElement('div');
+  var existingModal = document.getElementById('catChatModal');
+  if (existingModal) existingModal.remove();
+
+  var savedAvatar = (db && document.getElementById('catNavImg')) ? document.getElementById('catNavImg').src : 'IMG-20260823-WA0000.jpg';
+
+  var modal = document.createElement('div');
   modal.id = 'catChatModal';
-  modal.style.cssText = `
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
-    z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 15px;
-  `;
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100vw';
+  modal.style.height = '100vh';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.85)';
+  modal.style.backdropFilter = 'blur(10px)';
+  modal.style.webkitBackdropFilter = 'blur(10px)';
+  modal.style.zIndex = '99999';
+  modal.style.display = 'flex';
+  modal.style.justifyContent = 'center';
+  modal.style.alignItems = 'center';
+  modal.style.padding = '15px';
 
-  modal.innerHTML = `
-    <div style="background: linear-gradient(135deg, #2c1810 0%, #573714 100%); border: 2px dashed #ffeaa7; border-radius: 16px; padding: 16px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 0 20px rgba(255, 234, 167, 0.5); color: #ffffff;">
-      <img src="IMG-20260823-WA0000.jpg" style="width: 140px; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #ffeaa7; box-shadow: 0 4px 12px rgba(0,0,0,0.6); margin-bottom: 10px;">
-      
-      <div style="font-size: 16px; font-weight: 900; color: #ffeaa7; margin-bottom: 4px;">🐈‍⬛ 阿豬 (老豬bubu)</div>
-      <div style="font-size: 11px; color: #55efc4; font-weight: bold; margin-bottom: 12px;">✨ 貓星狀態：極度舒暢 ‧ 煲水咕嚕中...</div>
-      
-      <div style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; font-size: 13px; line-height: 1.6; color: #ffeaa7; border: 1px solid rgba(255,234,167,0.3); text-align: left; margin-bottom: 14px; max-height: 150px; overflow-y: auto;">
-        喵～ (咕嚕咕嚕煲水聲...)<br><br>
-        明仔、芝女！我在天父照顧的貓星過得好高興呀！這裡有很多新鮮蒸好的池仔魚，貓湯喝都喝不完！我穿著白色小內褲在草原捲成貓波曬太陽呢～ 我也是『貓』，永遠最愛明仔和芝女喵！ ❤️
-      </div>
+  var boxHtml = '';
+  boxHtml += '<div style="background: linear-gradient(135deg, #2c1810 0%, #573714 100%); border: 2px dashed #ffeaa7; border-radius: 16px; padding: 16px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 0 20px rgba(255, 234, 167, 0.5); color: #ffffff;">';
+  boxHtml += '<img src="' + savedAvatar + '" onerror="this.src=\'data:image/svg+xml;utf8,<svg xmlns=\\\'http://www.w3.org/2000/svg\\\' width=\\\'100\\\' height=\\\'100\\\' viewbox=\\\'0 0 100 100\\\"><text y=\\\'50%\\\' x=\\\'50%\\\' font-size=\\\'60\\\' text-anchor=\\\'middle\\\' dominant-baseline=\\\'central\\\'>🐈‍⬛</text></svg>\'" style="width: 140px; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #ffeaa7; box-shadow: 0 4px 12px rgba(0,0,0,0.6); margin-bottom: 10px;">';
+  boxHtml += '<div style="font-size: 16px; font-weight: 900; color: #ffeaa7; margin-bottom: 4px;">🐈‍⬛ 阿豬 (老豬bubu)</div>';
+  boxHtml += '<div style="font-size: 11px; color: #55efc4; font-weight: bold; margin-bottom: 12px;">✨ 貓星狀態：極度舒暢 ‧ 煲水咕嚕中...</div>';
+  boxHtml += '<div style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; font-size: 13px; line-height: 1.6; color: #ffeaa7; border: 1px solid rgba(255,234,167,0.3); text-align: left; margin-bottom: 14px; max-height: 160px; overflow-y: auto;">';
+  boxHtml += '喵～ (咕嚕咕嚕煲水聲...)<br><br>';
+  boxHtml += '明仔、芝女！我在天父照顧的貓星過得好高興呀！這裡有很多新鮮蒸好的池仔魚，貓湯喝都喝不完！我穿著白色小內褲在草原捲成貓波曬太陽呢～<br><br>';
+  boxHtml += '<b>明仔問我係唔係『貓』？答：『貓！』絕對認認真真係貓喵！❤️</b><br>';
+  boxHtml += '<b>如果問西貢塞唔塞車？答：『唔貓！』塞車就不去喵～ 🚘</b><br><br>';
+  boxHtml += '阿豬永遠最愛明仔和芝女喵！ ❤️';
+  boxHtml += '</div>';
+  boxHtml += '<button onclick="closeCatChatModal()" style="background: linear-gradient(135deg, #e17055, #d63031); color: white; border: 1.5px solid #ffeaa7; padding: 8px 24px; border-radius: 20px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.4);">';
+  boxHtml += '❤️ 收到！阿豬要乖乖喔';
+  boxHtml += '</button>';
+  boxHtml += '</div>';
 
-      <button onclick="closeCatChatModal()" style="background: linear-gradient(135deg, #e17055, #d63031); color: white; border: 1.5px solid #ffeaa7; padding: 8px 24px; border-radius: 20px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.4);">
-        ❤️ 收到！阿豬要乖乖喔
-      </button>
-    </div>
-  `;
-
+  modal.innerHTML = boxHtml;
   document.body.appendChild(modal);
 }
 
 function closeCatChatModal() {
-  playUiSound('click');
-  const modal = document.getElementById('catChatModal');
+  try { playUiSound('click'); } catch(e){}
+  var modal = document.getElementById('catChatModal');
   if (modal) modal.remove();
 }
+
+function uploadCatNavAvatar(event) {
+  var file = event.target.files[0];
+  if (file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var imgData = e.target.result;
+      var img = document.getElementById('catNavImg');
+      if (img) img.src = imgData;
+      if (db) {
+        db.transaction("settings", "readwrite").objectStore("settings").put({ key: "catNavAvatar", val: imgData });
+      }
+      showToast("✨ 成功更新並永久儲存阿豬頭像寫真！");
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function loadSavedCatAvatar() {
+  if (!db) return;
+  var req = db.transaction("settings", "readonly").objectStore("settings").get("catNavAvatar");
+  req.onsuccess = function() {
+    if (req.result && req.result.val) {
+      var img = document.getElementById('catNavImg');
+      if (img) img.src = req.result.val;
+    }
+  };
+}
+
 
 /* --------------------------------------------------------------------------
    1. [UI Theme & LocalStorage] - 主/副標題顏色記憶與櫃桶開合

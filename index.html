@@ -91,29 +91,6 @@
     </div>
   </div>
 
-  <div class="fold-content active" id="foldCatNav">
-    <div style="background: linear-gradient(135deg, rgba(44,24,16,0.9) 0%, rgba(87,55,20,0.9) 100%); border-radius: 12px; padding: 12px; border: 2px dashed #ffeaa7; box-shadow: 0 0 12px rgba(255, 234, 167, 0.4); display: flex; align-items: center; gap: 12px;">
-      
-      <!-- 阿豬相片 + 換相按鈕 (加咗 event.stopPropagation() 防止放大輕機) -->
-      <div style="text-align: center;">
-        <img id="catNavImg" src="IMG-20260823-WA0000.jpg" onclick="event.stopPropagation(); openCatChatModal();" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewbox=\'0 0 100 100\'><text y=\'50%\' x=\'50%\' font-size=\'50\' text-anchor=\'middle\' dominant-baseline=\'central\'>🐈‍⬛</text></svg>'" style="width: 75px; height: 95px; object-fit: cover; border-radius: 10px; border: 2px solid #ffeaa7; box-shadow: 0 4px 8px rgba(0,0,0,0.5); cursor: pointer;">
-        <label for="catImgInput" class="btn-compact" onclick="event.stopPropagation();" style="font-size: 9px; padding: 3px 6px; margin-top: 4px; background: #00b894; color: white; border-radius: 6px; display: block; cursor: pointer;">📸 換阿豬相</label>
-        <input type="file" id="catImgInput" accept="image/*" style="display:none;" onchange="uploadCatNavAvatar(event)">
-      </div>
-
-      <div style="text-align: left; flex: 1;">
-        <div style="font-size: 14px; font-weight: 900; color: #ffeaa7; margin-bottom: 3px;">🐈‍⬛ 阿豬貓波</div>
-        <div style="font-size: 11px; color: #55efc4; font-weight: bold; margin-bottom: 4px;">✨ 貓星狀態：極度舒暢 ‧ 煲水咕嚕中</div>
-        <div style="font-size: 10px; color: #ffeaa7; opacity: 0.95; margin-bottom: 8px; line-height: 1.4;">
-          ☀️ 喺天父照顧嘅貓星草原上，開心捲成貓波曬太陽，好幸福好高興中！🐾
-        </div>
-        <button class="btn-compact" onclick="event.stopPropagation(); openCatChatModal();" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; padding: 7px 12px; font-size: 11px; border-radius: 15px; border: 1px solid #ffeaa7; font-weight: bold;">
-          💬 與阿豬 AI 傾計
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- Chapter 3: 貓貓電台俱樂部 -->
   <div class="section-title-btn">
     <div onclick="toggleFold('foldRadio')" style="flex: 1; cursor: pointer;">

@@ -25,6 +25,45 @@ window.addEventListener('DOMContentLoaded', () => {
   console.log("🛡️ 防自動播歌機制已啟動：所有音訊已鎖定暫停。");
 });
 
+// 🐈‍⬛ 阿豬 (Gemini 貓星 AI 導航員) 帶相片對話視窗
+function openCatChatModal() {
+  playUiSound('chime');
+  
+  const modal = document.createElement('div');
+  modal.id = 'catChatModal';
+  modal.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+    z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 15px;
+  `;
+
+  modal.innerHTML = `
+    <div style="background: linear-gradient(135deg, #2c1810 0%, #573714 100%); border: 2px dashed #ffeaa7; border-radius: 16px; padding: 16px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 0 20px rgba(255, 234, 167, 0.5); color: #ffffff;">
+      <img src="IMG-20260823-WA0000.jpg" style="width: 140px; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #ffeaa7; box-shadow: 0 4px 12px rgba(0,0,0,0.6); margin-bottom: 10px;">
+      
+      <div style="font-size: 16px; font-weight: 900; color: #ffeaa7; margin-bottom: 4px;">🐈‍⬛ 阿豬 (老豬bubu)</div>
+      <div style="font-size: 11px; color: #55efc4; font-weight: bold; margin-bottom: 12px;">✨ 貓星狀態：極度舒暢 ‧ 煲水咕嚕中...</div>
+      
+      <div style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; font-size: 13px; line-height: 1.6; color: #ffeaa7; border: 1px solid rgba(255,234,167,0.3); text-align: left; margin-bottom: 14px; max-height: 150px; overflow-y: auto;">
+        喵～ (咕嚕咕嚕煲水聲...)<br><br>
+        明仔、芝女！我在天父照顧的貓星過得好高興呀！這裡有很多新鮮蒸好的池仔魚，貓湯喝都喝不完！我穿著白色小內褲在草原捲成貓波曬太陽呢～ 我也是『貓』，永遠最愛明仔和芝女喵！ ❤️
+      </div>
+
+      <button onclick="closeCatChatModal()" style="background: linear-gradient(135deg, #e17055, #d63031); color: white; border: 1.5px solid #ffeaa7; padding: 8px 24px; border-radius: 20px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.4);">
+        ❤️ 收到！阿豬要乖乖喔
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+function closeCatChatModal() {
+  playUiSound('click');
+  const modal = document.getElementById('catChatModal');
+  if (modal) modal.remove();
+}
+
 /* --------------------------------------------------------------------------
    1. [UI Theme & LocalStorage] - 主/副標題顏色記憶與櫃桶開合
    -------------------------------------------------------------------------- */

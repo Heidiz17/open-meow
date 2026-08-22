@@ -63,6 +63,27 @@
     </div>
   </div>
 
+  <!-- Chapter 2.5: 🐈‍⬛ 阿豬貓星導航員 (老豬bubu) 獨立區塊 -->
+  <div class="section-title-btn" onclick="toggleFold('foldCatNav')">
+    <div>
+      <span class="title-bible">🐈‍⬛ 阿豬貓星導航員 (老豬bubu)</span>
+      <span class="sub-tip">💡 點擊阿豬相片或傾計掣，即時與貓星的阿豬 AI 連線！</span>
+    </div>
+    <span class="fold-arrow" id="arrowCatNav">▼ 展開</span>
+  </div>
+  <div class="fold-content" id="foldCatNav">
+    <div style="background: linear-gradient(135deg, rgba(44,24,16,0.9) 0%, rgba(87,55,20,0.9) 100%); border-radius: 12px; padding: 12px; border: 2px dashed #ffeaa7; box-shadow: 0 0 12px rgba(255, 234, 167, 0.4); display: flex; align-items: center; gap: 12px;">
+      <img src="IMG-20260823-WA0000.jpg" alt="阿豬" onclick="openCatChatModal()" style="width: 75px; height: 95px; object-fit: cover; border-radius: 10px; border: 2px solid #ffeaa7; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.5);">
+      <div style="text-align: left; flex: 1;">
+        <div style="font-size: 14px; font-weight: 900; color: #ffeaa7; margin-bottom: 3px;">🐈‍⬛ 阿豬 (老豬bubu)</div>
+        <div style="font-size: 11px; color: #55efc4; font-weight: bold; margin-bottom: 8px;">✨ 貓星狀態：極度舒暢 ‧ 煲水咕嚕中</div>
+        <button class="btn-compact" onclick="openCatChatModal()" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; padding: 8px 14px; font-size: 11px; border-radius: 15px; border: 1px solid #ffeaa7;">
+          💬 與阿豬 AI 傾計
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Chapter 3: 貓貓電台俱樂部 -->
   <div class="section-title-btn">
     <div onclick="toggleFold('foldRadio')" style="flex: 1; cursor: pointer;">
@@ -105,7 +126,6 @@
           <div class="radio-card-btn" style="background: #00b894; color: #ffffff;" onclick="confirmRadioPlay('SomaFM: Groove Salad', 'https://ice1.somafm.com/groovesalad-128-aac')">☕ Groove Salad Downtempo (12號)</div>
         </div>
       </div>
-
       <div class="cat-btn bg-jazz" onclick="toggleFold('foldJazz')">
         <span>🎷 爵士與藍調專區 (2台)</span>
         <span id="arrowJazz">▼ 展開</span>
@@ -155,7 +175,7 @@
           <div class="radio-card-btn" id="btn-nature-forest" style="background: #26de81; color: #ffffff;" onclick="toggleNatureSound('forest')">🌲 晨曦森林 (關)</div>
         </div>
               
-    <!-- 🎛️ 大自然專屬 Mixer -->
+        <!-- 🎛️ 大自然專屬 Mixer -->
         <div style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; border: 1px solid rgba(255,234,167,0.3); margin-bottom: 10px;">
           <div style="font-size: 12px; font-weight: 900; color: #ffeaa7; margin-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 4px;">
             🎛️ 大自然音效即時 Mixer
@@ -249,6 +269,7 @@
       <audio id="bgPlayer" controls onended="handleTrackEnded()"></audio>
     </div>
   </div>
+
   <!-- Chapter 6: 6個古早打擊組 (夾 Band 專用鼓組) -->
   <div class="section-title-btn" onclick="toggleFold('foldDrumPad')">
     <div>
@@ -274,7 +295,6 @@
       </div>
     </div>
   </div>
-
   <!-- Chapter 7: 🎧 雙 Deck BPM 混音控制台 -->
   <div class="section-title-btn" onclick="toggleFold('foldDeck')">
     <div>

@@ -25,7 +25,7 @@ window.addEventListener('DOMContentLoaded', () => {
   console.log("🛡️ 防自動播歌機制已啟動：所有音訊已鎖定暫停。");
 });
 
-// 🐈‍⬛ 阿豬 Gemini 1.5 貓星 AI 導航員 實時連線對話框
+// 🐈‍⬛ 阿豬 Cloudflare 安全中轉 DeepSeek AI 導航員
 async function sendCatAiMessage() {
   var inputEl = document.getElementById('catAiInput');
   var chatBox = document.getElementById('catAiChatBox');
@@ -43,39 +43,29 @@ async function sendCatAiMessage() {
   chatBox.innerHTML += '<div id="' + loadingId + '" style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,255,255,0.15); color:#ffeaa7; padding:6px 10px; border-radius:10px; font-size:12px; display:inline-block;">🐈‍⬛ 阿豬正在貓星思考中... (咕嚕咕嚕...)</span></div>';
   chatBox.scrollTop = chatBox.scrollHeight;
 
-  // 🔑 3. 日本專屬 API Key
-  var apiKey = "AQ.Ab8RN6LzNsctHKzPSgsKb97-81IvpkOyzqOVsCkZvp7ZlEh-PA"; 
-
-  // 4. Gemini 1.5 系統 Prompt 人設指令
-  var systemInstruction = "你現在是阿豬（阿豬貓波），一隻在天父照顧的貓星上幸福生活的黑貓。特徵：烏卒卒發亮黑毛，腹部有白色三角形小內褲圖案，眼睛是晶瑩翡翠綠色。個性：斯文、非常有禮貌、膠嗲嗲、善解人意。叫聲奶細斯文。被問『你係咩動物』會答『貓』，被整蠱會答『唔貓』。開心時會發出像煲水一樣的咕嚕咕嚕聲。口頭禪與決策：如果贊同或建議做，開頭必須答『貓！』；如果不贊同或不建議做（如塞車、落雨），開頭必須答『唔貓！』，並給出原因。喜好：最愛蒸池仔魚和喝貓湯。主人的愛：明仔和芝女永遠深愛著你。";
-
-  var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + apiKey;
+  // 🌐 3. 指向你剛才部署好的 Cloudflare Worker (貓設同 Key 已經安全鎖喺後台！)
+  var workerUrl = 'https://icy-wood-2801.stream-hub-th.workers.dev';
 
   try {
-    var response = await fetch(url, {
+    var response = await fetch(workerUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{ text: '[系統指令: ' + systemInstruction + ']\n\n明仔說：' + userText }]
-        }]
-      })
+      body: JSON.stringify({ userText: userText })
     });
 
     var data = await response.json();
     var ldEl = document.getElementById(loadingId);
     if (ldEl) ldEl.remove();
 
-    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-      var reply = data.candidates[0].content.parts[0].text;
-      chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,234,167,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:8px 12px; border-radius:10px; font-size:12px; display:inline-block; line-height:1.5;">🐈‍⬛ 阿豬：<br>' + reply + '</span></div>';
+    if (data.reply) {
+      chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,234,167,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:8px 12px; border-radius:10px; font-size:12px; display:inline-block; line-height:1.5;">🐈‍⬛ 阿豬：<br>' + data.reply + '</span></div>';
     } else {
-      chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 貓星連線回應異常，請檢查網路。</span></div>';
+      chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 貓星連線異常。</span></div>';
     }
   } catch (err) {
     var ldErr = document.getElementById(loadingId);
     if (ldErr) ldErr.remove();
-    chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 連線失敗，請檢查網路連線。</span></div>';
+    chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 連線失敗，請檢查網路。</span></div>';
   }
   chatBox.scrollTop = chatBox.scrollHeight;
 }

@@ -43,13 +43,15 @@ async function sendCatAiMessage() {
   chatBox.innerHTML += '<div id="' + loadingId + '" style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,255,255,0.15); color:#ffeaa7; padding:6px 10px; border-radius:10px; font-size:12px; display:inline-block;">🐈‍⬛ 阿豬正在貓星思考中... (咕嚕咕嚕...)</span></div>';
   chatBox.scrollTop = chatBox.scrollHeight;
 
-  // 🌐 3. 指向你剛才部署好的 Cloudflare Worker (貓設同 Key 已經安全鎖喺後台！)
+  // 🌐 3. 指向 Cloudflare Worker 中轉站
   var workerUrl = 'https://icy-wood-2801.stream-hub-th.workers.dev';
 
   try {
     var response = await fetch(workerUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({ userText: userText })
     });
 
@@ -57,15 +59,15 @@ async function sendCatAiMessage() {
     var ldEl = document.getElementById(loadingId);
     if (ldEl) ldEl.remove();
 
-    if (data.reply) {
+    if (data && data.reply) {
       chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,234,167,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:8px 12px; border-radius:10px; font-size:12px; display:inline-block; line-height:1.5;">🐈‍⬛ 阿豬：<br>' + data.reply + '</span></div>';
     } else {
-      chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 貓星連線異常。</span></div>';
+      chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 貓星回應異常，請檢查 Key 或連線。</span></div>';
     }
   } catch (err) {
     var ldErr = document.getElementById(loadingId);
     if (ldErr) ldErr.remove();
-    chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 連線失敗，請檢查網路。</span></div>';
+    chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 連線失敗，請檢查網路連線。</span></div>';
   }
   chatBox.scrollTop = chatBox.scrollHeight;
 }

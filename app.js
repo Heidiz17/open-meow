@@ -179,9 +179,9 @@ function openCatChatModal() {
   boxHtml += '<div style="position:relative; text-align:center;">';
   boxHtml += '<button onclick="switchCatChatTheme()" style="position:absolute; right:0; top:0; background:rgba(255,255,255,0.2); color:white; border:none; padding:4px 8px; border-radius:10px; font-size:10px; cursor:pointer;">🎨 換色</button>';
   
-  // 📸 阿豬相片區 (直接點擊相片放大/縮細)
-  boxHtml += '<div style="display:inline-block; position:relative; margin-bottom:4px;">';
-  boxHtml += '<img id="catChatAvatarImg" src="' + currentAvatar + '" onclick="toggleCatAvatarZoom()" style="transition: all 0.3s ease; width: 80px; height: 80px; object-fit: cover; border-radius: 15px; border: 2px solid #ffeaa7; cursor: pointer;" title="點擊放大/縮細">';
+  // 📸 阿豬相片區 (點擊即時高清撐大/縮細)
+  boxHtml += '<div id="catAvatarContainer" style="display:inline-block; position:relative; margin-bottom:4px; transition: all 0.3s ease;">';
+  boxHtml += '<img id="catChatAvatarImg" src="' + currentAvatar + '" onclick="toggleCatAvatarZoom()" style="transition: all 0.3s ease; width: 85px; height: 85px; object-fit: cover; border-radius: 16px; border: 2px solid #ffeaa7; cursor: pointer;" title="點擊放大/縮細">';
   boxHtml += '<label for="petAvatarInput" style="position:absolute; bottom:2px; right:2px; background:#00b894; color:white; border-radius:50%; width:24px; height:24px; display:flex; justify-content:center; align-items:center; font-size:11px; cursor:pointer; border:1px solid white;">📸</label>';
   boxHtml += '<input type="file" id="petAvatarInput" accept="image/*" style="display:none;" onchange="uploadPetChatAvatar(event)">';
   boxHtml += '</div>';
@@ -230,38 +230,38 @@ function openCatChatModal() {
   document.body.appendChild(modal);
 }
 
-// 🔍 點擊相片切換放大/縮細 (直接睇大細，100% 成功)
+// 🔍 點擊相片切換放大/縮細 (爆發性加大至 230px)
 function toggleCatAvatarZoom() {
   try { playUiSound('click'); } catch(e){}
   var img = document.getElementById('catChatAvatarImg');
+  var container = document.getElementById('catAvatarContainer');
   if (!img) return;
   
-  // 取得外層包裹容器 (即帶有 display:inline-block 嗰個 div)
-  var container = img.parentElement;
-  
   if (!img.dataset.zoomed || img.dataset.zoomed === "false") {
-    // 放大模式：將圖片同容器同步放大，並拉高層級
-    img.style.width = '180px';
-    img.style.height = '180px';
-    img.style.borderRadius = '20px';
+    // 💥 放大模式：爆發性撐大至 230px + 金光邊框
+    img.style.width = '230px';
+    img.style.height = '230px';
+    img.style.borderRadius = '24px';
+    img.style.boxShadow = '0 0 25px rgba(255, 234, 167, 0.8)';
     img.dataset.zoomed = "true";
     if (container) {
       container.style.zIndex = '9999';
       container.style.position = 'relative';
     }
-    showToast("🔍 已放大阿豬寫真");
+    showToast("🔍 已放大阿豬高清大圖");
   } else {
-    // 還原模式
-    img.style.width = '80px';
-    img.style.height = '80px';
-    img.style.borderRadius = '15px';
+    // ⚡ 還原細相模式
+    img.style.width = '85px';
+    img.style.height = '85px';
+    img.style.borderRadius = '16px';
+    img.style.boxShadow = 'none';
     img.dataset.zoomed = "false";
     if (container) {
       container.style.zIndex = '1';
     }
+    showToast("🔍 已還原小圖");
   }
 }
-
 
 // 🎛️ 櫃桶開合函數
 function toggleVoiceDrawer() {

@@ -255,7 +255,7 @@ function toggleCatAvatarZoom(e) {
   overlay.style.left = '0';
   overlay.style.width = '100vw';
   overlay.style.height = '100vh';
-  overlay.style.backgroundColor = 'rgba(45, 24, 16, 0.94)';
+  overlay.style.backgroundColor = 'rgba(80, 45, 20, 0.95)';
   overlay.style.backdropFilter = 'blur(8px)';
   overlay.style.webkitBackdropFilter = 'blur(8px)';
   overlay.style.zIndex = '9999999';

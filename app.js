@@ -26,14 +26,22 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 /*==========================================================================
-   🐾 靈寵對講機 - 獨立 Prompt / 語音 Talkback / 4色 Preset 升級核心
+   🐾 靈寵對講機 - 獨立 Prompt / 語音 Talkback / 6色 Preset 升級核心
    ========================================================================== */
 
 let currentCatThemeIdx = parseInt(localStorage.getItem("catChatThemeIdx") || "0");
-const catThemeClasses = ['cat-theme-0', 'cat-theme-1', 'cat-theme-2', 'cat-theme-3'];
-const catThemeNames = ['🐈‍⬛ 黑金 (阿豬)', '🤍 雪銀 (白/灰貓)', '🍊 焦糖 (橘貓)', '🌸 夢幻紫 (貓星)'];
+const catThemeClasses = ['cat-theme-0', 'cat-theme-1', 'cat-theme-2', 'cat-theme-3', 'cat-theme-4', 'cat-theme-5'];
+const catThemeNames = [
+  '🐈‍⬛ 黑金 (阿豬)', 
+  '🤍 雪銀 (灰貓)', 
+  '🍊 焦糖 (橘貓)', 
+  '🌸 夢幻紫 (少女)', 
+  '❄️ 純白 (白貓)', 
+  '👑 帝皇黃 (黃貓)'
+];
 
-// 🎨 1. 循環切換 4 隻高對比毛色主題
+
+// 🎨 1. 循環切換 6 隻高對比毛色主題
 function switchCatChatTheme() {
   try { playUiSound('click'); } catch(e){}
   currentCatThemeIdx = (currentCatThemeIdx + 1) % catThemeClasses.length;
@@ -89,7 +97,7 @@ function uploadPetChatAvatar(event) {
   reader.readAsDataURL(file);
 }
 
-// 🎙️ 4. 語音 Talkback 對講 (廣東話 STT)
+// 🎙️ 4. 語音 Talkback 對講 (廣東話 STT：聽完入框，留畀明仔修改後手動發送)
 function startVoiceTalkback() {
   try { playUiSound('chime'); } catch(e){}
   var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -105,13 +113,16 @@ function startVoiceTalkback() {
   recognition.onresult = function(event) {
     var transcript = event.results[0][0].transcript;
     var inputEl = document.getElementById('catAiInput');
-    if (inputEl) inputEl.value = transcript;
-    sendCatAiMessage();
+    if (inputEl) {
+      inputEl.value = transcript; // 💡 只填入輸入框，唔會自動發送！
+      showToast("✨ 語音已轉換！你可以修改後再撳發送。");
+    }
   };
   recognition.onerror = function() {
     showToast("❌ 語音未聽清，請再試一次！");
   };
 }
+
 
 // 💬 5. 對話框核心 (全螢幕加大 + 獨立 Prompt & 相片)
 function openCatChatModal() {
@@ -181,7 +192,24 @@ function closeCatChatModal() {
   if (modal) modal.remove();
 }
 
-// 🌐 6. 發送訊息 (將動態 Prompt 送交 Cloudflare Worker)
+// 📢 廣東話 Q 版貓咪語音朗讀函數 (Text-to-Speech)
+function speakCatReply(text) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel(); // 停止上一句
+    
+    // 清除括號內的動作描寫（例如：「（眼睛亮晶晶）」唔會讀出嚟）
+    var cleanText = text.replace(/（[^）]*）|\([^)]*\)/g, '');
+    
+    var utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'zh-HK'; // 廣東話
+    utterance.pitch = 1.4;    // 音調調高（少女/Q版童音）
+    utterance.rate = 1.05;    // 輕快語速
+    
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+// 🌐 6. 發送訊息 (將動態 Prompt 送交 Cloudflare Worker + 自動廣東話語音 Talkback)
 async function sendCatAiMessage() {
   var inputEl = document.getElementById('catAiInput');
   var chatBox = document.getElementById('catAiChatBox');
@@ -221,6 +249,9 @@ async function sendCatAiMessage() {
 
     if (data && data.reply) {
       chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,234,167,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:8px 12px; border-radius:10px; font-size:12px; display:inline-block; line-height:1.5;">🐈‍⬛ ' + petName + '：<br>' + data.reply + '</span></div>';
+      
+      // 🔊 阿豬自動用廣東話少女童音讀出回覆！
+      speakCatReply(data.reply);
     } else {
       chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 貓星連線異常，請檢查設定。</span></div>';
     }

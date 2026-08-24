@@ -330,11 +330,13 @@ body.sub-white .section-title-btn span.sub-tip  { color: #ffffff !important; tex
   transition: all 0.3s ease !important;
 }
 
-/* 🎨 4 隻 Preset 高對比毛色主題 (Contrast Theme System) */
-.cat-theme-0 { background: linear-gradient(135deg, #2c1810 0%, #573714 100%) !important; border: 2px dashed #ffeaa7 !important; color: #ffeaa7 !important; } /* 🐈‍⬛ 黑金 (阿豬) */
-.cat-theme-1 { background: linear-gradient(135deg, #2d3436 0%, #000000 100%) !important; border: 2px dashed #74b9ff !important; color: #ffffff !important; } /* 🤍 雪銀 (白/灰貓) */
-.cat-theme-2 { background: linear-gradient(135deg, #3d1e03 0%, #632d00 100%) !important; border: 2px dashed #ffeaa7 !important; color: #ffeaa7 !important; } /* 🍊 焦糖 (橘貓) */
-.cat-theme-3 { background: linear-gradient(135deg, #2d132c 0%, #1d0c1d 100%) !important; border: 2px dashed #fd79a8 !important; color: #55efc4 !important; } /* 🌸 夢幻 (貓星靈性) */
+/* 🎨 6 隻 Preset 高對比毛色主題 */
+.cat-theme-0 { background: linear-gradient(135deg, #2c1810 0%, #573714 100%) !important; border: 2px dashed #ffeaa7 !important; color: #ffeaa7 !important; } /* 🐈‍⬛ 黑金 */
+.cat-theme-1 { background: linear-gradient(135deg, #2d3436 0%, #000000 100%) !important; border: 2px dashed #74b9ff !important; color: #ffffff !important; } /* 🤍 雪銀 */
+.cat-theme-2 { background: linear-gradient(135deg, #3d1e03 0%, #632d00 100%) !important; border: 2px dashed #ffeaa7 !important; color: #ffeaa7 !important; } /* 🍊 焦糖 */
+.cat-theme-3 { background: linear-gradient(135deg, #2d132c 0%, #1d0c1d 100%) !important; border: 2px dashed #fd79a8 !important; color: #55efc4 !important; } /* 🌸 夢幻紫 */
+.cat-theme-4 { background: linear-gradient(135deg, #1e272e 0%, #0f1418 100%) !important; border: 2px dashed #ffffff !important; color: #ffffff !important; } /* ❄️ 純白 */
+.cat-theme-5 { background: linear-gradient(135deg, #4b3200 0%, #2b1d00 100%) !important; border: 2px dashed #f1c40f !important; color: #f1c40f !important; } /* 👑 帝皇黃 */
 
 /* 放大貓咪靚相頭像 */
 #catChatModal img#catChatAvatarImg {

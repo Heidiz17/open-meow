@@ -230,38 +230,29 @@ function openCatChatModal() {
   document.body.appendChild(modal);
 }
 
-// 🔍 點擊相片切換放大/縮細 (爆發性加大至 230px)
-function toggleCatAvatarZoom() {
-  try { playUiSound('click'); } catch(e){}
-  var img = document.getElementById('catChatAvatarImg');
-  var container = document.getElementById('catAvatarContainer');
-  if (!img) return;
+// 🔍 測試專用：點擊即時跳出彈窗提示
+function toggleCatAvatarZoom(e) {
+  if (e) e.stopPropagation();
   
-  if (!img.dataset.zoomed || img.dataset.zoomed === "false") {
-    // 💥 放大模式：爆發性撐大至 230px + 金光邊框
-    img.style.width = '230px';
-    img.style.height = '230px';
-    img.style.borderRadius = '24px';
-    img.style.boxShadow = '0 0 25px rgba(255, 234, 167, 0.8)';
-    img.dataset.zoomed = "true";
-    if (container) {
-      container.style.zIndex = '9999';
-      container.style.position = 'relative';
-    }
-    showToast("🔍 已放大阿豬高清大圖");
-  } else {
-    // ⚡ 還原細相模式
-    img.style.width = '85px';
-    img.style.height = '85px';
-    img.style.borderRadius = '16px';
-    img.style.boxShadow = 'none';
-    img.dataset.zoomed = "false";
-    if (container) {
-      container.style.zIndex = '1';
-    }
-    showToast("🔍 已還原小圖");
+  // 1. 測試點擊事件有冇傳進來
+  alert("1. 成功撳到相片區域！");
+  
+  var img = document.getElementById('catChatAvatarImg');
+  
+  // 2. 測試抓唔抓得到張相
+  if (!img) {
+    alert("❌ 錯誤：抓唔到 catChatAvatarImg 張相！");
+    return;
   }
+  
+  alert("2. 成功抓到相片！準備放大...");
+  
+  // 3. 執行放大
+  img.style.width = '240px';
+  img.style.height = '300px';
+  alert("3. 已經下達放大指令！");
 }
+
 
 // 🎛️ 櫃桶開合函數
 function toggleVoiceDrawer() {

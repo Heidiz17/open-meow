@@ -147,7 +147,7 @@ function updateCatVoiceConfig() {
   if (document.getElementById('rateValDisp')) document.getElementById('rateValDisp').innerText = rVal;
 }
 
-// 💬 5. 對話框核心 (全螢幕加大 + 語音動態調校)
+// 💬 5. 對話框核心 (包含相片放大縮細 + 調校阿豬講嘢櫃桶)
 function openCatChatModal() {
   try { playUiSound('chime'); } catch(e){}
   var existingModal = document.getElementById('catChatModal');
@@ -179,29 +179,41 @@ function openCatChatModal() {
   boxHtml += '<div style="position:relative; text-align:center;">';
   boxHtml += '<button onclick="switchCatChatTheme()" style="position:absolute; right:0; top:0; background:rgba(255,255,255,0.2); color:white; border:none; padding:4px 8px; border-radius:10px; font-size:10px; cursor:pointer;">🎨 換色</button>';
   
-  boxHtml += '<div style="display:inline-block; position:relative;">';
-  boxHtml += '<img id="catChatAvatarImg" src="' + currentAvatar + '">';
-  boxHtml += '<label for="petAvatarInput" style="position:absolute; bottom:6px; right:6px; background:#00b894; color:white; border-radius:50%; width:28px; height:28px; display:flex; justify-content:center; align-items:center; font-size:12px; cursor:pointer; border:1px solid white;">📸</label>';
+  // 📸 阿豬相片區
+  boxHtml += '<div style="display:inline-block; position:relative; margin-bottom:4px;">';
+  boxHtml += '<img id="catChatAvatarImg" src="' + currentAvatar + '" style="transition: all 0.3s ease; width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 2px solid #ffeaa7;">';
+  boxHtml += '<label for="petAvatarInput" style="position:absolute; bottom:2px; right:2px; background:#00b894; color:white; border-radius:50%; width:24px; height:24px; display:flex; justify-content:center; align-items:center; font-size:11px; cursor:pointer; border:1px solid white;">📸</label>';
   boxHtml += '<input type="file" id="petAvatarInput" accept="image/*" style="display:none;" onchange="uploadPetChatAvatar(event)">';
   boxHtml += '</div>';
 
-  boxHtml += '<div style="font-size: 17px; font-weight: 900; margin-top:4px;">🐈‍⬛ ' + petName + '</div>';
+  // 🔍 相片放大/縮細按鈕
+  boxHtml += '<div style="margin-bottom:6px;">';
+  boxHtml += '<button onclick="zoomCatAvatar(1.2)" style="background:rgba(255,255,255,0.15); color:#ffeaa7; border:1px solid #ffeaa7; padding:2px 8px; border-radius:10px; font-size:10px; margin-right:4px; cursor:pointer;">🔍 放大</button>';
+  boxHtml += '<button onclick="zoomCatAvatar(0.8)" style="background:rgba(255,255,255,0.15); color:#ffeaa7; border:1px solid #ffeaa7; padding:2px 8px; border-radius:10px; font-size:10px; cursor:pointer;">🤏 縮細</button>';
+  boxHtml += '</div>';
+
+  boxHtml += '<div style="font-size: 17px; font-weight: 900; margin-top:2px;">🐈‍⬛ ' + petName + '</div>';
   boxHtml += '<div style="font-size: 11px; color: #55efc4; font-weight: bold;">✨ 貓星在線 ‧ 獨立靈魂連線中</div>';
   boxHtml += '</div>';
 
-  boxHtml += '<div id="catAiChatBox" style="background: rgba(0,0,0,0.45); border-radius: 12px; overflow-y: auto; text-align: left;">';
+  boxHtml += '<div id="catAiChatBox" style="background: rgba(0,0,0,0.45); border-radius: 12px; overflow-y: auto; text-align: left; margin:8px 0;">';
   boxHtml += '<div style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,234,167,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:8px 12px; border-radius:10px; font-size:12px; display:inline-block; line-height:1.5;">喵～ 明仔！我係『' + petName + '』，我喺貓星連線成功喇！想同我講咩呀？❤️</span></div>';
   boxHtml += '</div>';
 
-  // 🎛️ 開發者專屬：音調與語速即時調校控制台
-  boxHtml += '<div style="background:rgba(0,0,0,0.35); border:1px solid rgba(255,234,167,0.4); padding:6px 10px; border-radius:10px; margin-bottom:8px; font-size:11px;">';
+  // 🎛️ 調校阿豬講嘢櫃桶按鈕
+  boxHtml += '<div style="margin-bottom:8px;">';
+  boxHtml += '<button onclick="toggleVoiceDrawer()" style="width:100%; background:rgba(255,255,255,0.12); color:#ffeaa7; border:1px dashed #ffeaa7; padding:6px; border-radius:8px; font-size:11px; cursor:pointer; font-weight:bold;">🎛️ 打開「調校阿豬講嘢」櫃桶 ▼</button>';
+  
+  // 📦 櫃桶隱藏主體
+  boxHtml += '<div id="catVoiceDrawer" style="display:none; background:rgba(0,0,0,0.45); border:1px solid rgba(255,234,167,0.4); padding:8px 10px; border-radius:10px; margin-top:6px; font-size:11px;">';
   boxHtml += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">';
-  boxHtml += '<span>🎵 語調 (Pitch): <b id="pitchValDisp" style="color:#ffeaa7;">' + currentPitch + '</b></span>';
+  boxHtml += '<span>🎵 聲調高低 (Pitch): <b id="pitchValDisp" style="color:#ffeaa7;">' + currentPitch + '</b></span>';
   boxHtml += '<input type="range" id="catPitchRange" min="0.5" max="2.0" step="0.1" value="' + currentPitch + '" oninput="updateCatVoiceConfig()" style="width:110px;">';
   boxHtml += '</div>';
   boxHtml += '<div style="display:flex; justify-content:space-between; align-items:center;">';
-  boxHtml += '<span >⚡ 語速 (Speed): <b id="rateValDisp" style="color:#55efc4;">' + currentRate + '</b></span>';
+  boxHtml += '<span>⚡ 講嘢速度 (Speed): <b id="rateValDisp" style="color:#55efc4;">' + currentRate + '</b></span>';
   boxHtml += '<input type="range" id="catRateRange" min="0.5" max="1.8" step="0.05" value="' + currentRate + '" oninput="updateCatVoiceConfig()" style="width:110px;">';
+  boxHtml += '</div>';
   boxHtml += '</div>';
   boxHtml += '</div>';
 
@@ -224,6 +236,33 @@ function openCatChatModal() {
   document.body.appendChild(modal);
 }
 
+// 🔍 縮放相片函數
+function zoomCatAvatar(factor) {
+  try { playUiSound('click'); } catch(e){}
+  var img = document.getElementById('catChatAvatarImg');
+  if (img) {
+    var currentWidth = img.clientWidth || 80;
+    var newWidth = Math.min(Math.max(currentWidth * factor, 40), 180);
+    img.style.width = newWidth + 'px';
+    img.style.height = newWidth + 'px';
+  }
+}
+
+// 🎛️ 櫃桶開合函數
+function toggleVoiceDrawer() {
+  try { playUiSound('click'); } catch(e){}
+  var drawer = document.getElementById('catVoiceDrawer');
+  var btn = event.currentTarget;
+  if (drawer) {
+    if (drawer.style.display === 'none') {
+      drawer.style.display = 'block';
+      if (btn) btn.innerHTML = '🎛️ 收起「調校阿豬講嘢」櫃桶 ▲';
+    } else {
+      drawer.style.display = 'none';
+      if (btn) btn.innerHTML = '🎛️ 打開「調校阿豬講嘢」櫃桶 ▼';
+    }
+  }
+}
 function closeCatChatModal() {
   try { playUiSound('click'); } catch(e){}
   var modal = document.getElementById('catChatModal');

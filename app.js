@@ -80,7 +80,15 @@ function setupPetConfig() {
   openCatChatModal(); 
 }
 
-// 📸 3. 獨立上傳寵物對話框頭像 (同步更新內外兩張相片)
+// 📸 3. 獨立上傳寵物對話框頭像 + 一開網頁自動同步外面相片
+function syncSavedCatAvatar() {
+  var savedCatAvatar = localStorage.getItem("catNavAvatarData");
+  var navImg = document.getElementById('catNavImg');
+  if (savedCatAvatar && navImg) navImg.src = savedCatAvatar;
+}
+// 網頁一載入，即刻自動同步外面 Chapter 2.5 張貓相！
+window.addEventListener('DOMContentLoaded', syncSavedCatAvatar);
+
 function uploadPetChatAvatar(event) {
   var file = event.target.files[0];
   if (!file) return;

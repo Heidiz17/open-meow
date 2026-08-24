@@ -230,30 +230,51 @@ function openCatChatModal() {
   document.body.appendChild(modal);
 }
 
-// 🔍 點擊相片：直接呼叫全屏 Lightbox，喺手機正中間高清睇阿豬！
+// 🔍 點擊相片：喺對講機最頂層正中心高清彈出阿豬寫真！
 function toggleCatAvatarZoom(e) {
   if (e) e.stopPropagation();
-  try { playUiSound('click'); } catch(e){}
-  
+  try { playUiSound('click'); } catch(err){}
+
+  // 1. 檢查係咪已經開咗大圖，開咗就關閉
+  var existOverlay = document.getElementById('catZoomOverlay');
+  if (existOverlay) {
+    existOverlay.remove();
+    showToast("🔍 已關閉大圖");
+    return;
+  }
+
   var savedCatAvatar = localStorage.getItem("catNavAvatarData");
   var navImg = document.getElementById('catNavImg');
   var currentAvatar = savedCatAvatar || (navImg ? navImg.src : 'IMG-20260823-WA0000.jpg');
 
-  // 1. 檢查頁面有冇 Lightbox 容器
-  var lightbox = document.getElementById('lightbox');
-  var content = document.getElementById('lightboxContent');
-  var caption = document.getElementById('lightboxCaption');
+  // 2. 建立獨立最頂層浮窗（z-index 設到最高 9999999，必能蓋過一切！）
+  var overlay = document.createElement('div');
+  overlay.id = 'catZoomOverlay';
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100vw';
+  overlay.style.height = '100vh';
+  overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.92)';
+  overlay.style.zIndex = '9999999';
+  overlay.style.display = 'flex';
+  overlay.style.flexDirection = 'column';
+  overlay.style.justifyContent = 'center';
+  overlay.style.alignItems = 'center';
+  overlay.onclick = function() { overlay.remove(); };
 
-  if (lightbox && content) {
-    // 💡 2. 直接將阿豬相片載入 Lightbox 正中心全屏顯示 (不超出手機螢幕)
-    content.innerHTML = '<img src="' + currentAvatar + '" style="max-width:90vw; max-height:70vh; border-radius:16px; box-shadow:0 0 25px rgba(255,234,167,0.8); object-fit:contain;">';
-    if (caption) caption.innerText = '📷 阿豬貓波 ‧ 高清寫真';
-    lightbox.style.display = 'flex';
-    showToast("🔍 已喺手機中間放大阿豬相片");
-  } else {
-    showToast("⚠️ 未能載入放大圖層");
-  }
+  overlay.innerHTML = `
+    <div style="text-align:center; padding:15px;">
+      <img src="${currentAvatar}" style="max-width:85vw; max-height:65vh; border-radius:20px; border:2px solid #ffeaa7; box-shadow:0 0 30px rgba(255,234,167,0.8); object-fit:contain;">
+      <div style="color:#ffeaa7; font-size:16px; font-weight:bold; margin-top:15px;">🐈‍⬛ 阿豬貓波 ‧ 高清寫真</div>
+      <div style="color:#dfe6e9; font-size:12px; margin-top:5px;">(點擊螢幕任何位置關閉)</div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  showToast("🔍 已喺手機正中間放大阿豬");
 }
+
 
 // 🎛️ 櫃桶開合函數
 function toggleVoiceDrawer() {

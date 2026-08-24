@@ -138,8 +138,19 @@ function startVoiceTalkback() {
   };
 }
 
+// 🎛️ 1. 動態更新並儲存音調數值
+function updateCatVoiceConfig() {
+  var pVal = document.getElementById('catPitchRange') ? document.getElementById('catPitchRange').value : "1.4";
+  var rVal = document.getElementById('catRateRange') ? document.getElementById('catRateRange').value : "1.05";
+  
+  localStorage.setItem("custom_cat_pitch", pVal);
+  localStorage.setItem("custom_cat_rate", rVal);
 
-// 💬 5. 對話框核心 (全螢幕加大 + 獨立 Prompt & 相片)
+  if (document.getElementById('pitchValDisp')) document.getElementById('pitchValDisp').innerText = pVal;
+  if (document.getElementById('rateValDisp')) document.getElementById('rateValDisp').innerText = rVal;
+}
+
+// 💬 5. 對話框核心 (全螢幕加大 + 語音動態調校)
 function openCatChatModal() {
   try { playUiSound('chime'); } catch(e){}
   var existingModal = document.getElementById('catChatModal');
@@ -149,6 +160,9 @@ function openCatChatModal() {
   var navImg = document.getElementById('catNavImg');
   var currentAvatar = savedCatAvatar || (navImg ? navImg.src : 'IMG-20260823-WA0000.jpg');
   var petName = localStorage.getItem("custom_pet_name") || "阿豬貓波";
+  
+  var currentPitch = localStorage.getItem("custom_cat_pitch") || "1.4";
+  var currentRate = localStorage.getItem("custom_cat_rate") || "1.05";
 
   var modal = document.createElement('div');
   modal.id = 'catChatModal';
@@ -182,6 +196,18 @@ function openCatChatModal() {
   boxHtml += '<div style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,234,167,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:8px 12px; border-radius:10px; font-size:12px; display:inline-block; line-height:1.5;">喵～ 明仔！我係『' + petName + '』，我喺貓星連線成功喇！想同我講咩呀？❤️</span></div>';
   boxHtml += '</div>';
 
+  // 🎛️ 開發者專屬：音調與語速即時調校控制台
+  boxHtml += '<div style="background:rgba(0,0,0,0.35); border:1px solid rgba(255,234,167,0.4); padding:6px 10px; border-radius:10px; margin-bottom:8px; font-size:11px;">';
+  boxHtml += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">';
+  boxHtml += '<span>🎵 語調 (Pitch): <b id="pitchValDisp" style="color:#ffeaa7;">' + currentPitch + '</b></span>';
+  boxHtml += '<input type="range" id="catPitchRange" min="0.5" max="2.0" step="0.1" value="' + currentPitch + '" oninput="updateCatVoiceConfig()" style="width:110px;">';
+  boxHtml += '</div>';
+  boxHtml += '<div style="display:flex; justify-content:space-between; align-items:center;">';
+  boxHtml += '<span >⚡ 語速 (Speed): <b id="rateValDisp" style="color:#55efc4;">' + currentRate + '</b></span>';
+  boxHtml += '<input type="range" id="catRateRange" min="0.5" max="1.8" step="0.05" value="' + currentRate + '" oninput="updateCatVoiceConfig()" style="width:110px;">';
+  boxHtml += '</div>';
+  boxHtml += '</div>';
+
   boxHtml += '<div>';
   boxHtml += '<div style="display:flex; gap:6px; margin-bottom:8px;">';
   boxHtml += '<input type="text" id="catAiInput" placeholder="同貓咪講嘢..." onkeydown="if(event.key===\'Enter\') sendCatAiMessage()" style="flex:1; background:rgba(0,0,0,0.5); border:1px solid #ffeaa7; color:white; padding:8px 12px; border-radius:15px; font-size:13px; outline:none;">';
@@ -190,7 +216,7 @@ function openCatChatModal() {
   boxHtml += '</div>';
 
   boxHtml += '<div style="display:flex; gap:8px; justify-content:center;">';
-  boxHtml += '<button onclick="setupPetConfig()" style="background:rgba(255,255,255,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:6px 12px; border-radius:15px; font-size:11px; cursor:pointer;">⚙️ 設定寵物 Prompt</button>';
+  boxHtml += '<button onclick="setupPetConfig()" style="background:rgba(255,255,255,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:6px 12px; border-radius:15px; font-size:11px; cursor:pointer;">⚙️ 設定 Prompt</button>';
   boxHtml += '<button onclick="closeCatChatModal()" style="background:linear-gradient(135deg, #e17055, #d63031); color:white; border:1px solid #ffeaa7; padding:6px 16px; border-radius:15px; font-weight:900; font-size:11px; cursor:pointer;">❤️ 關閉對講機</button>';
   boxHtml += '</div>';
   boxHtml += '</div>';
@@ -207,22 +233,24 @@ function closeCatChatModal() {
   if (modal) modal.remove();
 }
 
-// 📢 廣東話 Q 版貓咪語音朗讀函數 (Text-to-Speech)
+// 📢 2. 廣東話 Q 版貓咪語音朗讀函數 (讀取動態設定)
 function speakCatReply(text) {
   if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel(); // 停止上一句
-    
-    // 清除括號內的動作描寫（例如：「（眼睛亮晶晶）」唔會讀出嚟）
+    window.speechSynthesis.cancel();
     var cleanText = text.replace(/（[^）]*）|\([^)]*\)/g, '');
-    
     var utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'zh-HK'; // 廣東話
-    utterance.pitch = 1.4;    // 音調調高（少女/Q版童音）
-    utterance.rate = 1.05;    // 輕快語速
+    
+    var pVal = parseFloat(localStorage.getItem("custom_cat_pitch") || "1.4");
+    var rVal = parseFloat(localStorage.getItem("custom_cat_rate") || "1.05");
+
+    utterance.lang = 'zh-HK';
+    utterance.pitch = pVal;
+    utterance.rate = rVal;
     
     window.speechSynthesis.speak(utterance);
   }
 }
+
 
 // 🌐 6. 發送訊息 (將動態 Prompt 送交 Cloudflare Worker + 自動廣東話語音 Talkback)
 async function sendCatAiMessage() {

@@ -230,29 +230,30 @@ function openCatChatModal() {
   document.body.appendChild(modal);
 }
 
-// 🔍 測試專用：點擊即時跳出彈窗提示
+// 🔍 點擊相片：直接呼叫全屏 Lightbox，喺手機正中間高清睇阿豬！
 function toggleCatAvatarZoom(e) {
   if (e) e.stopPropagation();
+  try { playUiSound('click'); } catch(e){}
   
-  // 1. 測試點擊事件有冇傳進來
-  alert("1. 成功撳到相片區域！");
-  
-  var img = document.getElementById('catChatAvatarImg');
-  
-  // 2. 測試抓唔抓得到張相
-  if (!img) {
-    alert("❌ 錯誤：抓唔到 catChatAvatarImg 張相！");
-    return;
-  }
-  
-  alert("2. 成功抓到相片！準備放大...");
-  
-  // 3. 執行放大
-  img.style.width = '240px';
-  img.style.height = '300px';
-  alert("3. 已經下達放大指令！");
-}
+  var savedCatAvatar = localStorage.getItem("catNavAvatarData");
+  var navImg = document.getElementById('catNavImg');
+  var currentAvatar = savedCatAvatar || (navImg ? navImg.src : 'IMG-20260823-WA0000.jpg');
 
+  // 1. 檢查頁面有冇 Lightbox 容器
+  var lightbox = document.getElementById('lightbox');
+  var content = document.getElementById('lightboxContent');
+  var caption = document.getElementById('lightboxCaption');
+
+  if (lightbox && content) {
+    // 💡 2. 直接將阿豬相片載入 Lightbox 正中心全屏顯示 (不超出手機螢幕)
+    content.innerHTML = '<img src="' + currentAvatar + '" style="max-width:90vw; max-height:70vh; border-radius:16px; box-shadow:0 0 25px rgba(255,234,167,0.8); object-fit:contain;">';
+    if (caption) caption.innerText = '📷 阿豬貓波 ‧ 高清寫真';
+    lightbox.style.display = 'flex';
+    showToast("🔍 已喺手機中間放大阿豬相片");
+  } else {
+    showToast("⚠️ 未能載入放大圖層");
+  }
+}
 
 // 🎛️ 櫃桶開合函數
 function toggleVoiceDrawer() {

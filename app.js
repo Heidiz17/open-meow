@@ -80,13 +80,12 @@ function setupPetConfig() {
   openCatChatModal(); 
 }
 
-// 📸 3. 獨立上傳寵物對話框頭像 + 一開網頁自動同步外面相片
+// 📸 3. 獨立上傳寵物對話框頭像 + 上傳完自動刷新 Modal 顯示飛打拉桿
 function syncSavedCatAvatar() {
   var savedCatAvatar = localStorage.getItem("catNavAvatarData");
   var navImg = document.getElementById('catNavImg');
   if (savedCatAvatar && navImg) navImg.src = savedCatAvatar;
 }
-// 網頁一載入，即刻自動同步外面 Chapter 2.5 張貓相！
 window.addEventListener('DOMContentLoaded', syncSavedCatAvatar);
 
 function uploadPetChatAvatar(event) {
@@ -98,19 +97,17 @@ function uploadPetChatAvatar(event) {
     var imgData = e.target.result;
     localStorage.setItem("catNavAvatarData", imgData);
     
-    // 1. 更新 Modal 對話框入面嗰張相
-    var avatarImg = document.getElementById('catChatAvatarImg');
-    if (avatarImg) avatarImg.src = imgData;
-    
-    // 2. 同步更新外面主介面 Chapter 2.5 嗰張相
+    // 1. 同步更新外面主介面 Chapter 2.5 嗰張相
     var navImg = document.getElementById('catNavImg');
     if (navImg) navImg.src = imgData;
     
-    showToast("📸 成功換上專屬貓咪靚相！(內外已同步變更)");
+    showToast("📸 成功換上專屬貓咪靚相！");
+    
+    // 2. 💡 關鍵修復：上傳完即刻重新開啟對講機 Modal，確保音調語速飛打拉桿完好無缺！
+    openCatChatModal();
   };
   reader.readAsDataURL(file);
 }
-
 
 // 🎙️ 4. 語音 Talkback 對講 (廣東話 STT：聽完入框，留畀明仔修改後手動發送)
 function startVoiceTalkback() {

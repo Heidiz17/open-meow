@@ -147,7 +147,7 @@ function updateCatVoiceConfig() {
   if (document.getElementById('rateValDisp')) document.getElementById('rateValDisp').innerText = rVal;
 }
 
-// 💬 5. 對話框核心 (包含相片放大縮細 + 調校阿豬講嘢櫃桶)
+// 💬 5. 對話框核心 (點擊相片切換放大/縮細 + 語音櫃桶)
 function openCatChatModal() {
   try { playUiSound('chime'); } catch(e){}
   var existingModal = document.getElementById('catChatModal');
@@ -179,17 +179,11 @@ function openCatChatModal() {
   boxHtml += '<div style="position:relative; text-align:center;">';
   boxHtml += '<button onclick="switchCatChatTheme()" style="position:absolute; right:0; top:0; background:rgba(255,255,255,0.2); color:white; border:none; padding:4px 8px; border-radius:10px; font-size:10px; cursor:pointer;">🎨 換色</button>';
   
-  // 📸 阿豬相片區
+  // 📸 阿豬相片區 (直接點擊相片放大/縮細)
   boxHtml += '<div style="display:inline-block; position:relative; margin-bottom:4px;">';
-  boxHtml += '<img id="catChatAvatarImg" src="' + currentAvatar + '" style="transition: all 0.3s ease; width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 2px solid #ffeaa7;">';
+  boxHtml += '<img id="catChatAvatarImg" src="' + currentAvatar + '" onclick="toggleCatAvatarZoom()" style="transition: all 0.3s ease; width: 80px; height: 80px; object-fit: cover; border-radius: 15px; border: 2px solid #ffeaa7; cursor: pointer;" title="點擊放大/縮細">';
   boxHtml += '<label for="petAvatarInput" style="position:absolute; bottom:2px; right:2px; background:#00b894; color:white; border-radius:50%; width:24px; height:24px; display:flex; justify-content:center; align-items:center; font-size:11px; cursor:pointer; border:1px solid white;">📸</label>';
   boxHtml += '<input type="file" id="petAvatarInput" accept="image/*" style="display:none;" onchange="uploadPetChatAvatar(event)">';
-  boxHtml += '</div>';
-
-  // 🔍 相片放大/縮細按鈕
-  boxHtml += '<div style="margin-bottom:6px;">';
-  boxHtml += '<button onclick="zoomCatAvatar(1.2)" style="background:rgba(255,255,255,0.15); color:#ffeaa7; border:1px solid #ffeaa7; padding:2px 8px; border-radius:10px; font-size:10px; margin-right:4px; cursor:pointer;">🔍 放大</button>';
-  boxHtml += '<button onclick="zoomCatAvatar(0.8)" style="background:rgba(255,255,255,0.15); color:#ffeaa7; border:1px solid #ffeaa7; padding:2px 8px; border-radius:10px; font-size:10px; cursor:pointer;">🤏 縮細</button>';
   boxHtml += '</div>';
 
   boxHtml += '<div style="font-size: 17px; font-weight: 900; margin-top:2px;">🐈‍⬛ ' + petName + '</div>';
@@ -236,15 +230,20 @@ function openCatChatModal() {
   document.body.appendChild(modal);
 }
 
-// 🔍 縮放相片函數
-function zoomCatAvatar(factor) {
+// 🔍 點擊相片切換放大/縮細 (預設 80px，撳一下變 150px 大圖，再撳還原)
+let isCatAvatarZoomed = false;
+function toggleCatAvatarZoom() {
   try { playUiSound('click'); } catch(e){}
   var img = document.getElementById('catChatAvatarImg');
   if (img) {
-    var currentWidth = img.clientWidth || 80;
-    var newWidth = Math.min(Math.max(currentWidth * factor, 40), 180);
-    img.style.width = newWidth + 'px';
-    img.style.height = newWidth + 'px';
+    isCatAvatarZoomed = !isCatAvatarZoomed;
+    if (isCatAvatarZoomed) {
+      img.style.width = '150px';
+      img.style.height = '150px';
+    } else {
+      img.style.width = '80px';
+      img.style.height = '80px';
+    }
   }
 }
 
@@ -263,6 +262,7 @@ function toggleVoiceDrawer() {
     }
   }
 }
+
 function closeCatChatModal() {
   try { playUiSound('click'); } catch(e){}
   var modal = document.getElementById('catChatModal');

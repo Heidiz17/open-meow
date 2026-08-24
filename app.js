@@ -234,17 +234,34 @@ function openCatChatModal() {
 function toggleCatAvatarZoom() {
   try { playUiSound('click'); } catch(e){}
   var img = document.getElementById('catChatAvatarImg');
-  if (img) {
-    var currentWidth = img.clientWidth || 80;
-    if (currentWidth < 100) {
-      img.style.width = '150px';
-      img.style.height = '150px';
-    } else {
-      img.style.width = '80px';
-      img.style.height = '80px';
+  if (!img) return;
+  
+  // 取得外層包裹容器 (即帶有 display:inline-block 嗰個 div)
+  var container = img.parentElement;
+  
+  if (!img.dataset.zoomed || img.dataset.zoomed === "false") {
+    // 放大模式：將圖片同容器同步放大，並拉高層級
+    img.style.width = '180px';
+    img.style.height = '180px';
+    img.style.borderRadius = '20px';
+    img.dataset.zoomed = "true";
+    if (container) {
+      container.style.zIndex = '9999';
+      container.style.position = 'relative';
+    }
+    showToast("🔍 已放大阿豬寫真");
+  } else {
+    // 還原模式
+    img.style.width = '80px';
+    img.style.height = '80px';
+    img.style.borderRadius = '15px';
+    img.dataset.zoomed = "false";
+    if (container) {
+      container.style.zIndex = '1';
     }
   }
 }
+
 
 // 🎛️ 櫃桶開合函數
 function toggleVoiceDrawer() {

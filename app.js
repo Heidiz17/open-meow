@@ -40,14 +40,15 @@ const catThemeNames = [
   '👑 帝皇黃 (黃貓)'
 ];
 
-
 // 🎨 1. 循環切換 6 隻高對比毛色主題
 function switchCatChatTheme() {
   try { playUiSound('click'); } catch(e){}
   currentCatThemeIdx = (currentCatThemeIdx + 1) % catThemeClasses.length;
   localStorage.setItem("catChatThemeIdx", currentCatThemeIdx);
+  
   var card = document.getElementById('catModalCard');
   if (card) {
+    // 清除舊 Class 並套用新主題
     card.className = catThemeClasses[currentCatThemeIdx];
     showToast("🎨 切換底色： " + catThemeNames[currentCatThemeIdx]);
   }
@@ -79,7 +80,7 @@ function setupPetConfig() {
   openCatChatModal(); 
 }
 
-// 📸 3. 獨立上傳寵物對話框頭像
+// 📸 3. 獨立上傳寵物對話框頭像 (同步更新內外兩張相片)
 function uploadPetChatAvatar(event) {
   var file = event.target.files[0];
   if (!file) return;
@@ -88,14 +89,20 @@ function uploadPetChatAvatar(event) {
   reader.onload = function(e) {
     var imgData = e.target.result;
     localStorage.setItem("catNavAvatarData", imgData);
+    
+    // 1. 更新 Modal 對話框入面嗰張相
     var avatarImg = document.getElementById('catChatAvatarImg');
     if (avatarImg) avatarImg.src = imgData;
+    
+    // 2. 同步更新外面主介面 Chapter 2.5 嗰張相
     var navImg = document.getElementById('catNavImg');
     if (navImg) navImg.src = imgData;
-    showToast("📸 成功換上專屬貓咪靚相！");
+    
+    showToast("📸 成功換上專屬貓咪靚相！(內外已同步變更)");
   };
   reader.readAsDataURL(file);
 }
+
 
 // 🎙️ 4. 語音 Talkback 對講 (廣東話 STT：聽完入框，留畀明仔修改後手動發送)
 function startVoiceTalkback() {

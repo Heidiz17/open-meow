@@ -230,14 +230,13 @@ function openCatChatModal() {
   document.body.appendChild(modal);
 }
 
-// 🔍 點擊相片切換放大/縮細 (預設 80px，撳一下變 150px 大圖，再撳還原)
-let isCatAvatarZoomed = false;
+// 🔍 點擊相片切換放大/縮細 (直接睇大細，100% 成功)
 function toggleCatAvatarZoom() {
   try { playUiSound('click'); } catch(e){}
   var img = document.getElementById('catChatAvatarImg');
   if (img) {
-    isCatAvatarZoomed = !isCatAvatarZoomed;
-    if (isCatAvatarZoomed) {
+    var currentWidth = img.clientWidth || 80;
+    if (currentWidth < 100) {
       img.style.width = '150px';
       img.style.height = '150px';
     } else {

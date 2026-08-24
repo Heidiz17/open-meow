@@ -230,7 +230,7 @@ function openCatChatModal() {
   document.body.appendChild(modal);
 }
 
-// 🔍 點擊相片：喺對講機最頂層正中心高清彈出阿豬寫真！
+ // 🔍 點擊相片：喺對講機最頂層正中心高清彈出阿豬寫真 (深啡色底)
 function toggleCatAvatarZoom(e) {
   if (e) e.stopPropagation();
   try { playUiSound('click'); } catch(err){}
@@ -247,7 +247,7 @@ function toggleCatAvatarZoom(e) {
   var navImg = document.getElementById('catNavImg');
   var currentAvatar = savedCatAvatar || (navImg ? navImg.src : 'IMG-20260823-WA0000.jpg');
 
-  // 2. 建立獨立最頂層浮窗（z-index 設到最高 9999999，必能蓋過一切！）
+  // 2. 建立獨立最頂層浮窗 (溫暖深啡色背景)
   var overlay = document.createElement('div');
   overlay.id = 'catZoomOverlay';
   overlay.style.position = 'fixed';
@@ -255,7 +255,9 @@ function toggleCatAvatarZoom(e) {
   overlay.style.left = '0';
   overlay.style.width = '100vw';
   overlay.style.height = '100vh';
-  overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.92)';
+  overlay.style.backgroundColor = 'rgba(45, 24, 16, 0.94)';
+  overlay.style.backdropFilter = 'blur(8px)';
+  overlay.style.webkitBackdropFilter = 'blur(8px)';
   overlay.style.zIndex = '9999999';
   overlay.style.display = 'flex';
   overlay.style.flexDirection = 'column';

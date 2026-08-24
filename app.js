@@ -25,79 +25,95 @@ window.addEventListener('DOMContentLoaded', () => {
   console.log("🛡️ 防自動播歌機制已啟動：所有音訊已鎖定暫停。");
 });
 
-// 🐈‍⬛ 阿豬 Cloudflare 安全中轉 DeepSeek AI 導航員
-async function sendCatAiMessage() {
-  var inputEl = document.getElementById('catAiInput');
-  var chatBox = document.getElementById('catAiChatBox');
-  var userText = inputEl ? inputEl.value.trim() : '';
+/*==========================================================================
+   🐾 靈寵對講機 - 獨立 Prompt / 語音 Talkback / 4色 Preset 升級核心
+   ========================================================================== */
 
-  if (!userText) return;
+let currentCatThemeIdx = parseInt(localStorage.getItem("catChatThemeIdx") || "0");
+const catThemeClasses = ['cat-theme-0', 'cat-theme-1', 'cat-theme-2', 'cat-theme-3'];
+const catThemeNames = ['🐈‍⬛ 黑金 (阿豬)', '🤍 雪銀 (白/灰貓)', '🍊 焦糖 (橘貓)', '🌸 夢幻紫 (貓星)'];
 
-  // 1. 顯示明仔說的話
-  chatBox.innerHTML += '<div style="text-align:right; margin-bottom:8px;"><span style="background:#6c5ce7; color:white; padding:6px 10px; border-radius:10px; font-size:12px; display:inline-block;">明仔：' + userText + '</span></div>';
-  if (inputEl) inputEl.value = '';
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  // 2. 顯示加載中
-  var loadingId = 'loading_' + Date.now();
-  chatBox.innerHTML += '<div id="' + loadingId + '" style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,255,255,0.15); color:#ffeaa7; padding:6px 10px; border-radius:10px; font-size:12px; display:inline-block;">🐈‍⬛ 阿豬正在貓星思考中... (咕嚕咕嚕...)</span></div>';
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  // 🌐 3. 指向 Cloudflare Worker 中轉站
-  var workerUrl = 'https://icy-wood-2801.stream-hub-th.workers.dev';
-
-  try {
-    var response = await fetch(workerUrl, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ userText: userText })
-    });
-
-    var data = await response.json();
-    var ldEl = document.getElementById(loadingId);
-    if (ldEl) ldEl.remove();
-
-    if (data && data.reply) {
-      chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,234,167,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:8px 12px; border-radius:10px; font-size:12px; display:inline-block; line-height:1.5;">🐈‍⬛ 阿豬：<br>' + data.reply + '</span></div>';
-    } else {
-      chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 貓星回應異常，請檢查 Key 或連線。</span></div>';
-    }
-  } catch (err) {
-    var ldErr = document.getElementById(loadingId);
-    if (ldErr) ldErr.remove();
-    chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 連線失敗，請檢查網路連線。</span></div>';
+// 🎨 1. 循環切換 4 隻高對比毛色主題
+function switchCatChatTheme() {
+  try { playUiSound('click'); } catch(e){}
+  currentCatThemeIdx = (currentCatThemeIdx + 1) % catThemeClasses.length;
+  localStorage.setItem("catChatThemeIdx", currentCatThemeIdx);
+  var card = document.getElementById('catModalCard');
+  if (card) {
+    card.className = catThemeClasses[currentCatThemeIdx];
+    showToast("🎨 切換底色： " + catThemeNames[currentCatThemeIdx]);
   }
-  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// 📸 5. 專屬上傳更換阿豬相片函數 (修復換相靈魂)
-function uploadCatNavAvatar(event) {
+// ⚙️ 2. 寵物獨立設定選單（名稱 + Prompt + Key 完全分離）
+function setupPetConfig() {
+  try { playUiSound('click'); } catch(e){}
+  var currentName = localStorage.getItem("custom_pet_name") || "阿豬貓波";
+  var currentPrompt = localStorage.getItem("custom_pet_prompt") || "你是一隻叫阿豬的可愛黑貓，說話活潑，常用『喵～』與『咕嚕咕嚕』，深愛主人明仔。";
+  var currentKey = localStorage.getItem("custom_ds_key") || "";
+
+  var newName = prompt("🐱 請輸入寵物名字（例如：陳國壽 / 阿豬）：", currentName);
+  if (newName !== null && newName.trim() !== "") {
+    localStorage.setItem("custom_pet_name", newName.trim());
+  }
+
+  var newPrompt = prompt("✨ 請輸入『" + (newName || currentName) + "』嘅性格 Prompt (靈魂提示詞)：", currentPrompt);
+  if (newPrompt !== null && newPrompt.trim() !== "") {
+    localStorage.setItem("custom_pet_prompt", newPrompt.trim());
+  }
+
+  var newKey = prompt("🔑 請輸入專屬 API Key（若無請留空）：", currentKey);
+  if (newKey !== null) {
+    localStorage.setItem("custom_ds_key", newKey.trim());
+  }
+
+  showToast("✨ 寵物『" + (newName || currentName) + "』設定已成功儲存！");
+  openCatChatModal(); 
+}
+
+// 📸 3. 獨立上傳寵物對話框頭像
+function uploadPetChatAvatar(event) {
   var file = event.target.files[0];
   if (!file) return;
 
   var reader = new FileReader();
   reader.onload = function(e) {
     var imgData = e.target.result;
+    localStorage.setItem("catNavAvatarData", imgData);
+    var avatarImg = document.getElementById('catChatAvatarImg');
+    if (avatarImg) avatarImg.src = imgData;
     var navImg = document.getElementById('catNavImg');
     if (navImg) navImg.src = imgData;
-    localStorage.setItem("catNavAvatarData", imgData);
-    showToast("✨ 成功換上阿豬全新靚相！");
+    showToast("📸 成功換上專屬貓咪靚相！");
   };
   reader.readAsDataURL(file);
 }
 
-// 📖 自動讀取歷史相片
-window.addEventListener('DOMContentLoaded', function() {
-  var savedCatAvatar = localStorage.getItem("catNavAvatarData");
-  if (savedCatAvatar) {
-    var navImg = document.getElementById('catNavImg');
-    if (navImg) navImg.src = savedCatAvatar;
+// 🎙️ 4. 語音 Talkback 對講 (廣東話 STT)
+function startVoiceTalkback() {
+  try { playUiSound('chime'); } catch(e){}
+  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    showToast("⚠️ 瀏覽器未支援語音識別，請直接打字！");
+    return;
   }
-});
+  var recognition = new SpeechRecognition();
+  recognition.lang = 'zh-HK';
+  recognition.start();
+  showToast("🎙️ 正在聽你講嘢，請講廣東話...");
 
-// 💬 6. 對話框核心 (同步載入最新相片)
+  recognition.onresult = function(event) {
+    var transcript = event.results[0][0].transcript;
+    var inputEl = document.getElementById('catAiInput');
+    if (inputEl) inputEl.value = transcript;
+    sendCatAiMessage();
+  };
+  recognition.onerror = function() {
+    showToast("❌ 語音未聽清，請再試一次！");
+  };
+}
+
+// 💬 5. 對話框核心 (全螢幕加大 + 獨立 Prompt & 相片)
 function openCatChatModal() {
   try { playUiSound('chime'); } catch(e){}
   var existingModal = document.getElementById('catChatModal');
@@ -106,41 +122,53 @@ function openCatChatModal() {
   var savedCatAvatar = localStorage.getItem("catNavAvatarData");
   var navImg = document.getElementById('catNavImg');
   var currentAvatar = savedCatAvatar || (navImg ? navImg.src : 'IMG-20260823-WA0000.jpg');
+  var petName = localStorage.getItem("custom_pet_name") || "阿豬貓波";
 
   var modal = document.createElement('div');
   modal.id = 'catChatModal';
   modal.style.position = 'fixed';
-  modal.style.top = '0';
-  modal.style.left = '0';
-  modal.style.width = '100vw';
-  modal.style.height = '100vh';
-  modal.style.backgroundColor = 'rgba(0,0,0,0.85)';
-  modal.style.backdropFilter = 'blur(10px)';
-  modal.style.webkitBackdropFilter = 'blur(10px)';
+  modal.style.top = '0'; modal.style.left = '0';
+  modal.style.width = '100vw'; modal.style.height = '100vh';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.88)';
+  modal.style.backdropFilter = 'blur(12px)';
+  modal.style.webkitBackdropFilter = 'blur(12px)';
   modal.style.zIndex = '999999';
-  modal.style.display = 'flex';
-  modal.style.justifyContent = 'center';
-  modal.style.alignItems = 'center';
-  modal.style.padding = '15px';
+  modal.style.display = 'flex'; modal.style.justifyContent = 'center'; modal.style.alignItems = 'center';
+  modal.style.padding = '10px';
 
   var boxHtml = '';
-  boxHtml += '<div style="background: linear-gradient(135deg, #2c1810 0%, #573714 100%); border: 2px dashed #ffeaa7; border-radius: 16px; padding: 14px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 0 20px rgba(255, 234, 167, 0.5); color: #ffffff;">';
-  boxHtml += '<img src="' + currentAvatar + '" style="width: 100px; height: 130px; object-fit: cover; border-radius: 12px; border: 2px solid #ffeaa7; margin-bottom: 8px;">';
-  boxHtml += '<div style="font-size: 15px; font-weight: 900; color: #ffeaa7; margin-bottom: 2px;">🐈‍⬛ 阿豬貓波 (Gemini 1.5)</div>';
-  boxHtml += '<div style="font-size: 10px; color: #55efc4; font-weight: bold; margin-bottom: 8px;">✨ 貓星在線中 ‧ 輸入問題即時對話</div>';
-
-  boxHtml += '<div id="catAiChatBox" style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; height: 160px; overflow-y: auto; margin-bottom: 8px; border: 1px solid rgba(255,234,167,0.3); text-align: left;">';
-  boxHtml += '<div style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,234,167,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:6px 10px; border-radius:10px; font-size:11px; display:inline-block; line-height:1.5;">喵～ (咕嚕咕嚕煲水聲...) 明仔！我喺 Gemini 1.5 貓星網絡連線成功喇！你想問我咩呀？❤️</span></div>';
+  boxHtml += '<div id="catModalCard" class="' + catThemeClasses[currentCatThemeIdx] + '">';
+  
+  boxHtml += '<div style="position:relative; text-align:center;">';
+  boxHtml += '<button onclick="switchCatChatTheme()" style="position:absolute; right:0; top:0; background:rgba(255,255,255,0.2); color:white; border:none; padding:4px 8px; border-radius:10px; font-size:10px; cursor:pointer;">🎨 換色</button>';
+  
+  boxHtml += '<div style="display:inline-block; position:relative;">';
+  boxHtml += '<img id="catChatAvatarImg" src="' + currentAvatar + '">';
+  boxHtml += '<label for="petAvatarInput" style="position:absolute; bottom:6px; right:6px; background:#00b894; color:white; border-radius:50%; width:28px; height:28px; display:flex; justify-content:center; align-items:center; font-size:12px; cursor:pointer; border:1px solid white;">📸</label>';
+  boxHtml += '<input type="file" id="petAvatarInput" accept="image/*" style="display:none;" onchange="uploadPetChatAvatar(event)">';
   boxHtml += '</div>';
 
+  boxHtml += '<div style="font-size: 17px; font-weight: 900; margin-top:4px;">🐈‍⬛ ' + petName + '</div>';
+  boxHtml += '<div style="font-size: 11px; color: #55efc4; font-weight: bold;">✨ 貓星在線 ‧ 獨立靈魂連線中</div>';
+  boxHtml += '</div>';
+
+  boxHtml += '<div id="catAiChatBox" style="background: rgba(0,0,0,0.45); border-radius: 12px; overflow-y: auto; text-align: left;">';
+  boxHtml += '<div style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,234,167,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:8px 12px; border-radius:10px; font-size:12px; display:inline-block; line-height:1.5;">喵～ 明仔！我係『' + petName + '』，我喺貓星連線成功喇！想同我講咩呀？❤️</span></div>';
+  boxHtml += '</div>';
+
+  boxHtml += '<div>';
   boxHtml += '<div style="display:flex; gap:6px; margin-bottom:8px;">';
-  boxHtml += '<input type="text" id="catAiInput" placeholder="問下阿豬去唔去西貢..." onkeydown="if(event.key===\'Enter\') sendCatAiMessage()" style="flex:1; background:rgba(0,0,0,0.5); border:1px solid #ffeaa7; color:white; padding:6px 10px; border-radius:15px; font-size:12px; outline:none;">';
-  boxHtml += '<button onclick="sendCatAiMessage()" style="background:#00b894; color:white; border:none; padding:6px 12px; border-radius:15px; font-size:12px; font-weight:bold; cursor:pointer;">發送</button>';
+  boxHtml += '<input type="text" id="catAiInput" placeholder="同貓咪講嘢..." onkeydown="if(event.key===\'Enter\') sendCatAiMessage()" style="flex:1; background:rgba(0,0,0,0.5); border:1px solid #ffeaa7; color:white; padding:8px 12px; border-radius:15px; font-size:13px; outline:none;">';
+  boxHtml += '<button onclick="startVoiceTalkback()" style="background:#e84393; color:white; border:none; padding:8px 12px; border-radius:15px; font-size:12px; font-weight:bold; cursor:pointer;">🎤 語音</button>';
+  boxHtml += '<button onclick="sendCatAiMessage()" style="background:#00b894; color:white; border:none; padding:8px 14px; border-radius:15px; font-size:13px; font-weight:bold; cursor:pointer;">發送</button>';
   boxHtml += '</div>';
 
-  boxHtml += '<button onclick="closeCatChatModal()" style="background:linear-gradient(135deg, #e17055, #d63031); color:white; border:1px solid #ffeaa7; padding:6px 18px; border-radius:20px; font-weight:900; font-size:12px; cursor:pointer;">';
-  boxHtml += '❤️ 關閉對話';
-  boxHtml += '</button>';
+  boxHtml += '<div style="display:flex; gap:8px; justify-content:center;">';
+  boxHtml += '<button onclick="setupPetConfig()" style="background:rgba(255,255,255,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:6px 12px; border-radius:15px; font-size:11px; cursor:pointer;">⚙️ 設定寵物 Prompt</button>';
+  boxHtml += '<button onclick="closeCatChatModal()" style="background:linear-gradient(135deg, #e17055, #d63031); color:white; border:1px solid #ffeaa7; padding:6px 16px; border-radius:15px; font-weight:900; font-size:11px; cursor:pointer;">❤️ 關閉對講機</button>';
+  boxHtml += '</div>';
+  boxHtml += '</div>';
+
   boxHtml += '</div>';
 
   modal.innerHTML = boxHtml;
@@ -153,6 +181,56 @@ function closeCatChatModal() {
   if (modal) modal.remove();
 }
 
+// 🌐 6. 發送訊息 (將動態 Prompt 送交 Cloudflare Worker)
+async function sendCatAiMessage() {
+  var inputEl = document.getElementById('catAiInput');
+  var chatBox = document.getElementById('catAiChatBox');
+  var userText = inputEl ? inputEl.value.trim() : '';
+
+  if (!userText) return;
+
+  chatBox.innerHTML += '<div style="text-align:right; margin-bottom:8px;"><span style="background:#6c5ce7; color:white; padding:6px 10px; border-radius:10px; font-size:12px; display:inline-block;">明仔：' + userText + '</span></div>';
+  if (inputEl) inputEl.value = '';
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  var petName = localStorage.getItem("custom_pet_name") || "阿豬";
+  var petPrompt = localStorage.getItem("custom_pet_prompt") || "你是一隻叫阿豬的可愛黑貓，說話活潑，常用『喵～』與『咕嚕咕嚕』，深愛主人明仔。";
+  var customKey = localStorage.getItem("custom_ds_key") || "";
+
+  var loadingId = 'loading_' + Date.now();
+  chatBox.innerHTML += '<div id="' + loadingId + '" style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,255,255,0.15); color:#ffeaa7; padding:6px 10px; border-radius:10px; font-size:12px; display:inline-block;">🐈‍⬛ ' + petName + '思考中... (咕嚕咕嚕...)</span></div>';
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  var workerUrl = 'https://icy-wood-2801.stream-hub-th.workers.dev';
+
+  try {
+    var response = await fetch(workerUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        userText: userText,
+        petName: petName,
+        petPrompt: petPrompt,
+        customKey: customKey
+      })
+    });
+
+    var data = await response.json();
+    var ldEl = document.getElementById(loadingId);
+    if (ldEl) ldEl.remove();
+
+    if (data && data.reply) {
+      chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="background:rgba(255,234,167,0.2); color:#ffeaa7; border:1px solid #ffeaa7; padding:8px 12px; border-radius:10px; font-size:12px; display:inline-block; line-height:1.5;">🐈‍⬛ ' + petName + '：<br>' + data.reply + '</span></div>';
+    } else {
+      chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 貓星連線異常，請檢查設定。</span></div>';
+    }
+  } catch (err) {
+    var ldErr = document.getElementById(loadingId);
+    if (ldErr) ldErr.remove();
+    chatBox.innerHTML += '<div style="text-align:left; margin-bottom:8px;"><span style="color:#ff7675; font-size:11px;">⚠️ 連線失敗，請檢查網路。</span></div>';
+  }
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
 
 /* --------------------------------------------------------------------------
    1. [UI Theme & LocalStorage] - 主/副標題顏色記憶與櫃桶開合

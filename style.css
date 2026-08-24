@@ -310,3 +310,48 @@ body.sub-white .section-title-btn span.sub-tip  { color: #ffffff !important; tex
 .speed-btn { background: transparent; color: #dfe6e9; border: none; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; }
 .speed-btn.active { background: #00b894; color: white; }
 .close-btn { position: absolute; top: 15px; right: 20px; color: white; font-size: 38px; cursor: pointer; font-weight: bold; z-index: 3100; }
+
+/* ==========================================
+   🐈‍⬛ 靈寵對講機 - 全螢幕 Modal & 4 隻 Preset 毛色主題
+   ========================================== */
+
+/* 全螢幕加大對話 Modal 視窗 */
+#catChatModal > div {
+  width: 94% !important;
+  max-width: 420px !important;
+  height: 88vh !important;
+  max-height: 720px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  padding: 16px !important;
+  border-radius: 20px !important;
+  box-shadow: 0 0 30px rgba(255, 234, 167, 0.4) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* 🎨 4 隻 Preset 高對比毛色主題 (Contrast Theme System) */
+.cat-theme-0 { background: linear-gradient(135deg, #2c1810 0%, #573714 100%) !important; border: 2px dashed #ffeaa7 !important; color: #ffeaa7 !important; } /* 🐈‍⬛ 黑金 (阿豬) */
+.cat-theme-1 { background: linear-gradient(135deg, #2d3436 0%, #000000 100%) !important; border: 2px dashed #74b9ff !important; color: #ffffff !important; } /* 🤍 雪銀 (白/灰貓) */
+.cat-theme-2 { background: linear-gradient(135deg, #3d1e03 0%, #632d00 100%) !important; border: 2px dashed #ffeaa7 !important; color: #ffeaa7 !important; } /* 🍊 焦糖 (橘貓) */
+.cat-theme-3 { background: linear-gradient(135deg, #2d132c 0%, #1d0c1d 100%) !important; border: 2px dashed #fd79a8 !important; color: #55efc4 !important; } /* 🌸 夢幻 (貓星靈性) */
+
+/* 放大貓咪靚相頭像 */
+#catChatModal img#catChatAvatarImg {
+  width: 120px !important;
+  height: 150px !important;
+  object-fit: cover !important;
+  border-radius: 14px !important;
+  border: 2px solid #ffeaa7 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6) !important;
+}
+
+/* 放大對話內容區域 */
+#catAiChatBox {
+  flex: 1 !important;
+  height: auto !important;
+  margin: 10px 0 !important;
+  padding: 12px !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+}
